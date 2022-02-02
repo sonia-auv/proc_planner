@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.0.2)
 project(proc_planner)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
