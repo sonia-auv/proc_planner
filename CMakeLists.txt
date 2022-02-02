@@ -50,7 +50,7 @@ file(GLOB ${PROJECT_NAME}_C_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SRC
 file(GLOB ${PROJECT_NAME}_CPP_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SRC_FILES}/*.cpp)
 
 ## Declare executable
-add_executable(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}_node
    ${PROJECT_SRC_FILES}/proc_planner.cpp
    ${${PROJECT_NAME}_C_SOURCES}
    ${${PROJECT_NAME}_CPP_SOURCES}
@@ -58,10 +58,10 @@ add_executable(${PROJECT_NAME}
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES}
    ${Boost_LIBRARIES}
    rt
