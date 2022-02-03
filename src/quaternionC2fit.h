@@ -5,7 +5,7 @@
 // File: quaternionC2fit.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 02-Feb-2022 17:45:08
+// C/C++ source code generated on  : 03-Feb-2022 14:08:22
 //
 
 #ifndef QUATERNIONC2FIT_H

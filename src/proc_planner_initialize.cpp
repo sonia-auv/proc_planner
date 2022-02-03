@@ -5,13 +5,11 @@
 // File: proc_planner_initialize.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 02-Feb-2022 17:45:08
+// C/C++ source code generated on  : 03-Feb-2022 14:08:22
 //
 
 // Include Files
 #include "proc_planner_initialize.h"
-#include "CoderTimeAPI.h"
-#include "proc_planner_data.h"
 #include "rt_nonfinite.h"
 #include <string.h>
 
@@ -22,8 +20,6 @@
 //
 void proc_planner_initialize()
 {
-  freq_not_empty_init();
-  isInitialized_proc_planner = true;
 }
 
 //
