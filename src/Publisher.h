@@ -5,7 +5,7 @@
 // File: Publisher.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 #ifndef PUBLISHER_H
@@ -33,44 +33,23 @@ private:
 
 public:
   bool matlabCodegenIsDeleted;
-  char TopicName[17];
+  char TopicName[20];
   double BufferSize;
   bool IsLatching;
 
 private:
-  MATLABPublisher<geometry_msgs::Vector3, geometry_msgs_Vector3Struct_T>
+  MATLABPublisher<sonia_common::MultiAddPose, sonia_common_MultiAddPoseStruct_T>
       *PublisherHelper;
 };
 
 class b_Publisher {
 public:
   b_Publisher *init();
-  void matlabCodegenDestructor();
-  ~b_Publisher();
-  b_Publisher();
-
-private:
-  void Publisher_delete() const;
-
-public:
-  bool matlabCodegenIsDeleted;
-  char TopicName[8];
-  double BufferSize;
-  bool IsLatching;
-
-private:
-  MATLABPublisher<geometry_msgs::Twist, geometry_msgs_TwistStruct_T>
-      *PublisherHelper;
-};
-
-class c_Publisher {
-public:
-  c_Publisher *init();
   void
   send(const trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T *msgToSend);
   void matlabCodegenDestructor();
-  ~c_Publisher();
-  c_Publisher();
+  ~b_Publisher();
+  b_Publisher();
 
 private:
   void Publisher_delete() const;
@@ -88,25 +67,26 @@ private:
       *PublisherHelper;
 };
 
-class d_Publisher {
+class c_Publisher {
 public:
-  d_Publisher *init();
+  c_Publisher *init();
+  void send(const std_msgs_BoolStruct_T msgToSend);
   void matlabCodegenDestructor();
-  ~d_Publisher();
-  d_Publisher();
+  ~c_Publisher();
+  c_Publisher();
 
 private:
   void Publisher_delete() const;
 
 public:
   bool matlabCodegenIsDeleted;
-  char TopicName[20];
+  char TopicName[31];
   double BufferSize;
   bool IsLatching;
 
 private:
-  MATLABPublisher<sonia_common::MultiAddPose, sonia_common_MultiAddPoseStruct_T>
-      *PublisherHelper;
+  std_msgs_BoolStruct_T MsgStruct;
+  MATLABPublisher<std_msgs::Bool, std_msgs_BoolStruct_T> *PublisherHelper;
 };
 
 } // namespace ros

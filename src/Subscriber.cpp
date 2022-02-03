@@ -5,19 +5,15 @@
 // File: Subscriber.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 // Include Files
 #include "Subscriber.h"
 #include "geometry_msgs_PoseStruct.h"
-#include "nav_msgs_OdometryStruct.h"
-#include "proc_planner_data.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
 #include "sonia_common_MultiAddPoseStruct.h"
-#include "std_msgs_BoolStruct.h"
-#include "std_msgs_Float64MultiArrayStruct.h"
 #include "coder_array.h"
 #include "mlroscpp_sub.h"
 #include "mutex"
@@ -32,34 +28,7 @@
 //
 namespace coder {
 namespace ros {
-void b_Subscriber::Subscriber_delete() const
-{
-  delete (SubscriberHelper);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
 void Subscriber::Subscriber_delete() const
-{
-  delete (SubscriberHelper);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void c_Subscriber::Subscriber_delete() const
-{
-  delete (SubscriberHelper);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void d_Subscriber::Subscriber_delete() const
 {
   delete (SubscriberHelper);
 }
@@ -77,36 +46,29 @@ void Subscriber::callback()
 // Arguments    : void
 // Return Type  : void
 //
-void d_Subscriber::callback()
-{
-  MessageCount = get_MessageCount() + 1.0;
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
 void b_Subscriber::callback()
 {
   MessageCount = get_MessageCount() + 1.0;
 }
 
 //
-// Arguments    : void
+// Arguments    : char lastSubMsg_MessageType[18]
+//                geometry_msgs_PointStruct_T *lastSubMsg_Position
+//                geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation
 // Return Type  : void
 //
-void c_Subscriber::callback()
+void b_Subscriber::get_LatestMessage(
+    char lastSubMsg_MessageType[18],
+    geometry_msgs_PointStruct_T *lastSubMsg_Position,
+    geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation)
 {
-  MessageCount = get_MessageCount() + 1.0;
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void e_Subscriber::callback()
-{
-  MessageCount = get_MessageCount() + 1.0;
+  lock();
+  for (int i{0}; i < 18; i++) {
+    lastSubMsg_MessageType[i] = MsgStruct.MessageType[i];
+  }
+  *lastSubMsg_Position = MsgStruct.Position;
+  *lastSubMsg_Orientation = MsgStruct.Orientation;
+  unlock();
 }
 
 //
@@ -115,7 +77,7 @@ void e_Subscriber::callback()
 //                &lastSubMsg_Pose
 // Return Type  : void
 //
-void d_Subscriber::get_LatestMessage(
+void Subscriber::get_LatestMessage(
     char lastSubMsg_MessageType[25],
     ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose)
 {
@@ -131,53 +93,6 @@ void d_Subscriber::get_LatestMessage(
     lastSubMsg_Pose[i] = MsgStruct.Pose[i];
   }
   unlock();
-}
-
-//
-// Arguments    : char lastSubMsg_MessageType[18]
-//                geometry_msgs_PointStruct_T *lastSubMsg_Position
-//                geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation
-// Return Type  : void
-//
-void e_Subscriber::get_LatestMessage(
-    char lastSubMsg_MessageType[18],
-    geometry_msgs_PointStruct_T *lastSubMsg_Position,
-    geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation)
-{
-  lock();
-  for (int i{0}; i < 18; i++) {
-    lastSubMsg_MessageType[i] = MsgStruct.MessageType[i];
-  }
-  *lastSubMsg_Position = MsgStruct.Position;
-  *lastSubMsg_Orientation = MsgStruct.Orientation;
-  unlock();
-}
-
-//
-// Arguments    : void
-// Return Type  : double
-//
-double d_Subscriber::get_MessageCount() const
-{
-  return MessageCount;
-}
-
-//
-// Arguments    : void
-// Return Type  : double
-//
-double c_Subscriber::get_MessageCount() const
-{
-  return MessageCount;
-}
-
-//
-// Arguments    : void
-// Return Type  : double
-//
-double e_Subscriber::get_MessageCount() const
-{
-  return MessageCount;
 }
 
 //
@@ -202,34 +117,7 @@ double Subscriber::get_MessageCount() const
 // Arguments    : void
 // Return Type  : void
 //
-void d_Subscriber::lock()
-{
-  this->Mutex.lock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void e_Subscriber::lock()
-{
-  this->Mutex.lock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
 void Subscriber::lock()
-{
-  this->Mutex.lock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void c_Subscriber::lock()
 {
   this->Mutex.lock(); //(&Mutex);
 }
@@ -241,18 +129,6 @@ void c_Subscriber::lock()
 void b_Subscriber::lock()
 {
   this->Mutex.lock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void d_Subscriber::matlabCodegenDestructor()
-{
-  if (!matlabCodegenIsDeleted) {
-    matlabCodegenIsDeleted = true;
-    Subscriber_delete();
-  }
 }
 
 //
@@ -271,40 +147,7 @@ void Subscriber::matlabCodegenDestructor()
 // Arguments    : void
 // Return Type  : void
 //
-void c_Subscriber::matlabCodegenDestructor()
-{
-  if (!matlabCodegenIsDeleted) {
-    matlabCodegenIsDeleted = true;
-    Subscriber_delete();
-  }
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void b_Subscriber::matlabCodegenDestructor()
-{
-  if (!matlabCodegenIsDeleted) {
-    matlabCodegenIsDeleted = true;
-    Subscriber_delete();
-  }
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void d_Subscriber::unlock()
-{
-  this->Mutex.unlock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void c_Subscriber::unlock()
+void Subscriber::unlock()
 {
   this->Mutex.unlock(); //(&Mutex);
 }
@@ -314,24 +157,6 @@ void c_Subscriber::unlock()
 // Return Type  : void
 //
 void b_Subscriber::unlock()
-{
-  this->Mutex.unlock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void e_Subscriber::unlock()
-{
-  this->Mutex.unlock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void Subscriber::unlock()
 {
   this->Mutex.unlock(); //(&Mutex);
 }
@@ -356,36 +181,9 @@ b_Subscriber::b_Subscriber()
 
 //
 // Arguments    : void
-// Return Type  : c_Subscriber
-//
-c_Subscriber::c_Subscriber()
-{
-  matlabCodegenIsDeleted = true;
-}
-
-//
-// Arguments    : void
-// Return Type  : d_Subscriber
-//
-d_Subscriber::d_Subscriber()
-{
-  matlabCodegenIsDeleted = true;
-}
-
-//
-// Arguments    : void
-// Return Type  : e_Subscriber
-//
-e_Subscriber::e_Subscriber()
-{
-  matlabCodegenIsDeleted = true;
-}
-
-//
-// Arguments    : void
 // Return Type  : void
 //
-c_Subscriber::~c_Subscriber()
+Subscriber::~Subscriber()
 {
   matlabCodegenDestructor();
 }
@@ -401,41 +199,14 @@ b_Subscriber::~b_Subscriber()
 
 //
 // Arguments    : void
-// Return Type  : void
+// Return Type  : b_Subscriber *
 //
-Subscriber::~Subscriber()
-{
-  matlabCodegenDestructor();
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-d_Subscriber::~d_Subscriber()
-{
-  matlabCodegenDestructor();
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-e_Subscriber::~e_Subscriber()
-{
-  matlabCodegenDestructor();
-}
-
-//
-// Arguments    : void
-// Return Type  : e_Subscriber *
-//
-e_Subscriber *e_Subscriber::init()
+b_Subscriber *b_Subscriber::init()
 {
   static const char topic[25]{'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n',
                               'n', 'e', 'r', '/', 'i', 'n', 'i', 't', 'i',
                               'a', 'l', '_', 'p', 'o', 's', 'e'};
-  e_Subscriber *obj;
+  b_Subscriber *obj;
   obj = this;
   for (int i{0}; i < 25; i++) {
     obj->TopicName[i] = topic[i];
@@ -461,14 +232,18 @@ e_Subscriber *e_Subscriber::init()
 
 //
 // Arguments    : void
-// Return Type  : d_Subscriber *
+// Return Type  : Subscriber *
 //
-d_Subscriber *d_Subscriber::init()
+Subscriber *Subscriber::init()
 {
-  d_Subscriber *obj;
+  static const char topic[32]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l',
+                              'a', 'n', 'n', 'e', 'r', '/', 's', 'e',
+                              'n', 'd', '_', 'm', 'u', 'l', 't', 'i',
+                              '_', 'a', 'd', 'd', 'p', 'o', 's', 'e'};
+  Subscriber *obj;
   obj = this;
-  for (int i{0}; i < 20; i++) {
-    obj->TopicName[i] = cv[i];
+  for (int i{0}; i < 32; i++) {
+    obj->TopicName[i] = topic[i];
   }
   void *input;
   obj->BufferSize = 1.0;
@@ -480,100 +255,7 @@ d_Subscriber *d_Subscriber::init()
   auto structPtr = (&obj->MsgStruct);
   sonia_common::MultiAddPose *msgPtr = nullptr;        //();
   auto sub = make_subscriber(this, msgPtr, structPtr); //();
-  sub->createSubscriber(&obj->TopicName[0], 20.0, obj->BufferSize);
-  obj->SubscriberHelper = sub; //();
-  input = obj->SubscriberHelper;
-  //(input);
-  obj->callback();
-  obj->matlabCodegenIsDeleted = false;
-  return obj;
-}
-
-//
-// Arguments    : void
-// Return Type  : c_Subscriber *
-//
-c_Subscriber *c_Subscriber::init()
-{
-  static const char topic[5]{'/', 'o', 'd', 'o', 'm'};
-  c_Subscriber *obj;
-  obj = this;
-  for (int i{0}; i < 5; i++) {
-    obj->TopicName[i] = topic[i];
-  }
-  void *input;
-  obj->BufferSize = 1.0;
-  obj->MessageCount = -1.0;
-  //(&obj->Mutex);
-  obj->lock();
-  obj->unlock();
-  nav_msgs_OdometryStruct(&obj->MsgStruct);
-  auto structPtr = (&obj->MsgStruct);
-  nav_msgs::Odometry *msgPtr = nullptr;                //();
-  auto sub = make_subscriber(this, msgPtr, structPtr); //();
-  sub->createSubscriber(&obj->TopicName[0], 5.0, obj->BufferSize);
-  obj->SubscriberHelper = sub; //();
-  input = obj->SubscriberHelper;
-  //(input);
-  obj->callback();
-  obj->matlabCodegenIsDeleted = false;
-  return obj;
-}
-
-//
-// Arguments    : void
-// Return Type  : b_Subscriber *
-//
-b_Subscriber *b_Subscriber::init()
-{
-  static const char topic[5]{'/', 's', 't', 'o', 'p'};
-  b_Subscriber *obj;
-  obj = this;
-  for (int i{0}; i < 5; i++) {
-    obj->TopicName[i] = topic[i];
-  }
-  void *input;
-  obj->BufferSize = 1.0;
-  obj->MessageCount = -1.0;
-  //(&obj->Mutex);
-  obj->lock();
-  obj->unlock();
-  obj->MsgStruct = std_msgs_BoolStruct();
-  auto structPtr = (&obj->MsgStruct);
-  std_msgs::Bool *msgPtr = nullptr;                    //();
-  auto sub = make_subscriber(this, msgPtr, structPtr); //();
-  sub->createSubscriber(&obj->TopicName[0], 5.0, obj->BufferSize);
-  obj->SubscriberHelper = sub; //();
-  input = obj->SubscriberHelper;
-  //(input);
-  obj->callback();
-  obj->matlabCodegenIsDeleted = false;
-  return obj;
-}
-
-//
-// Arguments    : void
-// Return Type  : Subscriber *
-//
-Subscriber *Subscriber::init()
-{
-  static const char topic[5]{'/', 'd', 'e', 's', 't'};
-  Subscriber *obj;
-  obj = this;
-  for (int i{0}; i < 5; i++) {
-    obj->TopicName[i] = topic[i];
-  }
-  void *input;
-  obj->BufferSize = 1.0;
-  obj->MessageCount = -1.0;
-  //(&obj->Mutex);
-  obj->lock();
-  obj->unlock();
-  std_msgs_Float64MultiArrayStruct(&obj->MsgStruct);
-  auto structPtr = (&obj->MsgStruct);
-  std_msgs::Float64MultiArray *msgPtr = nullptr;       //();
-  auto sub = make_subscriber(this, msgPtr, structPtr); //();
-  sub->createSubscriber(&obj->TopicName[0], 5.0, obj->BufferSize);
+  sub->createSubscriber(&obj->TopicName[0], 32.0, obj->BufferSize);
   obj->SubscriberHelper = sub; //();
   input = obj->SubscriberHelper;
   //(input);
@@ -586,7 +268,7 @@ Subscriber *Subscriber::init()
 // Arguments    : void
 // Return Type  : void
 //
-void e_Subscriber::matlabCodegenDestructor()
+void b_Subscriber::matlabCodegenDestructor()
 {
   if (!matlabCodegenIsDeleted) {
     matlabCodegenIsDeleted = true;
@@ -601,7 +283,7 @@ void e_Subscriber::matlabCodegenDestructor()
 //                bool *status
 // Return Type  : void
 //
-void e_Subscriber::receive(
+void b_Subscriber::receive(
     char receivedMsg_MessageType[18],
     geometry_msgs_PointStruct_T *receivedMsg_Position,
     geometry_msgs_QuaternionStruct_T *receivedMsg_Orientation, bool *status)
@@ -639,7 +321,7 @@ void e_Subscriber::receive(
 //                &receivedMsg_Pose bool *status
 // Return Type  : void
 //
-void d_Subscriber::receive(
+void Subscriber::receive(
     char receivedMsg_MessageType[25],
     ::coder::array<sonia_common_AddPoseStruct_T, 1U> &receivedMsg_Pose,
     bool *status)
@@ -655,7 +337,7 @@ void d_Subscriber::receive(
     statusText[i] = b_statusText[i];
   }
   ::ros::Duration tDur;
-  tDur = tDur.fromSec(0.1);
+  tDur = tDur.fromSec(0.5);
   tStop = ::ros::Time::now() + (tDur);
   statusFlag = false;
   while (get_MessageCount() == nMessages) {
