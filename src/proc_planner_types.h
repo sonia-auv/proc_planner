@@ -5,7 +5,7 @@
 // File: proc_planner_types.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 #ifndef PROC_PLANNER_TYPES_H
@@ -16,11 +16,6 @@
 #include "coder_array.h"
 
 // Type Definitions
-struct ros_TimeStruct_T {
-  unsigned int Sec;
-  unsigned int Nsec;
-};
-
 struct ros_DurationStruct_T {
   int Sec;
   int Nsec;
@@ -64,6 +59,11 @@ struct geometry_msgs_PoseStruct_T {
   geometry_msgs_QuaternionStruct_T Orientation;
 };
 
+struct std_msgs_BoolStruct_T {
+  char MessageType[13];
+  bool Data;
+};
+
 struct geometry_msgs_TransformStruct_T {
   char MessageType[23];
   geometry_msgs_Vector3Struct_T Translation;
@@ -74,23 +74,6 @@ struct geometry_msgs_TwistStruct_T {
   char MessageType[19];
   geometry_msgs_Vector3Struct_T Linear;
   geometry_msgs_Vector3Struct_T Angular;
-};
-
-struct geometry_msgs_PoseWithCovarianceStruct_T {
-  char MessageType[32];
-  geometry_msgs_PoseStruct_T Pose;
-  double Covariance[36];
-};
-
-struct geometry_msgs_TwistWithCovarianceStruct_T {
-  char MessageType[33];
-  geometry_msgs_TwistStruct_T Twist;
-  double Covariance[36];
-};
-
-struct std_msgs_BoolStruct_T {
-  char MessageType[13];
-  bool Data;
 };
 
 struct sonia_common_MultiAddPoseStruct_T {
@@ -104,40 +87,6 @@ struct trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T {
   coder::array<geometry_msgs_TwistStruct_T, 1U> Velocities;
   coder::array<geometry_msgs_TwistStruct_T, 1U> Accelerations;
   ros_DurationStruct_T TimeFromStart;
-};
-
-struct std_msgs_HeaderStruct_T {
-  char MessageType[15];
-  unsigned int Seq;
-  ros_TimeStruct_T Stamp;
-  coder::array<char, 2U> FrameId;
-};
-
-struct nav_msgs_OdometryStruct_T {
-  char MessageType[17];
-  std_msgs_HeaderStruct_T Header;
-  coder::array<char, 2U> ChildFrameId;
-  geometry_msgs_PoseWithCovarianceStruct_T Pose;
-  geometry_msgs_TwistWithCovarianceStruct_T Twist;
-};
-
-struct std_msgs_MultiArrayDimensionStruct_T {
-  char MessageType[28];
-  coder::array<char, 2U> Label;
-  unsigned int Size;
-  unsigned int Stride;
-};
-
-struct std_msgs_MultiArrayLayoutStruct_T {
-  char MessageType[25];
-  coder::array<std_msgs_MultiArrayDimensionStruct_T, 1U> Dim;
-  unsigned int DataOffset;
-};
-
-struct std_msgs_Float64MultiArrayStruct_T {
-  char MessageType[26];
-  std_msgs_MultiArrayLayoutStruct_T Layout;
-  coder::array<double, 1U> Data;
 };
 
 #endif

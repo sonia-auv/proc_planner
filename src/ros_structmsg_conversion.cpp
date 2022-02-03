@@ -41,25 +41,6 @@ void msg2struct(geometry_msgs_PoseStruct_T* structPtr, geometry_msgs::Pose const
 }
 
 
-// Conversions between geometry_msgs_PoseWithCovarianceStruct_T and geometry_msgs::PoseWithCovariance
-
-void struct2msg(geometry_msgs::PoseWithCovariance* msgPtr, geometry_msgs_PoseWithCovarianceStruct_T const* structPtr)
-{
-  const std::string rosMessageType("geometry_msgs/PoseWithCovariance");
-
-  convertFromStructPrimitiveArray(msgPtr->covariance, structPtr->Covariance);
-  struct2msg(&msgPtr->pose, &structPtr->Pose);
-}
-
-void msg2struct(geometry_msgs_PoseWithCovarianceStruct_T* structPtr, geometry_msgs::PoseWithCovariance const* msgPtr)
-{
-  const std::string rosMessageType("geometry_msgs/PoseWithCovariance");
-
-  convertToStructPrimitiveArray(structPtr->Covariance, msgPtr->covariance);
-  msg2struct(&structPtr->Pose, &msgPtr->pose);
-}
-
-
 // Conversions between geometry_msgs_QuaternionStruct_T and geometry_msgs::Quaternion
 
 void struct2msg(geometry_msgs::Quaternion* msgPtr, geometry_msgs_QuaternionStruct_T const* structPtr)
@@ -121,25 +102,6 @@ void msg2struct(geometry_msgs_TwistStruct_T* structPtr, geometry_msgs::Twist con
 }
 
 
-// Conversions between geometry_msgs_TwistWithCovarianceStruct_T and geometry_msgs::TwistWithCovariance
-
-void struct2msg(geometry_msgs::TwistWithCovariance* msgPtr, geometry_msgs_TwistWithCovarianceStruct_T const* structPtr)
-{
-  const std::string rosMessageType("geometry_msgs/TwistWithCovariance");
-
-  convertFromStructPrimitiveArray(msgPtr->covariance, structPtr->Covariance);
-  struct2msg(&msgPtr->twist, &structPtr->Twist);
-}
-
-void msg2struct(geometry_msgs_TwistWithCovarianceStruct_T* structPtr, geometry_msgs::TwistWithCovariance const* msgPtr)
-{
-  const std::string rosMessageType("geometry_msgs/TwistWithCovariance");
-
-  convertToStructPrimitiveArray(structPtr->Covariance, msgPtr->covariance);
-  msg2struct(&structPtr->Twist, &msgPtr->twist);
-}
-
-
 // Conversions between geometry_msgs_Vector3Struct_T and geometry_msgs::Vector3
 
 void struct2msg(geometry_msgs::Vector3* msgPtr, geometry_msgs_Vector3Struct_T const* structPtr)
@@ -161,29 +123,6 @@ void msg2struct(geometry_msgs_Vector3Struct_T* structPtr, geometry_msgs::Vector3
 }
 
 
-// Conversions between nav_msgs_OdometryStruct_T and nav_msgs::Odometry
-
-void struct2msg(nav_msgs::Odometry* msgPtr, nav_msgs_OdometryStruct_T const* structPtr)
-{
-  const std::string rosMessageType("nav_msgs/Odometry");
-
-  convertFromStructPrimitiveArray(msgPtr->child_frame_id, structPtr->ChildFrameId);
-  struct2msg(&msgPtr->header, &structPtr->Header);
-  struct2msg(&msgPtr->pose, &structPtr->Pose);
-  struct2msg(&msgPtr->twist, &structPtr->Twist);
-}
-
-void msg2struct(nav_msgs_OdometryStruct_T* structPtr, nav_msgs::Odometry const* msgPtr)
-{
-  const std::string rosMessageType("nav_msgs/Odometry");
-
-  convertToStructPrimitiveArray(structPtr->ChildFrameId, msgPtr->child_frame_id);
-  msg2struct(&structPtr->Header, &msgPtr->header);
-  msg2struct(&structPtr->Pose, &msgPtr->pose);
-  msg2struct(&structPtr->Twist, &msgPtr->twist);
-}
-
-
 // Conversions between ros_DurationStruct_T and ros::Duration
 
 void struct2msg(ros::Duration* msgPtr, ros_DurationStruct_T const* structPtr)
@@ -197,25 +136,6 @@ void struct2msg(ros::Duration* msgPtr, ros_DurationStruct_T const* structPtr)
 void msg2struct(ros_DurationStruct_T* structPtr, ros::Duration const* msgPtr)
 {
   const std::string rosMessageType("ros_time/Duration");
-
-  structPtr->Nsec =  msgPtr->nsec;
-  structPtr->Sec =  msgPtr->sec;
-}
-
-
-// Conversions between ros_TimeStruct_T and ros::Time
-
-void struct2msg(ros::Time* msgPtr, ros_TimeStruct_T const* structPtr)
-{
-  const std::string rosMessageType("ros_time/Time");
-
-  msgPtr->nsec =  structPtr->Nsec;
-  msgPtr->sec =  structPtr->Sec;
-}
-
-void msg2struct(ros_TimeStruct_T* structPtr, ros::Time const* msgPtr)
-{
-  const std::string rosMessageType("ros_time/Time");
 
   structPtr->Nsec =  msgPtr->nsec;
   structPtr->Sec =  msgPtr->sec;
@@ -280,86 +200,6 @@ void msg2struct(std_msgs_BoolStruct_T* structPtr, std_msgs::Bool const* msgPtr)
   const std::string rosMessageType("std_msgs/Bool");
 
   structPtr->Data =  msgPtr->data;
-}
-
-
-// Conversions between std_msgs_Float64MultiArrayStruct_T and std_msgs::Float64MultiArray
-
-void struct2msg(std_msgs::Float64MultiArray* msgPtr, std_msgs_Float64MultiArrayStruct_T const* structPtr)
-{
-  const std::string rosMessageType("std_msgs/Float64MultiArray");
-
-  convertFromStructPrimitiveArray(msgPtr->data, structPtr->Data);
-  struct2msg(&msgPtr->layout, &structPtr->Layout);
-}
-
-void msg2struct(std_msgs_Float64MultiArrayStruct_T* structPtr, std_msgs::Float64MultiArray const* msgPtr)
-{
-  const std::string rosMessageType("std_msgs/Float64MultiArray");
-
-  convertToStructPrimitiveArray(structPtr->Data, msgPtr->data);
-  msg2struct(&structPtr->Layout, &msgPtr->layout);
-}
-
-
-// Conversions between std_msgs_HeaderStruct_T and std_msgs::Header
-
-void struct2msg(std_msgs::Header* msgPtr, std_msgs_HeaderStruct_T const* structPtr)
-{
-  const std::string rosMessageType("std_msgs/Header");
-
-  convertFromStructPrimitiveArray(msgPtr->frame_id, structPtr->FrameId);
-  msgPtr->seq =  structPtr->Seq;
-  struct2msg(&msgPtr->stamp, &structPtr->Stamp);
-}
-
-void msg2struct(std_msgs_HeaderStruct_T* structPtr, std_msgs::Header const* msgPtr)
-{
-  const std::string rosMessageType("std_msgs/Header");
-
-  convertToStructPrimitiveArray(structPtr->FrameId, msgPtr->frame_id);
-  structPtr->Seq =  msgPtr->seq;
-  msg2struct(&structPtr->Stamp, &msgPtr->stamp);
-}
-
-
-// Conversions between std_msgs_MultiArrayDimensionStruct_T and std_msgs::MultiArrayDimension
-
-void struct2msg(std_msgs::MultiArrayDimension* msgPtr, std_msgs_MultiArrayDimensionStruct_T const* structPtr)
-{
-  const std::string rosMessageType("std_msgs/MultiArrayDimension");
-
-  convertFromStructPrimitiveArray(msgPtr->label, structPtr->Label);
-  msgPtr->size =  structPtr->Size;
-  msgPtr->stride =  structPtr->Stride;
-}
-
-void msg2struct(std_msgs_MultiArrayDimensionStruct_T* structPtr, std_msgs::MultiArrayDimension const* msgPtr)
-{
-  const std::string rosMessageType("std_msgs/MultiArrayDimension");
-
-  convertToStructPrimitiveArray(structPtr->Label, msgPtr->label);
-  structPtr->Size =  msgPtr->size;
-  structPtr->Stride =  msgPtr->stride;
-}
-
-
-// Conversions between std_msgs_MultiArrayLayoutStruct_T and std_msgs::MultiArrayLayout
-
-void struct2msg(std_msgs::MultiArrayLayout* msgPtr, std_msgs_MultiArrayLayoutStruct_T const* structPtr)
-{
-  const std::string rosMessageType("std_msgs/MultiArrayLayout");
-
-  msgPtr->data_offset =  structPtr->DataOffset;
-  convertFromStructNestedArray(msgPtr->dim, structPtr->Dim);
-}
-
-void msg2struct(std_msgs_MultiArrayLayoutStruct_T* structPtr, std_msgs::MultiArrayLayout const* msgPtr)
-{
-  const std::string rosMessageType("std_msgs/MultiArrayLayout");
-
-  structPtr->DataOffset =  msgPtr->data_offset;
-  convertToStructNestedArray(structPtr->Dim, msgPtr->dim);
 }
 
 

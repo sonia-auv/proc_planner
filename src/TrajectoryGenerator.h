@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 #ifndef TRAJECTORYGENERATOR_H
@@ -27,6 +27,7 @@ public:
   ~TrajectoryGenerator();
   TrajectoryGenerator();
   bool matlabCodegenIsDeleted;
+  double status;
   double n;
   coder::array<double, 2U> pointList;
   coder::array<double, 2U> quatList;
@@ -35,8 +36,8 @@ public:
   sonia_common_MultiAddPoseStruct_T MAPM;
   struct_T param;
   geometry_msgs_PoseStruct_T icMsg;
-  coder::ros::e_Subscriber *icSub;
-  coder::ros::e_Subscriber _pobj0;
+  coder::ros::b_Subscriber *icSub;
+  coder::ros::b_Subscriber _pobj0;
 };
 
 #endif

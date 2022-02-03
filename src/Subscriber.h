@@ -5,7 +5,7 @@
 // File: Subscriber.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 #ifndef SUBSCRIBER_H
@@ -29,6 +29,13 @@ public:
   void unlock();
   void callback();
   double get_MessageCount() const;
+  void
+  receive(char receivedMsg_MessageType[25],
+          ::coder::array<sonia_common_AddPoseStruct_T, 1U> &receivedMsg_Pose,
+          bool *status);
+  void get_LatestMessage(
+      char lastSubMsg_MessageType[25],
+      ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose);
   void matlabCodegenDestructor();
   ~Subscriber();
   Subscriber();
@@ -38,92 +45,7 @@ private:
 
 public:
   bool matlabCodegenIsDeleted;
-  char TopicName[5];
-  double BufferSize;
-  double MessageCount;
-
-private:
-  void *SubscriberHelper;
-  std_msgs_Float64MultiArrayStruct_T MsgStruct;
-  std::mutex Mutex;
-};
-
-class b_Subscriber {
-public:
-  b_Subscriber *init();
-  void lock();
-  void unlock();
-  void callback();
-  double get_MessageCount() const;
-  void matlabCodegenDestructor();
-  ~b_Subscriber();
-  b_Subscriber();
-
-private:
-  void Subscriber_delete() const;
-
-public:
-  bool matlabCodegenIsDeleted;
-  char TopicName[5];
-  double BufferSize;
-  double MessageCount;
-
-private:
-  void *SubscriberHelper;
-  std_msgs_BoolStruct_T MsgStruct;
-  std::mutex Mutex;
-};
-
-class c_Subscriber {
-public:
-  c_Subscriber *init();
-  void lock();
-  void unlock();
-  void callback();
-  double get_MessageCount() const;
-  void matlabCodegenDestructor();
-  ~c_Subscriber();
-  c_Subscriber();
-
-private:
-  void Subscriber_delete() const;
-
-public:
-  bool matlabCodegenIsDeleted;
-  char TopicName[5];
-  double BufferSize;
-  double MessageCount;
-
-private:
-  void *SubscriberHelper;
-  nav_msgs_OdometryStruct_T MsgStruct;
-  std::mutex Mutex;
-};
-
-class d_Subscriber {
-public:
-  d_Subscriber *init();
-  void lock();
-  void unlock();
-  void callback();
-  double get_MessageCount() const;
-  void
-  receive(char receivedMsg_MessageType[25],
-          ::coder::array<sonia_common_AddPoseStruct_T, 1U> &receivedMsg_Pose,
-          bool *status);
-  void get_LatestMessage(
-      char lastSubMsg_MessageType[25],
-      ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose);
-  void matlabCodegenDestructor();
-  ~d_Subscriber();
-  d_Subscriber();
-
-private:
-  void Subscriber_delete() const;
-
-public:
-  bool matlabCodegenIsDeleted;
-  char TopicName[20];
+  char TopicName[32];
   double BufferSize;
   double MessageCount;
 
@@ -133,9 +55,9 @@ private:
   std::mutex Mutex;
 };
 
-class e_Subscriber {
+class b_Subscriber {
 public:
-  e_Subscriber *init();
+  b_Subscriber *init();
   void lock();
   void unlock();
   void callback();
@@ -149,8 +71,8 @@ public:
                     geometry_msgs_PointStruct_T *lastSubMsg_Position,
                     geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation);
   void matlabCodegenDestructor();
-  ~e_Subscriber();
-  e_Subscriber();
+  ~b_Subscriber();
+  b_Subscriber();
   bool matlabCodegenIsDeleted;
   char TopicName[25];
   double BufferSize;

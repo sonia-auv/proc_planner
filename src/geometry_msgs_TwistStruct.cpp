@@ -5,7 +5,7 @@
 // File: geometry_msgs_TwistStruct.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 // Include Files
@@ -24,10 +24,10 @@
 //
 void geometry_msgs_TwistStruct(geometry_msgs_TwistStruct_T *msg)
 {
-  static const char b_cv[19]{'g', 'e', 'o', 'm', 'e', 't', 'r', 'y', '_', 'm',
-                             's', 'g', 's', '/', 'T', 'w', 'i', 's', 't'};
+  static const char cv[19]{'g', 'e', 'o', 'm', 'e', 't', 'r', 'y', '_', 'm',
+                           's', 'g', 's', '/', 'T', 'w', 'i', 's', 't'};
   for (int i{0}; i < 19; i++) {
-    msg->MessageType[i] = b_cv[i];
+    msg->MessageType[i] = cv[i];
   }
   msg->Linear = geometry_msgs_Vector3Struct();
   msg->Angular = geometry_msgs_Vector3Struct();

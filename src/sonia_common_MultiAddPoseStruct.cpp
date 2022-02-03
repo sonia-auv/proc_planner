@@ -5,7 +5,7 @@
 // File: sonia_common_MultiAddPoseStruct.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 // Include Files
@@ -25,16 +25,16 @@
 //
 void sonia_common_MultiAddPoseStruct(sonia_common_MultiAddPoseStruct_T *msg)
 {
-  static const char b_cv[25]{'s', 'o', 'n', 'i', 'a', '_', 'c', 'o', 'm',
-                             'm', 'o', 'n', '/', 'M', 'u', 'l', 't', 'i',
-                             'A', 'd', 'd', 'P', 'o', 's', 'e'};
-  sonia_common_AddPoseStruct_T t5_Pose;
-  sonia_common_AddPoseStruct(&t5_Pose);
+  static const char cv[25]{'s', 'o', 'n', 'i', 'a', '_', 'c', 'o', 'm',
+                           'm', 'o', 'n', '/', 'M', 'u', 'l', 't', 'i',
+                           'A', 'd', 'd', 'P', 'o', 's', 'e'};
+  sonia_common_AddPoseStruct_T t1_Pose;
+  sonia_common_AddPoseStruct(&t1_Pose);
   for (int i{0}; i < 25; i++) {
-    msg->MessageType[i] = b_cv[i];
+    msg->MessageType[i] = cv[i];
   }
   msg->Pose.set_size(1);
-  msg->Pose[0] = t5_Pose;
+  msg->Pose[0] = t1_Pose;
   msg->Pose.set_size(0);
   //(msg);
 }

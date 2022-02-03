@@ -5,7 +5,7 @@
 // File: geometry_msgs_TransformStruct.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 // Include Files
@@ -25,11 +25,11 @@
 //
 void geometry_msgs_TransformStruct(geometry_msgs_TransformStruct_T *msg)
 {
-  static const char b_cv[23]{'g', 'e', 'o', 'm', 'e', 't', 'r', 'y',
-                             '_', 'm', 's', 'g', 's', '/', 'T', 'r',
-                             'a', 'n', 's', 'f', 'o', 'r', 'm'};
+  static const char cv[23]{'g', 'e', 'o', 'm', 'e', 't', 'r', 'y',
+                           '_', 'm', 's', 'g', 's', '/', 'T', 'r',
+                           'a', 'n', 's', 'f', 'o', 'r', 'm'};
   for (int i{0}; i < 23; i++) {
-    msg->MessageType[i] = b_cv[i];
+    msg->MessageType[i] = cv[i];
   }
   msg->Translation = geometry_msgs_Vector3Struct();
   msg->Rotation = geometry_msgs_QuaternionStruct();
