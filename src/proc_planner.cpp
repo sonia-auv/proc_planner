@@ -5,26 +5,23 @@
 // File: proc_planner.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 02-Feb-2022 17:45:08
+// C/C++ source code generated on  : 03-Feb-2022 14:08:22
 //
 
 // Include Files
 #include "proc_planner.h"
 #include "Publisher.h"
-#include "Rate.h"
 #include "Subscriber.h"
 #include "TrajectoryGenerator.h"
-#include "dot.h"
+#include "geometry_msgs_PoseStruct.h"
 #include "geometry_msgs_TransformStruct.h"
 #include "geometry_msgs_TwistStruct.h"
 #include "minOrMax.h"
 #include "norm.h"
-#include "proc_planner_data.h"
-#include "proc_planner_initialize.h"
-#include "proc_planner_internal_types.h"
 #include "proc_planner_rtwutil.h"
 #include "proc_planner_types.h"
 #include "quaternion.h"
+#include "repelem.h"
 #include "rt_nonfinite.h"
 #include "sonia_common_AddPoseStruct.h"
 #include "sonia_common_MultiAddPoseStruct.h"
@@ -33,11 +30,12 @@
 #include "waypointTrajectory.h"
 #include "coder_array.h"
 #include <cmath>
+#include <stdio.h>
 #include <string.h>
 
 // Function Definitions
 //
-// Definir les message ros
+// definir le node
 //
 // Arguments    : void
 // Return Type  : void
@@ -46,21 +44,19 @@ void proc_planner()
 {
   TrajectoryGenerator TG;
   coder::b_quaternion varargout_2;
-  coder::quaternion obj;
+  coder::quaternion r2;
   coder::ros::Publisher pospub;
-  coder::ros::Rate b_r;
   coder::ros::Subscriber mapSub;
   coder::ros::b_Publisher trajpub;
-  coder::ros::b_Subscriber *sub;
+  coder::ros::b_Subscriber icSub;
   coder::ros::c_Publisher validSub;
   coder::waypointTrajectory trajObj;
-  coder::array<geometry_msgs_TransformStruct_T, 2U> y;
-  coder::array<geometry_msgs_TwistStruct_T, 2U> b_y;
+  coder::array<geometry_msgs_TransformStruct_T, 2U> r3;
+  coder::array<geometry_msgs_TwistStruct_T, 2U> r4;
   coder::array<sonia_common_AddPoseStruct_T, 1U> rMaddposemsg_Pose;
-  coder::array<double, 2U> c_TG;
-  coder::array<double, 1U> b_TG;
-  geometry_msgs_PointStruct_T t3_Position;
-  geometry_msgs_QuaternionStruct_T t3_Orientation;
+  geometry_msgs_PointStruct_T icMsg_Position;
+  geometry_msgs_PoseStruct_T b_unusedExpr;
+  geometry_msgs_QuaternionStruct_T icMsg_Orientation;
   geometry_msgs_TransformStruct_T transformBuff;
   geometry_msgs_TwistStruct_T twistBuff;
   sonia_common_AddPoseStruct_T unusedExpr;
@@ -68,648 +64,450 @@ void proc_planner()
   sonia_common_MultiAddPoseStruct_T r1;
   std_msgs_BoolStruct_T validMsg;
   trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T trajMsg;
-  double bufferQuat[4];
-  double q[4];
   double qRel[4];
-  double a[3];
   double c[3];
   double s[3];
+  double varargout_4[3];
   double varargout_5[3];
-  char rMaddposemsg_MessageType[25];
-  char t3_MessageType[18];
-  bool status;
-  if (!isInitialized_proc_planner) {
-    proc_planner_initialize();
-  }
   pospub.matlabCodegenIsDeleted = true;
   mapSub.matlabCodegenIsDeleted = true;
+  icSub.matlabCodegenIsDeleted = true;
   trajpub.matlabCodegenIsDeleted = true;
   validSub.matlabCodegenIsDeleted = true;
-  TG._pobj0.matlabCodegenIsDeleted = true;
-  TG.matlabCodegenIsDeleted = true;
+  // r = rateControl(rosSpin);
+  //  Definir les message ros
   sonia_common_AddPoseStruct(&unusedExpr);
   sonia_common_MultiAddPoseStruct(&r);
   sonia_common_MultiAddPoseStruct(&r1);
   validMsg = std_msgs_BoolStruct();
-  //  Definir les publisher ros
+  geometry_msgs_PoseStruct(&b_unusedExpr);
+  //  IC topic
+  //  Definir les Subscrier ros
   pospub.init();
   mapSub.init();
-  //  Definir les Subscrier ROS
+  icSub.init();
+  //  Definir les publisher ROS
   trajpub.init();
   validSub.init();
   //  Definir les parametre de trajectoire
-  b_r.init();
+  printf("proc planner : Node is started \n");
+  fflush(stdout);
+  // reset(r)
   while (1) {
-    mapSub.receive(rMaddposemsg_MessageType, rMaddposemsg_Pose, &status);
+    double a;
+    double b_norm;
+    double q_idx_0;
+    double q_idx_1;
+    double q_idx_2;
+    double q_idx_3;
+    double q_tmp;
+    int b_i;
+    int i;
+    bool guard1{false};
+    printf("proc planner : Wait for poses \n");
+    fflush(stdout);
+    mapSub.receive(rMaddposemsg_Pose);
+    printf("proc planner : Poses received \n");
+    fflush(stdout);
+    printf("proc planner : Wait for initial pose \n");
+    fflush(stdout);
+    icSub.receive(&icMsg_Position, &icMsg_Orientation);
+    printf("proc planner : Initial poses received \n");
+    fflush(stdout);
     //  Si Recois un nouveau message
-    if (status) {
-      double b_d;
-      double d;
-      double tl;
-      double vl;
-      int b_i;
-      int i;
-      int loop_ub;
-      TG.matlabCodegenDestructor();
-      TG._pobj0.matlabCodegenDestructor();
-      TG.status = 1.0;
-      TG.nbPoint = 1.0;
-      // ==================================================================
-      //  Constructeur
-      for (i = 0; i < 25; i++) {
-        TG.MAPM.MessageType[i] = rMaddposemsg_MessageType[i];
-      }
-      TG.MAPM.Pose.set_size(rMaddposemsg_Pose.size(0));
-      loop_ub = rMaddposemsg_Pose.size(0);
-      for (i = 0; i < loop_ub; i++) {
-        TG.MAPM.Pose[i] = rMaddposemsg_Pose[i];
-      }
-      //  nombre de waypoints + iC
-      TG.n = 3.0;
-      //  Initialiser les tableaux
-      loop_ub = static_cast<int>(TG.n);
-      TG.pointList.set_size(loop_ub, 3);
-      loop_ub *= 3;
-      for (i = 0; i < loop_ub; i++) {
-        TG.pointList[i] = 0.0;
-      }
-      loop_ub = static_cast<int>(TG.n);
-      TG.quatList.set_size(loop_ub, 4);
-      loop_ub <<= 2;
-      for (i = 0; i < loop_ub; i++) {
-        TG.quatList[i] = 0.0;
-      }
-      TG.timeList.set_size(static_cast<int>(TG.n));
-      loop_ub = static_cast<int>(TG.n);
-      for (i = 0; i < loop_ub; i++) {
-        TG.timeList[i] = 0.0;
-      }
-      //  Initialiser les parametres
-      TG.param.ts = 0.1;
-      TG.param.amax = 0.15;
-      TG.param.vlmax = 0.8;
-      TG.param.vamax = 0.78539816339744828;
-      sub = TG._pobj0.init();
-      TG.icSub = sub;
-      //  trouver le waypoint initial
-      //  lire la position initale
-      // ==================================================================
-      //  Fonnction qui retoure le waypoint initial
-      TG.icSub->receive(t3_MessageType, &t3_Position, &t3_Orientation, &status);
-      for (i = 0; i < 18; i++) {
-        TG.icMsg.MessageType[i] = t3_MessageType[i];
-      }
-      TG.icMsg.Position = t3_Position;
-      TG.icMsg.Orientation = t3_Orientation;
-      //              this.icMsg = this.icSub.LatestMessage;
-      //
-      //              status = ~isempty(this.icMsg);
-      if (status) {
-        //  Replire les listes.
-        TG.pointList[0] = TG.icMsg.Position.X;
-        TG.pointList[TG.pointList.size(0)] = TG.icMsg.Position.Y;
-        TG.pointList[TG.pointList.size(0) * 2] = TG.icMsg.Position.Z;
-        TG.quatList[0] = TG.icMsg.Orientation.W;
-        TG.quatList[TG.quatList.size(0)] = TG.icMsg.Orientation.X;
-        TG.quatList[TG.quatList.size(0) * 2] = TG.icMsg.Orientation.Y;
-        TG.quatList[TG.quatList.size(0) * 3] = TG.icMsg.Orientation.Z;
-        TG.timeList[0] = 0.0;
-        //  Process le message addpose
-        // ==================================================================
-        //  Fonction qui interprete les waypoints reçu par ROS
-        d = TG.n - 2.0;
-        b_i = 0;
-        int exitg1;
-        do {
-          exitg1 = 0;
-          if (b_i <= static_cast<int>(d) - 1) {
-            //  pour chaques waypoints
-            //  transformer les angle d'euler quaternions
-            s[0] = TG.MAPM.Pose[b_i].Orientation.Z;
-            s[1] = TG.MAPM.Pose[b_i].Orientation.Y;
-            s[2] = TG.MAPM.Pose[b_i].Orientation.X;
-            vl = 0.017453292519943295 * s[0] / 2.0;
-            c[0] = std::cos(vl);
-            vl = std::sin(vl);
-            s[0] = vl;
-            vl = 0.017453292519943295 * s[1] / 2.0;
-            c[1] = std::cos(vl);
-            vl = std::sin(vl);
-            s[1] = vl;
-            vl = 0.017453292519943295 * s[2] / 2.0;
-            c[2] = std::cos(vl);
-            vl = std::sin(vl);
-            b_d = c[0] * c[1];
-            tl = s[0] * s[1];
-            q[0] = b_d * c[2] + tl * vl;
-            q[1] = b_d * vl - tl * c[2];
-            b_d = s[0] * c[1];
-            tl = c[0] * s[1];
-            q[2] = tl * c[2] + b_d * vl;
-            q[3] = b_d * c[2] - tl * vl;
-            //  cree le vecteur pose
-            c[0] = TG.MAPM.Pose[b_i].Position.X;
-            c[1] = TG.MAPM.Pose[b_i].Position.Y;
-            c[2] = TG.MAPM.Pose[b_i].Position.Z;
-            //  transformer le point en fonction du frame
-            switch (TG.MAPM.Pose[b_i].Frame) {
-            case 0U:
-              //  position et angle absolue
-              TG.pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) -
-                           1] = c[0];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0)) -
-                           1] = c[1];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0) * 2) -
-                           1] = c[2];
-              TG.quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           1.0) -
-                          1] = q[0];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0)) -
-                          1] = q[1];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 2) -
-                          1] = q[2];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 3) -
-                          1] = q[3];
-              b_i++;
-              break;
-            case 1U:
-              //  position et angle relatif
-              // =================================================================
-              //  Fonction qui tourne un vecteur selon un quaternion.
-              //  quaternion partie scalaire
-              //  quaternion partie vectoriel
-              //  QuatRotate n'est pas compilable
-              b_d = 2.0 * coder::dot(*(double(*)[3]) & q[1], c);
-              tl = q[0] * q[0] -
-                   coder::dot(*(double(*)[3]) & q[1], *(double(*)[3]) & q[1]);
-              vl = 2.0 * q[0];
-              s[0] = TG.pointList[b_i] + ((b_d * q[1] + tl * c[0]) +
-                                          vl * (q[2] * c[2] - c[1] * q[3]));
-              s[1] =
-                  TG.pointList[b_i + TG.pointList.size(0)] +
-                  ((b_d * q[2] + tl * c[1]) + vl * (c[0] * q[3] - q[1] * c[2]));
-              s[2] =
-                  TG.pointList[b_i + TG.pointList.size(0) * 2] +
-                  ((b_d * q[3] + tl * c[2]) + vl * (q[1] * c[1] - c[0] * q[2]));
-              TG.pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) -
-                           1] = s[0];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0)) -
-                           1] = s[1];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0) * 2) -
-                           1] = s[2];
-              bufferQuat[0] = TG.quatList[b_i];
-              bufferQuat[1] = TG.quatList[b_i + TG.quatList.size(0)];
-              bufferQuat[2] = TG.quatList[b_i + TG.quatList.size(0) * 2];
-              bufferQuat[3] = TG.quatList[b_i + TG.quatList.size(0) * 3];
-              status = TG.MAPM.Pose[b_i].Rotation;
-              // ==================================================================
-              //  Fonnction qui retoure le quaternion le plus court/long selon
-              //  l'utilisateur
-              vl = ((bufferQuat[0] * q[0] + bufferQuat[1] * q[1]) +
-                    bufferQuat[2] * q[2]) +
-                   bufferQuat[3] * q[3];
-              //  conjuger le quaternion au besoin
-              if (((vl > 1.0) && (!status)) || ((vl < 1.0) && status)) {
-                q[1] = -q[1];
-                q[2] = -q[2];
-                q[3] = -q[3];
-              }
-              TG.quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           1.0) -
-                          1] = ((bufferQuat[0] * q[0] - bufferQuat[1] * q[1]) -
-                                bufferQuat[2] * q[2]) -
-                               bufferQuat[3] * q[3];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0)) -
-                          1] = (bufferQuat[0] * q[1] + q[0] * bufferQuat[1]) +
-                               (bufferQuat[2] * q[3] - q[2] * bufferQuat[3]);
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 2) -
-                          1] = (bufferQuat[0] * q[2] + q[0] * bufferQuat[2]) +
-                               (q[1] * bufferQuat[3] - bufferQuat[1] * q[3]);
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 3) -
-                          1] = (bufferQuat[0] * q[3] + q[0] * bufferQuat[3]) +
-                               (bufferQuat[1] * q[2] - q[1] * bufferQuat[2]);
-              b_i++;
-              break;
-            case 2U:
-              //  position relatif et angle absolue
-              // =================================================================
-              //  Fonction qui tourne un vecteur selon un quaternion.
-              //  quaternion partie scalaire
-              //  quaternion partie vectoriel
-              //  QuatRotate n'est pas compilable
-              b_d = 2.0 * coder::dot(*(double(*)[3]) & q[1], c);
-              tl = q[0] * q[0] -
-                   coder::dot(*(double(*)[3]) & q[1], *(double(*)[3]) & q[1]);
-              vl = 2.0 * q[0];
-              s[0] = TG.pointList[b_i] + ((b_d * q[1] + tl * c[0]) +
-                                          vl * (q[2] * c[2] - c[1] * q[3]));
-              s[1] =
-                  TG.pointList[b_i + TG.pointList.size(0)] +
-                  ((b_d * q[2] + tl * c[1]) + vl * (c[0] * q[3] - q[1] * c[2]));
-              s[2] =
-                  TG.pointList[b_i + TG.pointList.size(0) * 2] +
-                  ((b_d * q[3] + tl * c[2]) + vl * (q[1] * c[1] - c[0] * q[2]));
-              TG.pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) -
-                           1] = s[0];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0)) -
-                           1] = s[1];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0) * 2) -
-                           1] = s[2];
-              TG.quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           1.0) -
-                          1] = q[0];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0)) -
-                          1] = q[1];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 2) -
-                          1] = q[2];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 3) -
-                          1] = q[3];
-              b_i++;
-              break;
-            case 3U:
-              //  position absolue et angle relatif
-              TG.pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) -
-                           1] = c[0];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0)) -
-                           1] = c[1];
-              TG.pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                             1.0) +
-                            TG.pointList.size(0) * 2) -
-                           1] = c[2];
-              bufferQuat[0] = TG.quatList[b_i];
-              bufferQuat[1] = TG.quatList[b_i + TG.quatList.size(0)];
-              bufferQuat[2] = TG.quatList[b_i + TG.quatList.size(0) * 2];
-              bufferQuat[3] = TG.quatList[b_i + TG.quatList.size(0) * 3];
-              status = TG.MAPM.Pose[b_i].Rotation;
-              // ==================================================================
-              //  Fonnction qui retoure le quaternion le plus court/long selon
-              //  l'utilisateur
-              vl = ((bufferQuat[0] * q[0] + bufferQuat[1] * q[1]) +
-                    bufferQuat[2] * q[2]) +
-                   bufferQuat[3] * q[3];
-              //  conjuger le quaternion au besoin
-              if (((vl > 1.0) && (!status)) || ((vl < 1.0) && status)) {
-                q[1] = -q[1];
-                q[2] = -q[2];
-                q[3] = -q[3];
-              }
-              TG.quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           1.0) -
-                          1] = ((bufferQuat[0] * q[0] - bufferQuat[1] * q[1]) -
-                                bufferQuat[2] * q[2]) -
-                               bufferQuat[3] * q[3];
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0)) -
-                          1] = (bufferQuat[0] * q[1] + q[0] * bufferQuat[1]) +
-                               (bufferQuat[2] * q[3] - q[2] * bufferQuat[3]);
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 2) -
-                          1] = (bufferQuat[0] * q[2] + q[0] * bufferQuat[2]) +
-                               (q[1] * bufferQuat[3] - bufferQuat[1] * q[3]);
-              TG.quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                            1.0) +
-                           TG.quatList.size(0) * 3) -
-                          1] = (bufferQuat[0] * q[3] + q[0] * bufferQuat[3]) +
-                               (bufferQuat[1] * q[2] - q[1] * bufferQuat[2]);
-              b_i++;
-              break;
-            default:
-              //  Le referentiel n'est pas valide
-              TG.status = 0.0;
-              exitg1 = 1;
-              break;
-            }
-          } else {
-            //  Copier le dernier waypoint 2 fois pour éviter un comportement
-            //  du generateur de trajecteur
-            loop_ub = TG.pointList.size(0) - 2;
-            b_i = TG.pointList.size(0) - 1;
-            s[0] = TG.pointList[loop_ub];
-            s[1] = TG.pointList[loop_ub + TG.pointList.size(0)];
-            s[2] = TG.pointList[loop_ub + TG.pointList.size(0) * 2];
-            TG.pointList[b_i] = s[0];
-            TG.pointList[b_i + TG.pointList.size(0)] = s[1];
-            TG.pointList[b_i + TG.pointList.size(0) * 2] = s[2];
-            loop_ub = TG.quatList.size(0) - 2;
-            b_i = TG.quatList.size(0) - 1;
-            q[0] = TG.quatList[loop_ub];
-            q[1] = TG.quatList[loop_ub + TG.quatList.size(0)];
-            q[2] = TG.quatList[loop_ub + TG.quatList.size(0) * 2];
-            q[3] = TG.quatList[loop_ub + TG.quatList.size(0) * 3];
-            TG.quatList[b_i] = q[0];
-            TG.quatList[b_i + TG.quatList.size(0)] = q[1];
-            TG.quatList[b_i + TG.quatList.size(0) * 2] = q[2];
-            TG.quatList[b_i + TG.quatList.size(0) * 3] = q[3];
-            //  Calculer les temps entre chaque waypoints
-            // ==================================================================
-            //  Fonnction qui calcul le temps entre chaque waypoint
-            d = TG.n;
-            i = static_cast<int>(d + -1.0);
-            for (b_i = 0; b_i < i; b_i++) {
-              //  pour chaques waypoints
-              //  Trouver la distance Eucledienne entre 2 points
-              s[0] = TG.pointList[b_i + 1] - TG.pointList[b_i];
-              s[1] = TG.pointList[(b_i + TG.pointList.size(0)) + 1] -
-                     TG.pointList[b_i + TG.pointList.size(0)];
-              s[2] = TG.pointList[(b_i + TG.pointList.size(0) * 2) + 1] -
-                     TG.pointList[b_i + TG.pointList.size(0) * 2];
-              b_d = coder::b_norm(s);
-              //  Déterminer le temps selon aMax
-              vl = TG.param.amax;
-              vl = std::sqrt(vl);
-              tl = 4.0 * std::sqrt(3.0 * b_d) / (3.0 * vl);
-              //  Déterminer la vitesse maximum de la trajectoire
-              vl = TG.param.amax * tl / 4.0;
-              //  Si la vitesse est plus grande que la vitesse maximum
-              if (vl > TG.param.vlmax) {
-                //  Calculer le temps selon vmax
-                tl = 4.0 * b_d / (3.0 * TG.param.vlmax);
-              }
-              //  Déterminer l'angle entre les 2 quaternions
-              q[0] = TG.quatList[b_i];
-              q[1] = TG.quatList[b_i + TG.quatList.size(0)];
-              q[2] = TG.quatList[b_i + TG.quatList.size(0) * 2];
-              q[3] = TG.quatList[b_i + TG.quatList.size(0) * 3];
-              q[1] = -q[1];
-              q[2] = -q[2];
-              q[3] = -q[3];
-              bufferQuat[0] = TG.quatList[b_i + 1];
-              bufferQuat[1] = TG.quatList[(b_i + TG.quatList.size(0)) + 1];
-              bufferQuat[2] = TG.quatList[(b_i + TG.quatList.size(0) * 2) + 1];
-              bufferQuat[3] = TG.quatList[(b_i + TG.quatList.size(0) * 3) + 1];
-              qRel[0] = ((q[0] * bufferQuat[0] - q[1] * bufferQuat[1]) -
-                         q[2] * bufferQuat[2]) -
-                        q[3] * bufferQuat[3];
-              qRel[1] = (q[0] * bufferQuat[1] + bufferQuat[0] * q[1]) +
-                        (q[2] * bufferQuat[3] - bufferQuat[2] * q[3]);
-              qRel[2] = (q[0] * bufferQuat[2] + bufferQuat[0] * q[2]) +
-                        (bufferQuat[1] * q[3] - q[1] * bufferQuat[3]);
-              qRel[3] = (q[0] * bufferQuat[3] + bufferQuat[0] * q[3]) +
-                        (q[1] * bufferQuat[2] - bufferQuat[1] * q[2]);
-              //  Déterminer le temps angulaire
-              vl = 2.0 *
-                   rt_atan2d_snf(coder::b_norm(*(double(*)[3]) & qRel[1]),
-                                 qRel[0]) /
-                   TG.param.vamax;
-              c[0] = tl;
-              c[1] = vl;
-              c[2] = TG.param.ts;
-              TG.timeList[b_i + 1] =
-                  TG.timeList[b_i] + coder::internal::maximum(c);
-            }
-            //  Déterminer le nombre de points
-            vl = TG.timeList[TG.timeList.size(0) - 1] / TG.param.ts;
-            vl = std::floor(vl);
-            TG.nbPoint = vl;
-            exitg1 = 1;
-          }
-        } while (exitg1 == 0);
-      } else {
-        TG.status = 0.0;
-      }
-      TG.matlabCodegenIsDeleted = false;
-      //  Envoyer a ros si le mAddpose est valide
-      validMsg.Data = (TG.status != 0.0);
-      validSub.send(validMsg);
-      //  Si la trajectoire est valide
-      if (TG.status != 0.0) {
-        //  Interpoler les waypoints
-        // ==================================================================
-        //  Fonction Main qui génère les waypoints
-        //  Crée l'objet waypoint trajectory
-        // ==================================================================
-        //  Fonnction qui interpole les waypoints
-        if (TG.quatList.size(0) == 0) {
-          obj.a.set_size(TG.quatList.size(0), 4);
-          loop_ub = TG.quatList.size(0) * 4;
-          for (i = 0; i < loop_ub; i++) {
-            obj.a[i] = TG.quatList[i];
-          }
-          obj.b.set_size(TG.quatList.size(0), 4);
-          loop_ub = TG.quatList.size(0) * 4;
-          for (i = 0; i < loop_ub; i++) {
-            obj.b[i] = TG.quatList[i];
-          }
-          obj.c.set_size(TG.quatList.size(0), 4);
-          loop_ub = TG.quatList.size(0) * 4;
-          for (i = 0; i < loop_ub; i++) {
-            obj.c[i] = TG.quatList[i];
-          }
-          obj.d.set_size(TG.quatList.size(0), 4);
-          loop_ub = TG.quatList.size(0) * 4;
-          for (i = 0; i < loop_ub; i++) {
-            obj.d[i] = TG.quatList[i];
-          }
-        } else {
-          loop_ub = TG.quatList.size(0);
-          b_i = TG.quatList.size(0);
-          b_TG.set_size(b_i);
-          for (i = 0; i < b_i; i++) {
-            b_TG[i] = TG.quatList[i];
-          }
-          obj.a.set_size(loop_ub, 1);
-          for (i = 0; i < loop_ub; i++) {
-            obj.a[i] = b_TG[i];
-          }
-          loop_ub = TG.quatList.size(0);
-          b_i = TG.quatList.size(0);
-          b_TG.set_size(b_i);
-          for (i = 0; i < b_i; i++) {
-            b_TG[i] = TG.quatList[i + TG.quatList.size(0)];
-          }
-          obj.b.set_size(loop_ub, 1);
-          for (i = 0; i < loop_ub; i++) {
-            obj.b[i] = b_TG[i];
-          }
-          loop_ub = TG.quatList.size(0);
-          b_i = TG.quatList.size(0);
-          b_TG.set_size(b_i);
-          for (i = 0; i < b_i; i++) {
-            b_TG[i] = TG.quatList[i + TG.quatList.size(0) * 2];
-          }
-          obj.c.set_size(loop_ub, 1);
-          for (i = 0; i < loop_ub; i++) {
-            obj.c[i] = b_TG[i];
-          }
-          loop_ub = TG.quatList.size(0);
-          b_i = TG.quatList.size(0);
-          b_TG.set_size(b_i);
-          for (i = 0; i < b_i; i++) {
-            b_TG[i] = TG.quatList[i + TG.quatList.size(0) * 3];
-          }
-          obj.d.set_size(loop_ub, 1);
-          for (i = 0; i < loop_ub; i++) {
-            obj.d[i] = b_TG[i];
-          }
-        }
-        c_TG.set_size(TG.pointList.size(0), 3);
-        loop_ub = TG.pointList.size(0) * TG.pointList.size(1) - 1;
-        for (i = 0; i <= loop_ub; i++) {
-          c_TG[i] = TG.pointList[i];
-        }
-        b_TG.set_size(TG.timeList.size(0));
-        loop_ub = TG.timeList.size(0) - 1;
-        for (i = 0; i <= loop_ub; i++) {
-          b_TG[i] = TG.timeList[i];
-        }
-        trajObj.init(c_TG, b_TG, 1.0 / TG.param.ts, &obj);
-        //  Initialiser le message trajectoire.
-        trajectory_msgs_MultiDOFJointTrajectoryPointStruct(&trajMsg);
-        //  message point
-        geometry_msgs_TransformStruct(&transformBuff);
-        //  trajectoire
-        geometry_msgs_TwistStruct(&twistBuff);
-        //  trajectoire
-        //  initialiser la dimention vecteur de points
-        vl = TG.nbPoint;
-        i = static_cast<int>(vl);
-        y.set_size(1, i);
-        for (loop_ub = 0; loop_ub < i; loop_ub++) {
-          y[loop_ub] = transformBuff;
-        }
-        trajMsg.Transforms.set_size(y.size(1));
-        loop_ub = y.size(1);
-        for (i = 0; i < loop_ub; i++) {
-          trajMsg.Transforms[i] = y[i];
-        }
-        vl = TG.nbPoint;
-        i = static_cast<int>(vl);
-        b_y.set_size(1, i);
-        for (loop_ub = 0; loop_ub < i; loop_ub++) {
-          b_y[loop_ub] = twistBuff;
-        }
-        trajMsg.Velocities.set_size(b_y.size(1));
-        loop_ub = b_y.size(1);
-        for (i = 0; i < loop_ub; i++) {
-          trajMsg.Velocities[i] = b_y[i];
-        }
-        vl = TG.nbPoint;
-        i = static_cast<int>(vl);
-        b_y.set_size(1, i);
-        for (loop_ub = 0; loop_ub < i; loop_ub++) {
-          b_y[loop_ub] = twistBuff;
-        }
-        trajMsg.Accelerations.set_size(b_y.size(1));
-        loop_ub = b_y.size(1);
-        for (i = 0; i < loop_ub; i++) {
-          trajMsg.Accelerations[i] = b_y[i];
-        }
-        //  Générer les points de la trajectoire
-        d = TG.nbPoint;
-        i = static_cast<int>(d);
-        for (b_i = 0; b_i < i; b_i++) {
-          trajObj.step(c, &varargout_2, s, a, varargout_5);
-          //  Remplire le message Transform.
-          transformBuff.Translation.X = c[0];
-          transformBuff.Translation.Y = c[1];
-          transformBuff.Translation.Z = c[2];
-          //  Convertir l'objet quaternion en vecteur
-          bufferQuat[0] = varargout_2.a;
-          bufferQuat[1] = varargout_2.b;
-          bufferQuat[2] = varargout_2.c;
-          bufferQuat[3] = varargout_2.d;
-          transformBuff.Rotation.W = varargout_2.a;
-          transformBuff.Rotation.X = varargout_2.b;
-          transformBuff.Rotation.Y = varargout_2.c;
-          transformBuff.Rotation.Z = varargout_2.d;
-          trajMsg.Transforms[b_i] = transformBuff;
-          //  Convertir les vitesse dans le ref sub
-          // =================================================================
-          //  Fonction qui tourne un vecteur selon un quaternion.
-          //  quaternion partie scalaire
-          //  quaternion partie vectoriel
-          //  QuatRotate n'est pas compilable
-          b_d = 2.0 * coder::dot(*(double(*)[3]) & bufferQuat[1], s);
-          tl = varargout_2.a * varargout_2.a -
-               coder::dot(*(double(*)[3]) & bufferQuat[1],
-                          *(double(*)[3]) & bufferQuat[1]);
-          vl = 2.0 * varargout_2.a;
-          //  Remplire les vitesse
-          twistBuff.Linear.X =
-              (b_d * varargout_2.b + tl * s[0]) +
-              vl * (varargout_2.c * s[2] - s[1] * varargout_2.d);
-          twistBuff.Linear.Y =
-              (b_d * varargout_2.c + tl * s[1]) +
-              vl * (s[0] * varargout_2.d - varargout_2.b * s[2]);
-          twistBuff.Linear.Z =
-              (b_d * varargout_2.d + tl * s[2]) +
-              vl * (varargout_2.b * s[1] - s[0] * varargout_2.c);
-          twistBuff.Angular.X = -varargout_5[0];
-          //  (-) pour convertir les vitesse angulaire dans le ref sub
-          twistBuff.Angular.Y = -varargout_5[1];
-          twistBuff.Angular.Z = -varargout_5[2];
-          trajMsg.Velocities[b_i] = twistBuff;
-          //  Ecrire le point dans le message
-          //  Convertir les accels dans le ref sub
-          // =================================================================
-          //  Fonction qui tourne un vecteur selon un quaternion.
-          //  quaternion partie scalaire
-          //  quaternion partie vectoriel
-          //  QuatRotate n'est pas compilable
-          b_d = 2.0 * coder::dot(*(double(*)[3]) & bufferQuat[1], a);
-          tl = varargout_2.a * varargout_2.a -
-               coder::dot(*(double(*)[3]) & bufferQuat[1],
-                          *(double(*)[3]) & bufferQuat[1]);
-          //  Remplire les acceleration
-          twistBuff.Linear.X =
-              (b_d * varargout_2.b + tl * a[0]) +
-              vl * (varargout_2.c * a[2] - a[1] * varargout_2.d);
-          twistBuff.Linear.Y =
-              (b_d * varargout_2.c + tl * a[1]) +
-              vl * (a[0] * varargout_2.d - varargout_2.b * a[2]);
-          twistBuff.Linear.Z =
-              (b_d * varargout_2.d + tl * a[2]) +
-              vl * (varargout_2.b * a[1] - a[0] * varargout_2.c);
-          twistBuff.Angular.X = 0.0;
-          twistBuff.Angular.Y = 0.0;
-          twistBuff.Angular.Z = 0.0;
-          trajMsg.Accelerations[b_i] = twistBuff;
-        }
-        //  Envoyer le message
-        trajpub.send(&trajMsg);
-        //  Si on roule en simulation
-        //  Retourner true (sucess)
-      }
+    TG.status = true;
+    TG.nbPoint = 1.0;
+    // ==================================================================
+    //  Constructeur
+    //  nombre de waypoints + iC
+    //  Initialiser les tableaux
+    TG.pointList.set_size(3, 3);
+    for (i = 0; i < 9; i++) {
+      TG.pointList[i] = 0.0;
     }
-    b_r.waitfor();
+    TG.quatList.set_size(3, 4);
+    for (i = 0; i < 12; i++) {
+      TG.quatList[i] = 0.0;
+    }
+    TG.timeList.set_size(3);
+    TG.timeList[1] = 0.0;
+    TG.timeList[2] = 0.0;
+    //  Initialiser les parametres
+    //  trouver le waypoint initial
+    //  lire la position initale
+    //  [this.icMsg, status] = receive(this.icSub,5);
+    // this.icMsg = this.icSub.LatestMessage;
+    // ==================================================================
+    //  Fonnction qui retoure le waypoint initial
+    // status = ~isempty(this.icMsg);
+    //  Replire les listes.
+    TG.pointList[0] = icMsg_Position.X;
+    TG.pointList[TG.pointList.size(0)] = icMsg_Position.Y;
+    TG.pointList[TG.pointList.size(0) * 2] = icMsg_Position.Z;
+    TG.quatList[0] = icMsg_Orientation.W;
+    TG.quatList[TG.quatList.size(0)] = icMsg_Orientation.X;
+    TG.quatList[TG.quatList.size(0) * 2] = icMsg_Orientation.Y;
+    TG.quatList[TG.quatList.size(0) * 3] = icMsg_Orientation.Z;
+    TG.timeList[0] = 0.0;
+    //  Process le message addpose
+    // ==================================================================
+    //  Fonction qui interprete les waypoints reçu par ROS
+    //  pour chaques waypoints
+    //  transformer les angle d'euler quaternions
+    s[0] = 0.017453292519943295 * rMaddposemsg_Pose[0].Orientation.Z / 2.0;
+    s[1] = 0.017453292519943295 * rMaddposemsg_Pose[0].Orientation.Y / 2.0;
+    s[2] = 0.017453292519943295 * rMaddposemsg_Pose[0].Orientation.X / 2.0;
+    c[0] = std::cos(s[0]);
+    s[0] = std::sin(s[0]);
+    c[1] = std::cos(s[1]);
+    s[1] = std::sin(s[1]);
+    c[2] = std::cos(s[2]);
+    s[2] = std::sin(s[2]);
+    b_norm = c[0] * c[1];
+    q_tmp = s[0] * s[1];
+    q_idx_0 = b_norm * c[2] + q_tmp * s[2];
+    q_idx_1 = b_norm * s[2] - q_tmp * c[2];
+    b_norm = s[0] * c[1];
+    q_tmp = c[0] * s[1];
+    q_idx_2 = q_tmp * c[2] + b_norm * s[2];
+    q_idx_3 = b_norm * c[2] - q_tmp * s[2];
+    //  cree le vecteur pose
+    //  transformer le point en fonction du frame
+    guard1 = false;
+    switch (rMaddposemsg_Pose[0].Frame) {
+    case 0U:
+      //  position et angle absolue
+      TG.pointList[1] = rMaddposemsg_Pose[0].Position.X;
+      TG.pointList[TG.pointList.size(0) + 1] = rMaddposemsg_Pose[0].Position.Y;
+      TG.pointList[TG.pointList.size(0) * 2 + 1] =
+          rMaddposemsg_Pose[0].Position.Z;
+      TG.quatList[1] = q_idx_0;
+      TG.quatList[TG.quatList.size(0) + 1] = q_idx_1;
+      TG.quatList[TG.quatList.size(0) * 2 + 1] = q_idx_2;
+      TG.quatList[TG.quatList.size(0) * 3 + 1] = q_idx_3;
+      guard1 = true;
+      break;
+    case 1U:
+      //  position et angle relatif
+      // =================================================================
+      //  Fonction qui tourne un vecteur selon un quaternion.
+      //  quaternion partie scalaire
+      //  quaternion partie vectoriel
+      //  QuatRotate n'est pas compilable
+      a = 2.0 * ((rMaddposemsg_Pose[0].Position.X * q_idx_1 +
+                  rMaddposemsg_Pose[0].Position.Y * q_idx_2) +
+                 rMaddposemsg_Pose[0].Position.Z * q_idx_3);
+      q_tmp = q_idx_0 * q_idx_0 -
+              ((q_idx_1 * q_idx_1 + q_idx_2 * q_idx_2) + q_idx_3 * q_idx_3);
+      b_norm = 2.0 * q_idx_0;
+      TG.pointList[1] =
+          TG.pointList[0] +
+          ((a * q_idx_1 + q_tmp * rMaddposemsg_Pose[0].Position.X) +
+           b_norm * (q_idx_2 * rMaddposemsg_Pose[0].Position.Z -
+                     rMaddposemsg_Pose[0].Position.Y * q_idx_3));
+      TG.pointList[TG.pointList.size(0) + 1] =
+          TG.pointList[TG.pointList.size(0)] +
+          ((a * q_idx_2 + q_tmp * rMaddposemsg_Pose[0].Position.Y) +
+           b_norm * (rMaddposemsg_Pose[0].Position.X * q_idx_3 -
+                     q_idx_1 * rMaddposemsg_Pose[0].Position.Z));
+      TG.pointList[TG.pointList.size(0) * 2 + 1] =
+          TG.pointList[TG.pointList.size(0) * 2] +
+          ((a * q_idx_3 + q_tmp * rMaddposemsg_Pose[0].Position.Z) +
+           b_norm * (q_idx_1 * rMaddposemsg_Pose[0].Position.Y -
+                     rMaddposemsg_Pose[0].Position.X * q_idx_2));
+      // ==================================================================
+      //  Fonnction qui retoure le quaternion le plus court/long selon
+      //  l'utilisateur
+      b_norm = ((TG.quatList[0] * q_idx_0 +
+                 TG.quatList[TG.quatList.size(0)] * q_idx_1) +
+                TG.quatList[TG.quatList.size(0) * 2] * q_idx_2) +
+               TG.quatList[TG.quatList.size(0) * 3] * q_idx_3;
+      //  conjuger le quaternion au besoin
+      if (((b_norm > 1.0) && (!rMaddposemsg_Pose[0].Rotation)) ||
+          ((b_norm < 1.0) && rMaddposemsg_Pose[0].Rotation)) {
+        q_idx_1 = -q_idx_1;
+        q_idx_2 = -q_idx_2;
+        q_idx_3 = -q_idx_3;
+      }
+      TG.quatList[1] = ((TG.quatList[0] * q_idx_0 -
+                         TG.quatList[TG.quatList.size(0)] * q_idx_1) -
+                        TG.quatList[TG.quatList.size(0) * 2] * q_idx_2) -
+                       TG.quatList[TG.quatList.size(0) * 3] * q_idx_3;
+      TG.quatList[TG.quatList.size(0) + 1] =
+          (TG.quatList[0] * q_idx_1 +
+           q_idx_0 * TG.quatList[TG.quatList.size(0)]) +
+          (TG.quatList[TG.quatList.size(0) * 2] * q_idx_3 -
+           q_idx_2 * TG.quatList[TG.quatList.size(0) * 3]);
+      TG.quatList[TG.quatList.size(0) * 2 + 1] =
+          (TG.quatList[0] * q_idx_2 +
+           q_idx_0 * TG.quatList[TG.quatList.size(0) * 2]) +
+          (q_idx_1 * TG.quatList[TG.quatList.size(0) * 3] -
+           TG.quatList[TG.quatList.size(0)] * q_idx_3);
+      TG.quatList[TG.quatList.size(0) * 3 + 1] =
+          (TG.quatList[0] * q_idx_3 +
+           q_idx_0 * TG.quatList[TG.quatList.size(0) * 3]) +
+          (TG.quatList[TG.quatList.size(0)] * q_idx_2 -
+           q_idx_1 * TG.quatList[TG.quatList.size(0) * 2]);
+      guard1 = true;
+      break;
+    case 2U:
+      //  position relatif et angle absolue
+      // =================================================================
+      //  Fonction qui tourne un vecteur selon un quaternion.
+      //  quaternion partie scalaire
+      //  quaternion partie vectoriel
+      //  QuatRotate n'est pas compilable
+      a = 2.0 * ((rMaddposemsg_Pose[0].Position.X * q_idx_1 +
+                  rMaddposemsg_Pose[0].Position.Y * q_idx_2) +
+                 rMaddposemsg_Pose[0].Position.Z * q_idx_3);
+      q_tmp = q_idx_0 * q_idx_0 -
+              ((q_idx_1 * q_idx_1 + q_idx_2 * q_idx_2) + q_idx_3 * q_idx_3);
+      b_norm = 2.0 * q_idx_0;
+      TG.pointList[1] =
+          TG.pointList[0] +
+          ((a * q_idx_1 + q_tmp * rMaddposemsg_Pose[0].Position.X) +
+           b_norm * (q_idx_2 * rMaddposemsg_Pose[0].Position.Z -
+                     rMaddposemsg_Pose[0].Position.Y * q_idx_3));
+      TG.pointList[TG.pointList.size(0) + 1] =
+          TG.pointList[TG.pointList.size(0)] +
+          ((a * q_idx_2 + q_tmp * rMaddposemsg_Pose[0].Position.Y) +
+           b_norm * (rMaddposemsg_Pose[0].Position.X * q_idx_3 -
+                     q_idx_1 * rMaddposemsg_Pose[0].Position.Z));
+      TG.pointList[TG.pointList.size(0) * 2 + 1] =
+          TG.pointList[TG.pointList.size(0) * 2] +
+          ((a * q_idx_3 + q_tmp * rMaddposemsg_Pose[0].Position.Z) +
+           b_norm * (q_idx_1 * rMaddposemsg_Pose[0].Position.Y -
+                     rMaddposemsg_Pose[0].Position.X * q_idx_2));
+      TG.quatList[1] = q_idx_0;
+      TG.quatList[TG.quatList.size(0) + 1] = q_idx_1;
+      TG.quatList[TG.quatList.size(0) * 2 + 1] = q_idx_2;
+      TG.quatList[TG.quatList.size(0) * 3 + 1] = q_idx_3;
+      guard1 = true;
+      break;
+    case 3U:
+      //  position absolue et angle relatif
+      TG.pointList[1] = rMaddposemsg_Pose[0].Position.X;
+      TG.pointList[TG.pointList.size(0) + 1] = rMaddposemsg_Pose[0].Position.Y;
+      TG.pointList[TG.pointList.size(0) * 2 + 1] =
+          rMaddposemsg_Pose[0].Position.Z;
+      // ==================================================================
+      //  Fonnction qui retoure le quaternion le plus court/long selon
+      //  l'utilisateur
+      b_norm = ((TG.quatList[0] * q_idx_0 +
+                 TG.quatList[TG.quatList.size(0)] * q_idx_1) +
+                TG.quatList[TG.quatList.size(0) * 2] * q_idx_2) +
+               TG.quatList[TG.quatList.size(0) * 3] * q_idx_3;
+      //  conjuger le quaternion au besoin
+      if (((b_norm > 1.0) && (!rMaddposemsg_Pose[0].Rotation)) ||
+          ((b_norm < 1.0) && rMaddposemsg_Pose[0].Rotation)) {
+        q_idx_1 = -q_idx_1;
+        q_idx_2 = -q_idx_2;
+        q_idx_3 = -q_idx_3;
+      }
+      TG.quatList[1] = ((TG.quatList[0] * q_idx_0 -
+                         TG.quatList[TG.quatList.size(0)] * q_idx_1) -
+                        TG.quatList[TG.quatList.size(0) * 2] * q_idx_2) -
+                       TG.quatList[TG.quatList.size(0) * 3] * q_idx_3;
+      TG.quatList[TG.quatList.size(0) + 1] =
+          (TG.quatList[0] * q_idx_1 +
+           q_idx_0 * TG.quatList[TG.quatList.size(0)]) +
+          (TG.quatList[TG.quatList.size(0) * 2] * q_idx_3 -
+           q_idx_2 * TG.quatList[TG.quatList.size(0) * 3]);
+      TG.quatList[TG.quatList.size(0) * 2 + 1] =
+          (TG.quatList[0] * q_idx_2 +
+           q_idx_0 * TG.quatList[TG.quatList.size(0) * 2]) +
+          (q_idx_1 * TG.quatList[TG.quatList.size(0) * 3] -
+           TG.quatList[TG.quatList.size(0)] * q_idx_3);
+      TG.quatList[TG.quatList.size(0) * 3 + 1] =
+          (TG.quatList[0] * q_idx_3 +
+           q_idx_0 * TG.quatList[TG.quatList.size(0) * 3]) +
+          (TG.quatList[TG.quatList.size(0)] * q_idx_2 -
+           q_idx_1 * TG.quatList[TG.quatList.size(0) * 2]);
+      guard1 = true;
+      break;
+    default:
+      //  Le referentiel n'est pas valide
+      TG.status = false;
+      break;
+    }
+    if (guard1) {
+      //  Copier le dernier waypoint 2 fois pour éviter un comportement
+      //  du generateur de trajecteur
+      TG.pointList[2] = TG.pointList[1];
+      TG.pointList[TG.pointList.size(0) + 2] =
+          TG.pointList[TG.pointList.size(0) + 1];
+      TG.pointList[TG.pointList.size(0) * 2 + 2] =
+          TG.pointList[TG.pointList.size(0) * 2 + 1];
+      TG.quatList[2] = TG.quatList[1];
+      TG.quatList[TG.quatList.size(0) + 2] =
+          TG.quatList[TG.quatList.size(0) + 1];
+      TG.quatList[TG.quatList.size(0) * 2 + 2] =
+          TG.quatList[TG.quatList.size(0) * 2 + 1];
+      TG.quatList[TG.quatList.size(0) * 3 + 2] =
+          TG.quatList[TG.quatList.size(0) * 3 + 1];
+      //  Calculer les temps entre chaque waypoints
+      // ==================================================================
+      //  Fonnction qui calcul le temps entre chaque waypoint
+      for (b_i = 0; b_i < 2; b_i++) {
+        double d;
+        double tl;
+        //  pour chaques waypoints
+        //  Trouver la distance Eucledienne entre 2 points
+        s[0] = TG.pointList[b_i + 1] - TG.pointList[b_i];
+        s[1] = TG.pointList[(b_i + TG.pointList.size(0)) + 1] -
+               TG.pointList[b_i + TG.pointList.size(0)];
+        s[2] = TG.pointList[(b_i + TG.pointList.size(0) * 2) + 1] -
+               TG.pointList[b_i + TG.pointList.size(0) * 2];
+        b_norm = coder::b_norm(s);
+        //  Déterminer le temps selon aMax
+        tl = 4.0 * std::sqrt(3.0 * b_norm) / 1.1618950038622251;
+        //  Déterminer la vitesse maximum de la trajectoire
+        //  Si la vitesse est plus grande que la vitesse maximum
+        if (0.15 * tl / 4.0 > 0.8) {
+          //  Calculer le temps selon vmax
+          tl = 4.0 * b_norm / 2.4000000000000004;
+        }
+        //  Déterminer l'angle entre les 2 quaternions
+        q_idx_0 = TG.quatList[b_i];
+        q_idx_1 = -TG.quatList[b_i + TG.quatList.size(0)];
+        q_idx_2 = -TG.quatList[b_i + TG.quatList.size(0) * 2];
+        q_idx_3 = -TG.quatList[b_i + TG.quatList.size(0) * 3];
+        q_tmp = TG.quatList[b_i + 1];
+        b_norm = TG.quatList[(b_i + TG.quatList.size(0)) + 1];
+        a = TG.quatList[(b_i + TG.quatList.size(0) * 2) + 1];
+        d = TG.quatList[(b_i + TG.quatList.size(0) * 3) + 1];
+        qRel[0] =
+            ((q_idx_0 * q_tmp - q_idx_1 * b_norm) - q_idx_2 * a) - q_idx_3 * d;
+        qRel[1] =
+            (q_idx_0 * b_norm + q_tmp * q_idx_1) + (q_idx_2 * d - a * q_idx_3);
+        qRel[2] =
+            (q_idx_0 * a + q_tmp * q_idx_2) + (b_norm * q_idx_3 - q_idx_1 * d);
+        qRel[3] =
+            (q_idx_0 * d + q_tmp * q_idx_3) + (q_idx_1 * a - b_norm * q_idx_2);
+        //  Déterminer le temps angulaire
+        q_tmp = coder::b_norm(*(double(*)[3]) & qRel[1]);
+        s[0] = tl;
+        s[1] = 2.0 * rt_atan2d_snf(q_tmp, qRel[0]) / 0.78539816339744828;
+        s[2] = 0.1;
+        TG.timeList[b_i + 1] = TG.timeList[b_i] + coder::internal::maximum(s);
+      }
+      //  Déterminer le nombre de points
+      TG.nbPoint = std::floor(TG.timeList[2] / 0.1);
+    }
+    //  Envoyer a ros si le mAddpose est valide
+    validMsg.Data = TG.status;
+    validSub.send(validMsg);
+    //  Si la trajectoire est valide
+    if (TG.status) {
+      //  Interpoler les waypoints
+      // ==================================================================
+      //  Fonction Main qui génère les waypoints
+      //  Crée l'objet waypoint trajectory
+      // ==================================================================
+      //  Fonnction qui interpole les waypoints
+      r2.init(TG.quatList);
+      trajObj.init(TG.pointList, TG.timeList, &r2);
+      //  Initialiser le message trajectoire.
+      trajectory_msgs_MultiDOFJointTrajectoryPointStruct(&trajMsg);
+      //  message point
+      geometry_msgs_TransformStruct(&transformBuff);
+      //  trajectoire
+      geometry_msgs_TwistStruct(&twistBuff);
+      //  trajectoire
+      //  initialiser la dimention vecteur de points
+      coder::repelem(&transformBuff, TG.nbPoint, r3);
+      trajMsg.Transforms.set_size(r3.size(1));
+      b_i = r3.size(1);
+      for (i = 0; i < b_i; i++) {
+        trajMsg.Transforms[i] = r3[i];
+      }
+      coder::repelem(&twistBuff, TG.nbPoint, r4);
+      trajMsg.Velocities.set_size(r4.size(1));
+      b_i = r4.size(1);
+      for (i = 0; i < b_i; i++) {
+        trajMsg.Velocities[i] = r4[i];
+      }
+      coder::repelem(&twistBuff, TG.nbPoint, r4);
+      trajMsg.Accelerations.set_size(r4.size(1));
+      b_i = r4.size(1);
+      for (i = 0; i < b_i; i++) {
+        trajMsg.Accelerations[i] = r4[i];
+      }
+      //  Générer les points de la trajectoire
+      i = static_cast<int>(TG.nbPoint);
+      for (b_i = 0; b_i < i; b_i++) {
+        trajObj.step(c, &varargout_2, s, varargout_4, varargout_5);
+        //  Remplire le message Transform.
+        transformBuff.Translation.X = c[0];
+        transformBuff.Translation.Y = c[1];
+        transformBuff.Translation.Z = c[2];
+        //  Convertir l'objet quaternion en vecteur
+        transformBuff.Rotation.W = varargout_2.a;
+        transformBuff.Rotation.X = varargout_2.b;
+        transformBuff.Rotation.Y = varargout_2.c;
+        transformBuff.Rotation.Z = varargout_2.d;
+        trajMsg.Transforms[b_i] = transformBuff;
+        //  Convertir les vitesse dans le ref sub
+        // =================================================================
+        //  Fonction qui tourne un vecteur selon un quaternion.
+        //  quaternion partie scalaire
+        //  quaternion partie vectoriel
+        //  QuatRotate n'est pas compilable
+        a = 2.0 * ((s[0] * varargout_2.b + s[1] * varargout_2.c) +
+                   s[2] * varargout_2.d);
+        b_norm =
+            varargout_2.a * varargout_2.a -
+            ((varargout_2.b * varargout_2.b + varargout_2.c * varargout_2.c) +
+             varargout_2.d * varargout_2.d);
+        q_tmp = 2.0 * varargout_2.a;
+        //  Remplire les vitesse
+        twistBuff.Angular.X = -varargout_5[0];
+        //  (-) pour convertir les vitesse angulaire dans le ref sub
+        twistBuff.Angular.Y = -varargout_5[1];
+        twistBuff.Angular.Z = -varargout_5[2];
+        //  Ecrire le point dans le message
+        //  Convertir les accels dans le ref sub
+        // =================================================================
+        //  Fonction qui tourne un vecteur selon un quaternion.
+        //  quaternion partie scalaire
+        //  quaternion partie vectoriel
+        //  QuatRotate n'est pas compilable
+        twistBuff.Linear.X =
+            (a * varargout_2.b + b_norm * s[0]) +
+            q_tmp * (varargout_2.c * s[2] - s[1] * varargout_2.d);
+        twistBuff.Linear.Y =
+            (a * varargout_2.c + b_norm * s[1]) +
+            q_tmp * (s[0] * varargout_2.d - varargout_2.b * s[2]);
+        twistBuff.Linear.Z =
+            (a * varargout_2.d + b_norm * s[2]) +
+            q_tmp * (varargout_2.b * s[1] - s[0] * varargout_2.c);
+        trajMsg.Velocities[b_i] = twistBuff;
+        a = 2.0 *
+            ((varargout_4[0] * varargout_2.b + varargout_4[1] * varargout_2.c) +
+             varargout_4[2] * varargout_2.d);
+        //  Remplire les acceleration
+        twistBuff.Linear.X = (a * varargout_2.b + b_norm * varargout_4[0]) +
+                             q_tmp * (varargout_2.c * varargout_4[2] -
+                                      varargout_4[1] * varargout_2.d);
+        twistBuff.Linear.Y = (a * varargout_2.c + b_norm * varargout_4[1]) +
+                             q_tmp * (varargout_4[0] * varargout_2.d -
+                                      varargout_2.b * varargout_4[2]);
+        twistBuff.Linear.Z = (a * varargout_2.d + b_norm * varargout_4[2]) +
+                             q_tmp * (varargout_2.b * varargout_4[1] -
+                                      varargout_4[0] * varargout_2.c);
+        twistBuff.Angular.X = 0.0;
+        twistBuff.Angular.Y = 0.0;
+        twistBuff.Angular.Z = 0.0;
+        trajMsg.Accelerations[b_i] = twistBuff;
+      }
+      //  Envoyer le message
+      trajpub.send(&trajMsg);
+      //  Si on roule en simulation
+      //  Retourner true (sucess)
+      printf("proc planner : Trajectory list is sended \n");
+      fflush(stdout);
+    }
+    //  waitfor(r);
   }
 }
 

@@ -5,7 +5,7 @@
 // File: proc_planner_types.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 02-Feb-2022 17:45:08
+// C/C++ source code generated on  : 03-Feb-2022 14:08:22
 //
 
 #ifndef PROC_PLANNER_TYPES_H
@@ -45,23 +45,17 @@ struct sonia_common_AddPoseStruct_T {
   bool Rotation;
 };
 
+struct std_msgs_BoolStruct_T {
+  char MessageType[13];
+  bool Data;
+};
+
 struct geometry_msgs_QuaternionStruct_T {
   char MessageType[24];
   double X;
   double Y;
   double Z;
   double W;
-};
-
-struct geometry_msgs_PoseStruct_T {
-  char MessageType[18];
-  geometry_msgs_PointStruct_T Position;
-  geometry_msgs_QuaternionStruct_T Orientation;
-};
-
-struct std_msgs_BoolStruct_T {
-  char MessageType[13];
-  bool Data;
 };
 
 struct geometry_msgs_TransformStruct_T {
@@ -74,6 +68,12 @@ struct geometry_msgs_TwistStruct_T {
   char MessageType[19];
   geometry_msgs_Vector3Struct_T Linear;
   geometry_msgs_Vector3Struct_T Angular;
+};
+
+struct geometry_msgs_PoseStruct_T {
+  char MessageType[18];
+  geometry_msgs_PointStruct_T Position;
+  geometry_msgs_QuaternionStruct_T Orientation;
 };
 
 struct sonia_common_MultiAddPoseStruct_T {
