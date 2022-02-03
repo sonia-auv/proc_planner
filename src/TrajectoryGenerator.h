@@ -5,15 +5,13 @@
 // File: TrajectoryGenerator.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 02-Feb-2022 17:45:08
+// C/C++ source code generated on  : 03-Feb-2022 14:08:22
 //
 
 #ifndef TRAJECTORYGENERATOR_H
 #define TRAJECTORYGENERATOR_H
 
 // Include Files
-#include "Subscriber.h"
-#include "proc_planner_internal_types.h"
 #include "proc_planner_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
@@ -21,23 +19,25 @@
 #include <cstdlib>
 
 // Type Definitions
+struct struct_T {
+  double ts;
+  double amax;
+  double vlmax;
+  double vamax;
+};
+
 class TrajectoryGenerator {
 public:
-  void matlabCodegenDestructor();
-  ~TrajectoryGenerator();
-  TrajectoryGenerator();
-  bool matlabCodegenIsDeleted;
-  double status;
-  double n;
+  bool status;
   coder::array<double, 2U> pointList;
   coder::array<double, 2U> quatList;
   coder::array<double, 1U> timeList;
   double nbPoint;
+
+private:
+  double n;
   sonia_common_MultiAddPoseStruct_T MAPM;
   struct_T param;
-  geometry_msgs_PoseStruct_T icMsg;
-  coder::ros::b_Subscriber *icSub;
-  coder::ros::b_Subscriber _pobj0;
 };
 
 #endif

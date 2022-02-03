@@ -5,7 +5,7 @@
 // File: proc_planner_data.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 02-Feb-2022 17:45:08
+// C/C++ source code generated on  : 03-Feb-2022 14:08:22
 //
 
 #ifndef PROC_PLANNER_DATA_H
@@ -15,11 +15,6 @@
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
-
-// Variable Declarations
-extern double freq;
-extern bool freq_not_empty;
-extern bool isInitialized_proc_planner;
 
 #endif
 //

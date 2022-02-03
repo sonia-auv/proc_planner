@@ -5,7 +5,7 @@
 // File: proc_planner_internal_types.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 02-Feb-2022 17:45:08
+// C/C++ source code generated on  : 03-Feb-2022 14:08:22
 //
 
 #ifndef PROC_PLANNER_INTERNAL_TYPES_H
@@ -17,13 +17,6 @@
 #include "coder_array.h"
 
 // Type Definitions
-struct struct_T {
-  double ts;
-  double amax;
-  double vlmax;
-  double vamax;
-};
-
 struct d_struct_T {
   coder::array<double, 2U> waypoints;
   coder::array<double, 1U> course;
