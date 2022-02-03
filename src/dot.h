@@ -5,7 +5,7 @@
 // File: dot.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 01-Feb-2022 18:48:34
+// C/C++ source code generated on  : 02-Feb-2022 17:45:08
 //
 
 #ifndef DOT_H
@@ -19,10 +19,12 @@
 
 // Function Declarations
 namespace coder {
+double dot(const double a[3], const double b[3]);
+
 void dot(const ::coder::array<double, 2U> &a,
          const ::coder::array<double, 2U> &b, ::coder::array<double, 1U> &c);
 
-}
+} // namespace coder
 
 #endif
 //

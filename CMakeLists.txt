@@ -15,6 +15,7 @@ roscpp
 sonia_common
 std_msgs
 trajectory_msgs
+geometry_msgs
 )
 
 add_definitions(
@@ -27,7 +28,7 @@ add_definitions(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-   CATKIN_DEPENDS roscpp sonia_common std_msgs trajectory_msgs 
+   CATKIN_DEPENDS roscpp sonia_common std_msgs trajectory_msgs geometry_msgs
 )
 
 ###########
