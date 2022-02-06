@@ -5,11 +5,13 @@
 // File: Publisher.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 03-Feb-2022 14:08:22
+// C/C++ source code generated on  : 05-Feb-2022 14:39:35
 //
 
 // Include Files
 #include "Publisher.h"
+#include "geometry_msgs_PoseStruct.h"
+#include "proc_planner_data.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
 #include "sonia_common_MultiAddPoseStruct.h"
@@ -25,7 +27,25 @@
 //
 namespace coder {
 namespace ros {
+void d_Publisher::Publisher_delete() const
+{
+  delete (PublisherHelper);
+}
+
+//
+// Arguments    : void
+// Return Type  : void
+//
 void c_Publisher::Publisher_delete() const
+{
+  delete (PublisherHelper);
+}
+
+//
+// Arguments    : void
+// Return Type  : void
+//
+void b_Publisher::Publisher_delete() const
 {
   delete (PublisherHelper);
 }
@@ -43,9 +63,12 @@ void Publisher::Publisher_delete() const
 // Arguments    : void
 // Return Type  : void
 //
-void b_Publisher::Publisher_delete() const
+void d_Publisher::matlabCodegenDestructor()
 {
-  delete (PublisherHelper);
+  if (!matlabCodegenIsDeleted) {
+    matlabCodegenIsDeleted = true;
+    Publisher_delete();
+  }
 }
 
 //
@@ -82,6 +105,15 @@ void b_Publisher::matlabCodegenDestructor()
     matlabCodegenIsDeleted = true;
     Publisher_delete();
   }
+}
+
+//
+// Arguments    : void
+// Return Type  : d_Publisher
+//
+d_Publisher::d_Publisher()
+{
+  matlabCodegenIsDeleted = true;
 }
 
 //
@@ -124,6 +156,15 @@ b_Publisher::~b_Publisher()
 // Arguments    : void
 // Return Type  : void
 //
+Publisher::~Publisher()
+{
+  matlabCodegenDestructor();
+}
+
+//
+// Arguments    : void
+// Return Type  : void
+//
 c_Publisher::~c_Publisher()
 {
   matlabCodegenDestructor();
@@ -133,31 +174,28 @@ c_Publisher::~c_Publisher()
 // Arguments    : void
 // Return Type  : void
 //
-Publisher::~Publisher()
+d_Publisher::~d_Publisher()
 {
   matlabCodegenDestructor();
 }
 
 //
 // Arguments    : void
-// Return Type  : Publisher *
+// Return Type  : d_Publisher *
 //
-Publisher *Publisher::init()
+d_Publisher *d_Publisher::init()
 {
-  static const char topic[20]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n',
-                              'n', 'e', 'r', '/', 'm', 'a', 'd', 'p', 'o', 's'};
-  Publisher *obj;
-  sonia_common_MultiAddPoseStruct_T r;
+  d_Publisher *obj;
   obj = this;
-  for (int i{0}; i < 20; i++) {
-    obj->TopicName[i] = topic[i];
+  for (int i{0}; i < 25; i++) {
+    obj->TopicName[i] = cv1[i];
   }
   obj->BufferSize = 1.0;
   obj->IsLatching = true;
-  sonia_common_MultiAddPoseStruct(&r);
-  auto pub = new MATLABPublisher<sonia_common::MultiAddPose,
-                                 sonia_common_MultiAddPoseStruct_T>(); //();
-  pub->createPublisher(&obj->TopicName[0], 20.0, obj->BufferSize,
+  geometry_msgs_PoseStruct(&obj->MsgStruct);
+  auto pub = new MATLABPublisher<geometry_msgs::Pose,
+                                 geometry_msgs_PoseStruct_T>(); //();
+  pub->createPublisher(&obj->TopicName[0], 25.0, obj->BufferSize,
                        obj->IsLatching);
   obj->PublisherHelper = pub; //();
   //(obj->PublisherHelper);
@@ -171,11 +209,35 @@ Publisher *Publisher::init()
 //
 c_Publisher *c_Publisher::init()
 {
+  c_Publisher *obj;
+  obj = this;
+  for (int i{0}; i < 32; i++) {
+    obj->TopicName[i] = cv[i];
+  }
+  obj->BufferSize = 1.0;
+  obj->IsLatching = true;
+  sonia_common_MultiAddPoseStruct(&obj->MsgStruct);
+  auto pub = new MATLABPublisher<sonia_common::MultiAddPose,
+                                 sonia_common_MultiAddPoseStruct_T>(); //();
+  pub->createPublisher(&obj->TopicName[0], 32.0, obj->BufferSize,
+                       obj->IsLatching);
+  obj->PublisherHelper = pub; //();
+  //(obj->PublisherHelper);
+  obj->matlabCodegenIsDeleted = false;
+  return obj;
+}
+
+//
+// Arguments    : void
+// Return Type  : b_Publisher *
+//
+b_Publisher *b_Publisher::init()
+{
   static const char topic[31]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l',
                               'a', 'n', 'n', 'e', 'r', '/', 'i', 's',
                               '_', 'w', 'a', 'y', 'p', 'o', 'i', 'n',
                               't', '_', 'v', 'a', 'l', 'i', 'd'};
-  c_Publisher *obj;
+  b_Publisher *obj;
   obj = this;
   for (int i{0}; i < 31; i++) {
     obj->TopicName[i] = topic[i];
@@ -194,15 +256,15 @@ c_Publisher *c_Publisher::init()
 
 //
 // Arguments    : void
-// Return Type  : b_Publisher *
+// Return Type  : Publisher *
 //
-b_Publisher *b_Publisher::init()
+Publisher *Publisher::init()
 {
   static const char topic[34]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a',
                               'n', 'n', 'e', 'r', '/', 's', 'e', 'n', 'd',
                               '_', 't', 'r', 'a', 'j', 'e', 'c', 't', 'o',
                               'r', 'y', '_', 'l', 'i', 's', 't'};
-  b_Publisher *obj;
+  Publisher *obj;
   obj = this;
   for (int i{0}; i < 34; i++) {
     obj->TopicName[i] = topic[i];
@@ -225,8 +287,28 @@ b_Publisher *b_Publisher::init()
 // Arguments    : const trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T *msgToSend
 // Return Type  : void
 //
-void b_Publisher::send(
+void Publisher::send(
     const trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T *msgToSend)
+{
+  //(&MsgStruct);
+  this->PublisherHelper->publish(*msgToSend);
+}
+
+//
+// Arguments    : const geometry_msgs_PoseStruct_T *msgToSend
+// Return Type  : void
+//
+void d_Publisher::send(const geometry_msgs_PoseStruct_T *msgToSend)
+{
+  //(&MsgStruct);
+  this->PublisherHelper->publish(*msgToSend);
+}
+
+//
+// Arguments    : const sonia_common_MultiAddPoseStruct_T *msgToSend
+// Return Type  : void
+//
+void c_Publisher::send(const sonia_common_MultiAddPoseStruct_T *msgToSend)
 {
   //(&MsgStruct);
   this->PublisherHelper->publish(*msgToSend);
@@ -236,7 +318,7 @@ void b_Publisher::send(
 // Arguments    : const std_msgs_BoolStruct_T msgToSend
 // Return Type  : void
 //
-void c_Publisher::send(const std_msgs_BoolStruct_T msgToSend)
+void b_Publisher::send(const std_msgs_BoolStruct_T msgToSend)
 {
   //(&MsgStruct);
   this->PublisherHelper->publish(msgToSend);
