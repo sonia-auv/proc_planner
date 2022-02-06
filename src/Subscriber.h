@@ -5,7 +5,7 @@
 // File: Subscriber.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 03-Feb-2022 14:08:22
+// C/C++ source code generated on  : 05-Feb-2022 14:39:35
 //
 
 #ifndef SUBSCRIBER_H
@@ -29,9 +29,8 @@ public:
   void unlock();
   void callback();
   double get_MessageCount() const;
-  void
-  receive(::coder::array<sonia_common_AddPoseStruct_T, 1U> &receivedMsg_Pose);
   void get_LatestMessage(
+      char lastSubMsg_MessageType[25],
       ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose);
   void matlabCodegenDestructor();
   ~Subscriber();
@@ -59,10 +58,9 @@ public:
   void unlock();
   void callback();
   double get_MessageCount() const;
-  void receive(geometry_msgs_PointStruct_T *receivedMsg_Position,
-               geometry_msgs_QuaternionStruct_T *receivedMsg_Orientation);
   void
-  get_LatestMessage(geometry_msgs_PointStruct_T *lastSubMsg_Position,
+  get_LatestMessage(char lastSubMsg_MessageType[18],
+                    geometry_msgs_PointStruct_T *lastSubMsg_Position,
                     geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation);
   void matlabCodegenDestructor();
   ~b_Subscriber();

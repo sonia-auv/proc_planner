@@ -5,12 +5,13 @@
 // File: Subscriber.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 03-Feb-2022 14:08:22
+// C/C++ source code generated on  : 05-Feb-2022 14:39:35
 //
 
 // Include Files
 #include "Subscriber.h"
 #include "geometry_msgs_PoseStruct.h"
+#include "proc_planner_data.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
 #include "sonia_common_MultiAddPoseStruct.h"
@@ -59,38 +60,6 @@ void b_Subscriber::callback()
 }
 
 //
-// Arguments    : geometry_msgs_PointStruct_T *lastSubMsg_Position
-//                geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation
-// Return Type  : void
-//
-void b_Subscriber::get_LatestMessage(
-    geometry_msgs_PointStruct_T *lastSubMsg_Position,
-    geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation)
-{
-  lock();
-  *lastSubMsg_Position = MsgStruct.Position;
-  *lastSubMsg_Orientation = MsgStruct.Orientation;
-  unlock();
-}
-
-//
-// Arguments    : ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose
-// Return Type  : void
-//
-void Subscriber::get_LatestMessage(
-    ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose)
-{
-  int loop_ub;
-  lock();
-  lastSubMsg_Pose.set_size(MsgStruct.Pose.size(0));
-  loop_ub = MsgStruct.Pose.size(0);
-  for (int i{0}; i < loop_ub; i++) {
-    lastSubMsg_Pose[i] = MsgStruct.Pose[i];
-  }
-  unlock();
-}
-
-//
 // Arguments    : void
 // Return Type  : double
 //
@@ -112,7 +81,7 @@ double b_Subscriber::get_MessageCount() const
 // Arguments    : void
 // Return Type  : void
 //
-void Subscriber::lock()
+void b_Subscriber::lock()
 {
   this->Mutex.lock(); //(&Mutex);
 }
@@ -121,7 +90,7 @@ void Subscriber::lock()
 // Arguments    : void
 // Return Type  : void
 //
-void b_Subscriber::lock()
+void Subscriber::lock()
 {
   this->Mutex.lock(); //(&Mutex);
 }
@@ -205,19 +174,59 @@ b_Subscriber::~b_Subscriber()
 }
 
 //
+// Arguments    : char lastSubMsg_MessageType[18]
+//                geometry_msgs_PointStruct_T *lastSubMsg_Position
+//                geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation
+// Return Type  : void
+//
+void b_Subscriber::get_LatestMessage(
+    char lastSubMsg_MessageType[18],
+    geometry_msgs_PointStruct_T *lastSubMsg_Position,
+    geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation)
+{
+  lock();
+  for (int i{0}; i < 18; i++) {
+    lastSubMsg_MessageType[i] = MsgStruct.MessageType[i];
+  }
+  *lastSubMsg_Position = MsgStruct.Position;
+  *lastSubMsg_Orientation = MsgStruct.Orientation;
+  unlock();
+}
+
+//
+// Arguments    : char lastSubMsg_MessageType[25]
+//                ::coder::array<sonia_common_AddPoseStruct_T, 1U>
+//                &lastSubMsg_Pose
+// Return Type  : void
+//
+void Subscriber::get_LatestMessage(
+    char lastSubMsg_MessageType[25],
+    ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose)
+{
+  int i;
+  int loop_ub;
+  lock();
+  for (i = 0; i < 25; i++) {
+    lastSubMsg_MessageType[i] = MsgStruct.MessageType[i];
+  }
+  lastSubMsg_Pose.set_size(MsgStruct.Pose.size(0));
+  loop_ub = MsgStruct.Pose.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    lastSubMsg_Pose[i] = MsgStruct.Pose[i];
+  }
+  unlock();
+}
+
+//
 // Arguments    : void
 // Return Type  : Subscriber *
 //
 Subscriber *Subscriber::init()
 {
-  static const char topic[32]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l',
-                              'a', 'n', 'n', 'e', 'r', '/', 's', 'e',
-                              'n', 'd', '_', 'm', 'u', 'l', 't', 'i',
-                              '_', 'a', 'd', 'd', 'p', 'o', 's', 'e'};
   Subscriber *obj;
   obj = this;
   for (int i{0}; i < 32; i++) {
-    obj->TopicName[i] = topic[i];
+    obj->TopicName[i] = cv[i];
   }
   void *input;
   obj->BufferSize = 1.0;
@@ -244,13 +253,10 @@ Subscriber *Subscriber::init()
 //
 b_Subscriber *b_Subscriber::init()
 {
-  static const char topic[25]{'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n',
-                              'n', 'e', 'r', '/', 'i', 'n', 'i', 't', 'i',
-                              'a', 'l', '_', 'p', 'o', 's', 'e'};
   b_Subscriber *obj;
   obj = this;
   for (int i{0}; i < 25; i++) {
-    obj->TopicName[i] = topic[i];
+    obj->TopicName[i] = cv1[i];
   }
   void *input;
   obj->BufferSize = 1.0;
@@ -269,48 +275,6 @@ b_Subscriber *b_Subscriber::init()
   obj->callback();
   obj->matlabCodegenIsDeleted = false;
   return obj;
-}
-
-//
-// Arguments    : geometry_msgs_PointStruct_T *receivedMsg_Position
-//                geometry_msgs_QuaternionStruct_T *receivedMsg_Orientation
-// Return Type  : void
-//
-void b_Subscriber::receive(
-    geometry_msgs_PointStruct_T *receivedMsg_Position,
-    geometry_msgs_QuaternionStruct_T *receivedMsg_Orientation)
-{
-  static const char b_statusText[7]{'t', 'i', 'm', 'e', 'o', 'u', 't'};
-  double nMessages;
-  char statusText[7];
-  nMessages = get_MessageCount();
-  for (int i{0}; i < 7; i++) {
-    statusText[i] = b_statusText[i];
-  }
-  while (get_MessageCount() == nMessages) {
-  }
-  getStatusText(true, &statusText[0]);
-  get_LatestMessage(receivedMsg_Position, receivedMsg_Orientation);
-}
-
-//
-// Arguments    : ::coder::array<sonia_common_AddPoseStruct_T, 1U> &receivedMsg_Pose
-// Return Type  : void
-//
-void Subscriber::receive(
-    ::coder::array<sonia_common_AddPoseStruct_T, 1U> &receivedMsg_Pose)
-{
-  static const char b_statusText[7]{'t', 'i', 'm', 'e', 'o', 'u', 't'};
-  double nMessages;
-  char statusText[7];
-  nMessages = get_MessageCount();
-  for (int i{0}; i < 7; i++) {
-    statusText[i] = b_statusText[i];
-  }
-  while (get_MessageCount() == nMessages) {
-  }
-  getStatusText(true, &statusText[0]);
-  get_LatestMessage(receivedMsg_Pose);
 }
 
 } // namespace ros

@@ -5,7 +5,7 @@
 // File: Publisher.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 03-Feb-2022 14:08:22
+// C/C++ source code generated on  : 05-Feb-2022 14:39:35
 //
 
 #ifndef PUBLISHER_H
@@ -24,32 +24,11 @@ namespace ros {
 class Publisher {
 public:
   Publisher *init();
-  void matlabCodegenDestructor();
-  ~Publisher();
-  Publisher();
-
-private:
-  void Publisher_delete() const;
-
-public:
-  bool matlabCodegenIsDeleted;
-  char TopicName[20];
-  double BufferSize;
-  bool IsLatching;
-
-private:
-  MATLABPublisher<sonia_common::MultiAddPose, sonia_common_MultiAddPoseStruct_T>
-      *PublisherHelper;
-};
-
-class b_Publisher {
-public:
-  b_Publisher *init();
   void
   send(const trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T *msgToSend);
   void matlabCodegenDestructor();
-  ~b_Publisher();
-  b_Publisher();
+  ~Publisher();
+  Publisher();
 
 private:
   void Publisher_delete() const;
@@ -67,13 +46,13 @@ private:
       *PublisherHelper;
 };
 
-class c_Publisher {
+class b_Publisher {
 public:
-  c_Publisher *init();
+  b_Publisher *init();
   void send(const std_msgs_BoolStruct_T msgToSend);
   void matlabCodegenDestructor();
-  ~c_Publisher();
-  c_Publisher();
+  ~b_Publisher();
+  b_Publisher();
 
 private:
   void Publisher_delete() const;
@@ -87,6 +66,52 @@ public:
 private:
   std_msgs_BoolStruct_T MsgStruct;
   MATLABPublisher<std_msgs::Bool, std_msgs_BoolStruct_T> *PublisherHelper;
+};
+
+class c_Publisher {
+public:
+  c_Publisher *init();
+  void send(const sonia_common_MultiAddPoseStruct_T *msgToSend);
+  void matlabCodegenDestructor();
+  ~c_Publisher();
+  c_Publisher();
+
+private:
+  void Publisher_delete() const;
+
+public:
+  bool matlabCodegenIsDeleted;
+  char TopicName[32];
+  double BufferSize;
+  bool IsLatching;
+
+private:
+  sonia_common_MultiAddPoseStruct_T MsgStruct;
+  MATLABPublisher<sonia_common::MultiAddPose, sonia_common_MultiAddPoseStruct_T>
+      *PublisherHelper;
+};
+
+class d_Publisher {
+public:
+  d_Publisher *init();
+  void send(const geometry_msgs_PoseStruct_T *msgToSend);
+  void matlabCodegenDestructor();
+  ~d_Publisher();
+  d_Publisher();
+
+private:
+  void Publisher_delete() const;
+
+public:
+  bool matlabCodegenIsDeleted;
+  char TopicName[25];
+  double BufferSize;
+  bool IsLatching;
+
+private:
+  geometry_msgs_PoseStruct_T MsgStruct;
+  MATLABPublisher<geometry_msgs::Pose, geometry_msgs_PoseStruct_T>
+      *PublisherHelper;
 };
 
 } // namespace ros

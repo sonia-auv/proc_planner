@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 03-Feb-2022 14:08:22
+// C/C++ source code generated on  : 05-Feb-2022 14:39:35
 //
 
 #ifndef TRAJECTORYGENERATOR_H
@@ -29,13 +29,13 @@ struct struct_T {
 class TrajectoryGenerator {
 public:
   bool status;
+  double n;
   coder::array<double, 2U> pointList;
   coder::array<double, 2U> quatList;
   coder::array<double, 1U> timeList;
   double nbPoint;
 
 private:
-  double n;
   sonia_common_MultiAddPoseStruct_T MAPM;
   struct_T param;
 };
