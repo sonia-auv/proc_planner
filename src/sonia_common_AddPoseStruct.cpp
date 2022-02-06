@@ -5,7 +5,7 @@
 // File: sonia_common_AddPoseStruct.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 03-Feb-2022 14:08:22
+// C/C++ source code generated on  : 05-Feb-2022 14:39:35
 //
 
 // Include Files
@@ -25,10 +25,10 @@
 //
 void sonia_common_AddPoseStruct(sonia_common_AddPoseStruct_T *msg)
 {
-  static const char cv[20]{'s', 'o', 'n', 'i', 'a', '_', 'c', 'o', 'm', 'm',
-                           'o', 'n', '/', 'A', 'd', 'd', 'P', 'o', 's', 'e'};
+  static const char b_cv[20]{'s', 'o', 'n', 'i', 'a', '_', 'c', 'o', 'm', 'm',
+                             'o', 'n', '/', 'A', 'd', 'd', 'P', 'o', 's', 'e'};
   for (int i{0}; i < 20; i++) {
-    msg->MessageType[i] = cv[i];
+    msg->MessageType[i] = b_cv[i];
   }
   msg->Position = geometry_msgs_PointStruct();
   msg->Orientation = geometry_msgs_Vector3Struct();
