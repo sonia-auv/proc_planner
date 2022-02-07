@@ -5,7 +5,7 @@
 // File: proc_planner.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 05-Feb-2022 14:39:35
+// C/C++ source code generated on  : 06-Feb-2022 23:10:59
 //
 
 // Include Files
@@ -15,7 +15,6 @@
 #include "Subscriber.h"
 #include "TrajectoryGenerator.h"
 #include "dot.h"
-#include "eul2quat.h"
 #include "geometry_msgs_PoseStruct.h"
 #include "geometry_msgs_TransformStruct.h"
 #include "geometry_msgs_TwistStruct.h"
@@ -27,6 +26,7 @@
 #include "proc_planner_rtwutil.h"
 #include "proc_planner_types.h"
 #include "quaternion.h"
+#include "repelem.h"
 #include "rt_nonfinite.h"
 #include "sonia_common_MultiAddPoseStruct.h"
 #include "std_msgs_BoolStruct.h"
@@ -58,7 +58,7 @@ void proc_planner()
   coder::ros::d_Publisher icPub;
   coder::waypointTrajectory trajObj;
   coder::array<geometry_msgs_TransformStruct_T, 2U> y;
-  coder::array<geometry_msgs_TwistStruct_T, 2U> b_y;
+  coder::array<geometry_msgs_TwistStruct_T, 2U> r2;
   coder::array<sonia_common_AddPoseStruct_T, 1U> Maddposemsg_Pose;
   coder::array<sonia_common_AddPoseStruct_T, 1U> t4_Pose;
   geometry_msgs_PointStruct_T icMsg_Position;
@@ -72,16 +72,17 @@ void proc_planner()
   sonia_common_MultiAddPoseStruct_T emptyMAddPoseMsg;
   std_msgs_BoolStruct_T validMsg;
   trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T trajMsg;
+  double bufferQuat[4];
   double q[4];
   double qRel[4];
-  double b_TG[3];
-  double p[3];
+  double c[3];
+  double s[3];
   double varargout_4[3];
   double varargout_5[3];
   double b_Maddposemsg_Pose[2];
   double d;
   double icMsg_Orientation_W;
-  double icMsg_Orientation_Z;
+  double icMsg_Orientation_Y;
   double icMsg_Position_X;
   double icMsg_Position_Y;
   double icMsg_Position_Z;
@@ -125,8 +126,8 @@ void proc_planner()
   icSub.get_LatestMessage(icMsg_MessageType, &icMsg_Position,
                           &icMsg_Orientation);
   d = icMsg_Orientation.X;
-  tl = icMsg_Orientation.Y;
-  icMsg_Orientation_Z = icMsg_Orientation.Z;
+  icMsg_Orientation_Y = icMsg_Orientation.Y;
+  tl = icMsg_Orientation.Z;
   icMsg_Orientation_W = icMsg_Orientation.W;
   icMsg_Position_X = icMsg_Position.X;
   icMsg_Position_Y = icMsg_Position.Y;
@@ -154,17 +155,17 @@ void proc_planner()
     icSub.get_LatestMessage(t5_MessageType, &t5_Position, &t5_Orientation);
     if ((!coder::isequaln(icMsg_MessageType, icMsg_Position.MessageType,
                           icMsg_Position_X, icMsg_Position_Y, icMsg_Position_Z,
-                          icMsg_Orientation.MessageType, d, tl,
-                          icMsg_Orientation_Z, icMsg_Orientation_W,
-                          t5_MessageType, t5_Position, t5_Orientation)) &&
+                          icMsg_Orientation.MessageType, d, icMsg_Orientation_Y,
+                          tl, icMsg_Orientation_W, t5_MessageType, t5_Position,
+                          t5_Orientation)) &&
         newMaddPose) {
       icSub.get_LatestMessage(icMsg_MessageType, &t5_Position, &t5_Orientation);
       for (i = 0; i < 24; i++) {
         icMsg_Orientation.MessageType[i] = t5_Orientation.MessageType[i];
       }
       d = t5_Orientation.X;
-      tl = t5_Orientation.Y;
-      icMsg_Orientation_Z = t5_Orientation.Z;
+      icMsg_Orientation_Y = t5_Orientation.Y;
+      tl = t5_Orientation.Z;
       icMsg_Orientation_W = t5_Orientation.W;
       for (i = 0; i < 19; i++) {
         icMsg_Position.MessageType[i] = t5_Position.MessageType[i];
@@ -220,8 +221,8 @@ void proc_planner()
       TG.pointList[TG.pointList.size(0) * 2] = icMsg_Position_Z;
       TG.quatList[0] = icMsg_Orientation_W;
       TG.quatList[TG.quatList.size(0)] = d;
-      TG.quatList[TG.quatList.size(0) * 2] = tl;
-      TG.quatList[TG.quatList.size(0) * 3] = icMsg_Orientation_Z;
+      TG.quatList[TG.quatList.size(0) * 2] = icMsg_Orientation_Y;
+      TG.quatList[TG.quatList.size(0) * 3] = tl;
       TG.timeList[0] = 0.0;
       //  Process le message addpose
       // ==================================================================
@@ -233,20 +234,33 @@ void proc_planner()
         if (loop_ub_tmp <= static_cast<int>(TG.n - 2.0) - 1) {
           //  pour chaques waypoints
           //  transformer les angle d'euler quaternions
-          b_TG[0] = 0.017453292519943295 *
-                    Maddposemsg_Pose[loop_ub_tmp].Orientation.Z;
-          b_TG[1] = 0.017453292519943295 *
-                    Maddposemsg_Pose[loop_ub_tmp].Orientation.Y;
-          b_TG[2] = 0.017453292519943295 *
-                    Maddposemsg_Pose[loop_ub_tmp].Orientation.X;
-          coder::eul2quat(b_TG, q);
+          s[0] = 0.017453292519943295 *
+                 Maddposemsg_Pose[loop_ub_tmp].Orientation.Z / 2.0;
+          s[1] = 0.017453292519943295 *
+                 Maddposemsg_Pose[loop_ub_tmp].Orientation.Y / 2.0;
+          s[2] = 0.017453292519943295 *
+                 Maddposemsg_Pose[loop_ub_tmp].Orientation.X / 2.0;
+          c[0] = std::cos(s[0]);
+          s[0] = std::sin(s[0]);
+          c[1] = std::cos(s[1]);
+          s[1] = std::sin(s[1]);
+          c[2] = std::cos(s[2]);
+          s[2] = std::sin(s[2]);
+          d = c[0] * c[1];
+          icMsg_Orientation_Y = s[0] * s[1];
+          q[0] = d * c[2] + icMsg_Orientation_Y * s[2];
+          q[1] = d * s[2] - icMsg_Orientation_Y * c[2];
+          d = s[0] * c[1];
+          icMsg_Orientation_Y = c[0] * s[1];
+          q[2] = icMsg_Orientation_Y * c[2] + d * s[2];
+          q[3] = d * c[2] - icMsg_Orientation_Y * s[2];
           //  cree le vecteur pose
           d = Maddposemsg_Pose[loop_ub_tmp].Position.X;
-          p[0] = d;
-          icMsg_Orientation_Z = Maddposemsg_Pose[loop_ub_tmp].Position.Y;
-          p[1] = icMsg_Orientation_Z;
+          c[0] = d;
+          icMsg_Orientation_Y = Maddposemsg_Pose[loop_ub_tmp].Position.Y;
+          c[1] = icMsg_Orientation_Y;
           icMsg_Orientation_W = Maddposemsg_Pose[loop_ub_tmp].Position.Z;
-          p[2] = icMsg_Orientation_W;
+          c[2] = icMsg_Orientation_W;
           //  transformer le point en fonction du frame
           switch (Maddposemsg_Pose[loop_ub_tmp].Frame) {
           case 0U:
@@ -257,7 +271,7 @@ void proc_planner()
             TG.pointList[(static_cast<int>(
                               (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                           TG.pointList.size(0)) -
-                         1] = icMsg_Orientation_Z;
+                         1] = icMsg_Orientation_Y;
             TG.pointList[(static_cast<int>(
                               (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                           TG.pointList.size(0) * 2) -
@@ -286,7 +300,7 @@ void proc_planner()
             //  quaternion partie scalaire
             //  quaternion partie vectoriel
             //  QuatRotate n'est pas compilable
-            tl = 2.0 * coder::dot(*(double(*)[3]) & q[1], p);
+            tl = 2.0 * coder::dot(*(double(*)[3]) & q[1], c);
             icMsg_Position_Y = q[0] * q[0] - coder::dot(*(double(*)[3]) & q[1],
                                                         *(double(*)[3]) & q[1]);
             icMsg_Position_X = 2.0 * q[0];
@@ -295,13 +309,13 @@ void proc_planner()
                          1] = TG.pointList[loop_ub_tmp] +
                               ((tl * q[1] + icMsg_Position_Y * d) +
                                icMsg_Position_X * (q[2] * icMsg_Orientation_W -
-                                                   icMsg_Orientation_Z * q[3]));
+                                                   icMsg_Orientation_Y * q[3]));
             TG.pointList[(static_cast<int>(
                               (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                           TG.pointList.size(0)) -
                          1] =
                 TG.pointList[loop_ub_tmp + TG.pointList.size(0)] +
-                ((tl * q[2] + icMsg_Position_Y * icMsg_Orientation_Z) +
+                ((tl * q[2] + icMsg_Position_Y * icMsg_Orientation_Y) +
                  icMsg_Position_X * (d * q[3] - q[1] * icMsg_Orientation_W));
             TG.pointList[(static_cast<int>(
                               (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
@@ -309,31 +323,35 @@ void proc_planner()
                          1] =
                 TG.pointList[loop_ub_tmp + TG.pointList.size(0) * 2] +
                 ((tl * q[3] + icMsg_Position_Y * icMsg_Orientation_W) +
-                 icMsg_Position_X * (q[1] * icMsg_Orientation_Z - d * q[2]));
+                 icMsg_Position_X * (q[1] * icMsg_Orientation_Y - d * q[2]));
             // ==================================================================
             //  Fonnction qui retoure le quaternion le plus court/long selon
             //  l'utilisateur
-            d = ((TG.quatList[loop_ub_tmp] * q[0] +
-                  TG.quatList[loop_ub_tmp + TG.quatList.size(0)] * q[1]) +
-                 TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2] * q[2]) +
-                TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3] * q[3];
+            bufferQuat[0] = TG.quatList[loop_ub_tmp];
+            bufferQuat[1] = TG.quatList[loop_ub_tmp + TG.quatList.size(0)];
+            bufferQuat[2] = TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2];
+            bufferQuat[3] = TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3];
+            d = coder::b_dot(bufferQuat, q);
             //  conjuger le quaternion au besoin
-            if (((d > 1.0) && (!Maddposemsg_Pose[loop_ub_tmp].Rotation)) ||
-                ((d < 1.0) && Maddposemsg_Pose[loop_ub_tmp].Rotation)) {
+            // if  norm > 1 && dir == 0 || norm < 1 && dir == 1
+            if (((d < 0.0) && (!Maddposemsg_Pose[loop_ub_tmp].Rotation)) ||
+                ((d >= 0.0) && Maddposemsg_Pose[loop_ub_tmp].Rotation)) {
+              q[0] = -q[0];
               q[1] = -q[1];
               q[2] = -q[2];
               q[3] = -q[3];
             }
-            d = (TG.quatList[loop_ub_tmp] * q[1] +
+            bufferQuat[1] =
+                (TG.quatList[loop_ub_tmp] * q[1] +
                  q[0] * TG.quatList[loop_ub_tmp + TG.quatList.size(0)]) +
                 (TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2] * q[3] -
                  q[2] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3]);
-            icMsg_Orientation_Z =
+            bufferQuat[2] =
                 (TG.quatList[loop_ub_tmp] * q[2] +
                  q[0] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2]) +
                 (q[1] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3] -
                  TG.quatList[loop_ub_tmp + TG.quatList.size(0)] * q[3]);
-            icMsg_Orientation_W =
+            bufferQuat[3] =
                 (TG.quatList[loop_ub_tmp] * q[3] +
                  q[0] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3]) +
                 (TG.quatList[loop_ub_tmp + TG.quatList.size(0)] * q[2] -
@@ -348,15 +366,15 @@ void proc_planner()
             TG.quatList[(static_cast<int>(
                              (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                          TG.quatList.size(0)) -
-                        1] = d;
+                        1] = bufferQuat[1];
             TG.quatList[(static_cast<int>(
                              (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                          TG.quatList.size(0) * 2) -
-                        1] = icMsg_Orientation_Z;
+                        1] = bufferQuat[2];
             TG.quatList[(static_cast<int>(
                              (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                          TG.quatList.size(0) * 3) -
-                        1] = icMsg_Orientation_W;
+                        1] = bufferQuat[3];
             loop_ub_tmp++;
             break;
           case 2U:
@@ -366,7 +384,7 @@ void proc_planner()
             //  quaternion partie scalaire
             //  quaternion partie vectoriel
             //  QuatRotate n'est pas compilable
-            tl = 2.0 * coder::dot(*(double(*)[3]) & q[1], p);
+            tl = 2.0 * coder::dot(*(double(*)[3]) & q[1], c);
             icMsg_Position_Y = q[0] * q[0] - coder::dot(*(double(*)[3]) & q[1],
                                                         *(double(*)[3]) & q[1]);
             icMsg_Position_X = 2.0 * q[0];
@@ -383,7 +401,7 @@ void proc_planner()
                           TG.pointList.size(0)) -
                          1] =
                 TG.pointList[loop_ub_tmp + TG.pointList.size(0)] +
-                ((tl * q[2] + icMsg_Position_Y * icMsg_Orientation_Z) +
+                ((tl * q[2] + icMsg_Position_Y * icMsg_Orientation_Y) +
                  icMsg_Position_X *
                      (Maddposemsg_Pose[loop_ub_tmp].Position.X * q[3] -
                       q[1] * Maddposemsg_Pose[loop_ub_tmp].Position.Z));
@@ -421,7 +439,7 @@ void proc_planner()
             TG.pointList[(static_cast<int>(
                               (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                           TG.pointList.size(0)) -
-                         1] = icMsg_Orientation_Z;
+                         1] = icMsg_Orientation_Y;
             TG.pointList[(static_cast<int>(
                               (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                           TG.pointList.size(0) * 2) -
@@ -429,27 +447,31 @@ void proc_planner()
             // ==================================================================
             //  Fonnction qui retoure le quaternion le plus court/long selon
             //  l'utilisateur
-            d = ((TG.quatList[loop_ub_tmp] * q[0] +
-                  TG.quatList[loop_ub_tmp + TG.quatList.size(0)] * q[1]) +
-                 TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2] * q[2]) +
-                TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3] * q[3];
+            bufferQuat[0] = TG.quatList[loop_ub_tmp];
+            bufferQuat[1] = TG.quatList[loop_ub_tmp + TG.quatList.size(0)];
+            bufferQuat[2] = TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2];
+            bufferQuat[3] = TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3];
+            d = coder::b_dot(bufferQuat, q);
             //  conjuger le quaternion au besoin
-            if (((d > 1.0) && (!Maddposemsg_Pose[loop_ub_tmp].Rotation)) ||
-                ((d < 1.0) && Maddposemsg_Pose[loop_ub_tmp].Rotation)) {
+            // if  norm > 1 && dir == 0 || norm < 1 && dir == 1
+            if (((d < 0.0) && (!Maddposemsg_Pose[loop_ub_tmp].Rotation)) ||
+                ((d >= 0.0) && Maddposemsg_Pose[loop_ub_tmp].Rotation)) {
+              q[0] = -q[0];
               q[1] = -q[1];
               q[2] = -q[2];
               q[3] = -q[3];
             }
-            d = (TG.quatList[loop_ub_tmp] * q[1] +
+            bufferQuat[1] =
+                (TG.quatList[loop_ub_tmp] * q[1] +
                  q[0] * TG.quatList[loop_ub_tmp + TG.quatList.size(0)]) +
                 (TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2] * q[3] -
                  q[2] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3]);
-            icMsg_Orientation_Z =
+            bufferQuat[2] =
                 (TG.quatList[loop_ub_tmp] * q[2] +
                  q[0] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2]) +
                 (q[1] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3] -
                  TG.quatList[loop_ub_tmp + TG.quatList.size(0)] * q[3]);
-            icMsg_Orientation_W =
+            bufferQuat[3] =
                 (TG.quatList[loop_ub_tmp] * q[3] +
                  q[0] * TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3]) +
                 (TG.quatList[loop_ub_tmp + TG.quatList.size(0)] * q[2] -
@@ -464,15 +486,15 @@ void proc_planner()
             TG.quatList[(static_cast<int>(
                              (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                          TG.quatList.size(0)) -
-                        1] = d;
+                        1] = bufferQuat[1];
             TG.quatList[(static_cast<int>(
                              (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                          TG.quatList.size(0) * 2) -
-                        1] = icMsg_Orientation_Z;
+                        1] = bufferQuat[2];
             TG.quatList[(static_cast<int>(
                              (static_cast<double>(loop_ub_tmp) + 1.0) + 1.0) +
                          TG.quatList.size(0) * 3) -
-                        1] = icMsg_Orientation_W;
+                        1] = bufferQuat[3];
             loop_ub_tmp++;
             break;
           default:
@@ -487,26 +509,27 @@ void proc_planner()
           //  Copier le dernier waypoint 2 fois pour éviter un comportement
           //  du generateur de trajecteur
           loop_ub_tmp = TG.pointList.size(0) - 1;
-          b_TG[1] =
+          s[1] =
               TG.pointList[(TG.pointList.size(0) + TG.pointList.size(0)) - 2];
-          b_TG[2] =
+          s[2] =
               TG.pointList[(TG.pointList.size(0) + TG.pointList.size(0) * 2) -
                            2];
           TG.pointList[TG.pointList.size(0) - 1] =
               TG.pointList[TG.pointList.size(0) - 2];
-          TG.pointList[loop_ub_tmp + TG.pointList.size(0)] = b_TG[1];
-          TG.pointList[loop_ub_tmp + TG.pointList.size(0) * 2] = b_TG[2];
+          TG.pointList[loop_ub_tmp + TG.pointList.size(0)] = s[1];
+          TG.pointList[loop_ub_tmp + TG.pointList.size(0) * 2] = s[2];
           loop_ub_tmp = TG.quatList.size(0) - 1;
-          q[1] = TG.quatList[(TG.quatList.size(0) + TG.quatList.size(0)) - 2];
-          q[2] =
+          bufferQuat[1] =
+              TG.quatList[(TG.quatList.size(0) + TG.quatList.size(0)) - 2];
+          bufferQuat[2] =
               TG.quatList[(TG.quatList.size(0) + TG.quatList.size(0) * 2) - 2];
-          q[3] =
+          bufferQuat[3] =
               TG.quatList[(TG.quatList.size(0) + TG.quatList.size(0) * 3) - 2];
           TG.quatList[TG.quatList.size(0) - 1] =
               TG.quatList[TG.quatList.size(0) - 2];
-          TG.quatList[loop_ub_tmp + TG.quatList.size(0)] = q[1];
-          TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2] = q[2];
-          TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3] = q[3];
+          TG.quatList[loop_ub_tmp + TG.quatList.size(0)] = bufferQuat[1];
+          TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2] = bufferQuat[2];
+          TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3] = bufferQuat[3];
           //  Calculer les temps entre chaque waypoints
           // ==================================================================
           //  Fonnction qui calcul le temps entre chaque waypoint
@@ -514,13 +537,12 @@ void proc_planner()
           for (loop_ub_tmp = 0; loop_ub_tmp < i; loop_ub_tmp++) {
             //  pour chaques waypoints
             //  Trouver la distance Eucledienne entre 2 points
-            b_TG[0] = TG.pointList[loop_ub_tmp + 1] - TG.pointList[loop_ub_tmp];
-            b_TG[1] = TG.pointList[(loop_ub_tmp + TG.pointList.size(0)) + 1] -
-                      TG.pointList[loop_ub_tmp + TG.pointList.size(0)];
-            b_TG[2] =
-                TG.pointList[(loop_ub_tmp + TG.pointList.size(0) * 2) + 1] -
-                TG.pointList[loop_ub_tmp + TG.pointList.size(0) * 2];
-            d = coder::b_norm(b_TG);
+            s[0] = TG.pointList[loop_ub_tmp + 1] - TG.pointList[loop_ub_tmp];
+            s[1] = TG.pointList[(loop_ub_tmp + TG.pointList.size(0)) + 1] -
+                   TG.pointList[loop_ub_tmp + TG.pointList.size(0)];
+            s[2] = TG.pointList[(loop_ub_tmp + TG.pointList.size(0) * 2) + 1] -
+                   TG.pointList[loop_ub_tmp + TG.pointList.size(0) * 2];
+            d = coder::b_norm(s);
             //  Déterminer le temps selon aMax
             tl = 4.0 * std::sqrt(3.0 * d) / 1.1618950038622251;
             //  Déterminer la vitesse maximum de la trajectoire
@@ -535,28 +557,28 @@ void proc_planner()
             q[2] = -TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 2];
             q[3] = -TG.quatList[loop_ub_tmp + TG.quatList.size(0) * 3];
             d = TG.quatList[loop_ub_tmp + 1];
-            icMsg_Orientation_Z =
+            icMsg_Orientation_Y =
                 TG.quatList[(loop_ub_tmp + TG.quatList.size(0)) + 1];
             icMsg_Orientation_W =
                 TG.quatList[(loop_ub_tmp + TG.quatList.size(0) * 2) + 1];
             icMsg_Position_X =
                 TG.quatList[(loop_ub_tmp + TG.quatList.size(0) * 3) + 1];
-            qRel[0] = ((q[0] * d - q[1] * icMsg_Orientation_Z) -
+            qRel[0] = ((q[0] * d - q[1] * icMsg_Orientation_Y) -
                        q[2] * icMsg_Orientation_W) -
                       q[3] * icMsg_Position_X;
-            qRel[1] = (q[0] * icMsg_Orientation_Z + d * q[1]) +
+            qRel[1] = (q[0] * icMsg_Orientation_Y + d * q[1]) +
                       (q[2] * icMsg_Position_X - icMsg_Orientation_W * q[3]);
             qRel[2] = (q[0] * icMsg_Orientation_W + d * q[2]) +
-                      (icMsg_Orientation_Z * q[3] - q[1] * icMsg_Position_X);
+                      (icMsg_Orientation_Y * q[3] - q[1] * icMsg_Position_X);
             qRel[3] = (q[0] * icMsg_Position_X + d * q[3]) +
-                      (q[1] * icMsg_Orientation_W - icMsg_Orientation_Z * q[2]);
+                      (q[1] * icMsg_Orientation_W - icMsg_Orientation_Y * q[2]);
             //  Déterminer le temps angulaire
             d = coder::b_norm(*(double(*)[3]) & qRel[1]);
-            b_TG[0] = tl;
-            b_TG[1] = 2.0 * rt_atan2d_snf(d, qRel[0]) / 0.78539816339744828;
-            b_TG[2] = 0.1;
+            s[0] = tl;
+            s[1] = 2.0 * rt_atan2d_snf(d, qRel[0]) / 0.78539816339744828;
+            s[2] = 0.1;
             TG.timeList[loop_ub_tmp + 1] =
-                TG.timeList[loop_ub_tmp] + coder::internal::b_maximum(b_TG);
+                TG.timeList[loop_ub_tmp] + coder::internal::b_maximum(s);
           }
           //  Déterminer le nombre de points
           TG.nbPoint = std::floor(TG.timeList[TG.timeList.size(0) - 1] / 0.1);
@@ -595,40 +617,49 @@ void proc_planner()
         for (loop_ub_tmp = 0; loop_ub_tmp < loop_ub; loop_ub_tmp++) {
           trajMsg.Transforms[loop_ub_tmp] = y[loop_ub_tmp];
         }
-        b_y.set_size(1, i);
-        for (loop_ub_tmp = 0; loop_ub_tmp < i; loop_ub_tmp++) {
-          b_y[loop_ub_tmp] = twistBuff;
-        }
-        trajMsg.Velocities.set_size(b_y.size(1));
-        loop_ub = b_y.size(1);
+        coder::repelem(&twistBuff, TG.nbPoint, r2);
+        trajMsg.Velocities.set_size(r2.size(1));
+        loop_ub = r2.size(1);
         for (loop_ub_tmp = 0; loop_ub_tmp < loop_ub; loop_ub_tmp++) {
-          trajMsg.Velocities[loop_ub_tmp] = b_y[loop_ub_tmp];
+          trajMsg.Velocities[loop_ub_tmp] = r2[loop_ub_tmp];
         }
-        b_y.set_size(1, i);
-        for (loop_ub_tmp = 0; loop_ub_tmp < i; loop_ub_tmp++) {
-          b_y[loop_ub_tmp] = twistBuff;
-        }
-        trajMsg.Accelerations.set_size(b_y.size(1));
-        loop_ub = b_y.size(1);
+        coder::repelem(&twistBuff, TG.nbPoint, r2);
+        trajMsg.Accelerations.set_size(r2.size(1));
+        loop_ub = r2.size(1);
         for (loop_ub_tmp = 0; loop_ub_tmp < loop_ub; loop_ub_tmp++) {
-          trajMsg.Accelerations[loop_ub_tmp] = b_y[loop_ub_tmp];
+          trajMsg.Accelerations[loop_ub_tmp] = r2[loop_ub_tmp];
         }
+        q[0] = 0.0;
+        q[1] = 0.0;
+        q[2] = 0.0;
+        q[3] = 0.0;
         //  Générer les points de la trajectoire
         for (loop_ub_tmp = 0; loop_ub_tmp < i; loop_ub_tmp++) {
-          trajObj.step(p, &varargout_2, b_TG, varargout_4, varargout_5);
+          trajObj.step(c, &varargout_2, s, varargout_4, varargout_5);
           //  Remplire le message Transform.
-          transformBuff.Translation.X = p[0];
-          transformBuff.Translation.Y = p[1];
-          transformBuff.Translation.Z = p[2];
+          transformBuff.Translation.X = c[0];
+          transformBuff.Translation.Y = c[1];
+          transformBuff.Translation.Z = c[2];
           //  Convertir l'objet quaternion en vecteur
-          q[0] = varargout_2.a;
-          q[1] = varargout_2.b;
-          q[2] = varargout_2.c;
-          q[3] = varargout_2.d;
-          transformBuff.Rotation.W = varargout_2.a;
-          transformBuff.Rotation.X = varargout_2.b;
-          transformBuff.Rotation.Y = varargout_2.c;
-          transformBuff.Rotation.Z = varargout_2.d;
+          bufferQuat[0] = varargout_2.a;
+          bufferQuat[1] = varargout_2.b;
+          bufferQuat[2] = varargout_2.c;
+          bufferQuat[3] = varargout_2.d;
+          //  Verifier de retourner la rotation la plus petite
+          if ((loop_ub_tmp + 1U > 1U) && (coder::b_dot(q, bufferQuat) < 0.0)) {
+            bufferQuat[0] = -varargout_2.a;
+            bufferQuat[1] = -varargout_2.b;
+            bufferQuat[2] = -varargout_2.c;
+            bufferQuat[3] = -varargout_2.d;
+          }
+          q[0] = bufferQuat[0];
+          q[1] = bufferQuat[1];
+          q[2] = bufferQuat[2];
+          q[3] = bufferQuat[3];
+          transformBuff.Rotation.W = bufferQuat[0];
+          transformBuff.Rotation.X = bufferQuat[1];
+          transformBuff.Rotation.Y = bufferQuat[2];
+          transformBuff.Rotation.Z = bufferQuat[3];
           trajMsg.Transforms[loop_ub_tmp] = transformBuff;
           //  Convertir les vitesse dans le ref sub
           // =================================================================
@@ -636,21 +667,21 @@ void proc_planner()
           //  quaternion partie scalaire
           //  quaternion partie vectoriel
           //  QuatRotate n'est pas compilable
-          tl = 2.0 * coder::dot(*(double(*)[3]) & q[1], b_TG);
-          icMsg_Position_Y =
-              varargout_2.a * varargout_2.a -
-              coder::dot(*(double(*)[3]) & q[1], *(double(*)[3]) & q[1]);
-          d = 2.0 * varargout_2.a;
+          tl = 2.0 * coder::dot(*(double(*)[3]) & bufferQuat[1], s);
+          icMsg_Position_Y = bufferQuat[0] * bufferQuat[0] -
+                             coder::dot(*(double(*)[3]) & bufferQuat[1],
+                                        *(double(*)[3]) & bufferQuat[1]);
+          d = 2.0 * bufferQuat[0];
           //  Remplire les vitesse
           twistBuff.Linear.X =
-              (tl * varargout_2.b + icMsg_Position_Y * b_TG[0]) +
-              d * (varargout_2.c * b_TG[2] - b_TG[1] * varargout_2.d);
+              (tl * bufferQuat[1] + icMsg_Position_Y * s[0]) +
+              d * (bufferQuat[2] * s[2] - s[1] * bufferQuat[3]);
           twistBuff.Linear.Y =
-              (tl * varargout_2.c + icMsg_Position_Y * b_TG[1]) +
-              d * (b_TG[0] * varargout_2.d - varargout_2.b * b_TG[2]);
+              (tl * bufferQuat[2] + icMsg_Position_Y * s[1]) +
+              d * (s[0] * bufferQuat[3] - bufferQuat[1] * s[2]);
           twistBuff.Linear.Z =
-              (tl * varargout_2.d + icMsg_Position_Y * b_TG[2]) +
-              d * (varargout_2.b * b_TG[1] - b_TG[0] * varargout_2.c);
+              (tl * bufferQuat[3] + icMsg_Position_Y * s[2]) +
+              d * (bufferQuat[1] * s[1] - s[0] * bufferQuat[2]);
           twistBuff.Angular.X = -varargout_5[0];
           //  (-) pour convertir les vitesse angulaire dans le ref sub
           twistBuff.Angular.Y = -varargout_5[1];
@@ -663,23 +694,23 @@ void proc_planner()
           //  quaternion partie scalaire
           //  quaternion partie vectoriel
           //  QuatRotate n'est pas compilable
-          tl = 2.0 * coder::dot(*(double(*)[3]) & q[1], varargout_4);
-          icMsg_Position_Y =
-              varargout_2.a * varargout_2.a -
-              coder::dot(*(double(*)[3]) & q[1], *(double(*)[3]) & q[1]);
+          tl = 2.0 * coder::dot(*(double(*)[3]) & bufferQuat[1], varargout_4);
+          icMsg_Position_Y = bufferQuat[0] * bufferQuat[0] -
+                             coder::dot(*(double(*)[3]) & bufferQuat[1],
+                                        *(double(*)[3]) & bufferQuat[1]);
           //  Remplire les acceleration
           twistBuff.Linear.X =
-              (tl * varargout_2.b + icMsg_Position_Y * varargout_4[0]) +
-              d * (varargout_2.c * varargout_4[2] -
-                   varargout_4[1] * varargout_2.d);
+              (tl * bufferQuat[1] + icMsg_Position_Y * varargout_4[0]) +
+              d * (bufferQuat[2] * varargout_4[2] -
+                   varargout_4[1] * bufferQuat[3]);
           twistBuff.Linear.Y =
-              (tl * varargout_2.c + icMsg_Position_Y * varargout_4[1]) +
-              d * (varargout_4[0] * varargout_2.d -
-                   varargout_2.b * varargout_4[2]);
+              (tl * bufferQuat[2] + icMsg_Position_Y * varargout_4[1]) +
+              d * (varargout_4[0] * bufferQuat[3] -
+                   bufferQuat[1] * varargout_4[2]);
           twistBuff.Linear.Z =
-              (tl * varargout_2.d + icMsg_Position_Y * varargout_4[2]) +
-              d * (varargout_2.b * varargout_4[1] -
-                   varargout_4[0] * varargout_2.c);
+              (tl * bufferQuat[3] + icMsg_Position_Y * varargout_4[2]) +
+              d * (bufferQuat[1] * varargout_4[1] -
+                   varargout_4[0] * bufferQuat[2]);
           twistBuff.Angular.X = 0.0;
           twistBuff.Angular.Y = 0.0;
           twistBuff.Angular.Z = 0.0;
@@ -727,8 +758,8 @@ void proc_planner()
             emptyIcMsg.Orientation.MessageType[i];
       }
       d = emptyIcMsg.Orientation.X;
-      tl = emptyIcMsg.Orientation.Y;
-      icMsg_Orientation_Z = emptyIcMsg.Orientation.Z;
+      icMsg_Orientation_Y = emptyIcMsg.Orientation.Y;
+      tl = emptyIcMsg.Orientation.Z;
       icMsg_Orientation_W = emptyIcMsg.Orientation.W;
       mapPub.send(&emptyMAddPoseMsg);
       icPub.send(&emptyIcMsg);

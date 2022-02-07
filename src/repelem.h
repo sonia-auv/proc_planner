@@ -2,29 +2,34 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: eul2quat.h
+// File: repelem.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 05-Feb-2022 14:39:35
+// C/C++ source code generated on  : 06-Feb-2022 23:10:59
 //
 
-#ifndef EUL2QUAT_H
-#define EUL2QUAT_H
+#ifndef REPELEM_H
+#define REPELEM_H
 
 // Include Files
 #include "rtwtypes.h"
+#include "coder_array.h"
 #include <cstddef>
 #include <cstdlib>
 
+// Type Declarations
+struct geometry_msgs_TwistStruct_T;
+
 // Function Declarations
 namespace coder {
-void eul2quat(const double eul[3], double q[4]);
+void repelem(const geometry_msgs_TwistStruct_T *x, double varargin_1,
+             ::coder::array<geometry_msgs_TwistStruct_T, 2U> &y);
 
 }
 
 #endif
 //
-// File trailer for eul2quat.h
+// File trailer for repelem.h
 //
 // [EOF]
 //
