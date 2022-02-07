@@ -5,7 +5,7 @@
 // File: trajectory_msgs_MultiDOFJointTrajectoryPointStruct.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 05-Feb-2022 14:39:35
+// C/C++ source code generated on  : 06-Feb-2022 23:10:59
 //
 
 #ifndef TRAJECTORY_MSGS_MULTIDOFJOINTTRAJECTORYPOINTSTRUCT_H

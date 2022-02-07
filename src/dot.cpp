@@ -5,7 +5,7 @@
 // File: dot.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 05-Feb-2022 14:39:35
+// C/C++ source code generated on  : 06-Feb-2022 23:10:59
 //
 
 // Include Files
@@ -16,11 +16,21 @@
 
 // Function Definitions
 //
+// Arguments    : const double a[4]
+//                const double b[4]
+// Return Type  : double
+//
+namespace coder {
+double b_dot(const double a[4], const double b[4])
+{
+  return ((a[0] * b[0] + a[1] * b[1]) + a[2] * b[2]) + a[3] * b[3];
+}
+
+//
 // Arguments    : const double a[3]
 //                const double b[3]
 // Return Type  : double
 //
-namespace coder {
 double dot(const double a[3], const double b[3])
 {
   return (a[0] * b[0] + a[1] * b[1]) + a[2] * b[2];
