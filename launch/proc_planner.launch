@@ -2,6 +2,6 @@
 
     <node name="proc_planner" pkg="proc_planner" type="proc_planner_node" output="screen"/>
 
-    <!-- <rosparam command="load" file="$(find proc_planner)/config/$(env AUV).yaml"/> -->
+    <rosparam command="load" file="$(find proc_planner)/config/$(env AUV).yaml"/>
 
 </launch>
