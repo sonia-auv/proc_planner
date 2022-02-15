@@ -5,7 +5,7 @@
 // File: waypointTrajectory.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// C/C++ source code generated on  : 09-Feb-2022 14:06:20
 //
 
 // Include Files
@@ -257,6 +257,7 @@ static double rt_remd_snf(double u0, double u1)
 //
 // Arguments    : const ::coder::array<double, 2U> &varargin_1
 //                const ::coder::array<double, 1U> &varargin_2
+//                double varargin_4
 //                const quaternion *varargin_8
 // Return Type  : waypointTrajectory *
 //
@@ -264,7 +265,7 @@ namespace coder {
 waypointTrajectory *
 waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
                          const ::coder::array<double, 1U> &varargin_2,
-                         const quaternion *varargin_8)
+                         double varargin_4, const quaternion *varargin_8)
 {
   quaternion b_obj;
   quaternion c_obj;
@@ -321,7 +322,7 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   for (i = 0; i < loop_ub; i++) {
     obj->TimeOfArrival[i] = varargin_2[i];
   }
-  obj->SampleRate = 10.0;
+  obj->SampleRate = varargin_4;
   obj->Quaternions = *varargin_8;
   aasq.set_size(obj->TimeOfArrival.size(0));
   loop_ub = obj->TimeOfArrival.size(0);

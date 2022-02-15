@@ -5,13 +5,14 @@
 // File: TrajectoryGenerator.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// C/C++ source code generated on  : 09-Feb-2022 14:06:20
 //
 
 #ifndef TRAJECTORYGENERATOR_H
 #define TRAJECTORYGENERATOR_H
 
 // Include Files
+#include "proc_planner_internal_types.h"
 #include "proc_planner_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
@@ -19,25 +20,28 @@
 #include <cstdlib>
 
 // Type Definitions
-struct struct_T {
-  double ts;
-  double amax;
-  double vlmax;
-  double vamax;
-};
-
 class TrajectoryGenerator {
 public:
+  TrajectoryGenerator *init(const char multiAddposeMsg_MessageType[25],
+                            const coder::array<sonia_common_AddPoseStruct_T, 1U>
+                                &multiAddposeMsg_Pose,
+                            double param_amax, double param_vlmax,
+                            double param_vamax, double icMsg_Position_X,
+                            double icMsg_Position_Y, double icMsg_Position_Z,
+                            double icMsg_Orientation_X,
+                            double icMsg_Orientation_Y,
+                            double icMsg_Orientation_Z,
+                            double icMsg_Orientation_W);
   bool status;
-  double n;
   coder::array<double, 2U> pointList;
   coder::array<double, 2U> quatList;
   coder::array<double, 1U> timeList;
   double nbPoint;
+  struct_T param;
 
 private:
+  double n;
   sonia_common_MultiAddPoseStruct_T MAPM;
-  struct_T param;
 };
 
 #endif
