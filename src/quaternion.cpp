@@ -5,7 +5,7 @@
 // File: quaternion.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// C/C++ source code generated on  : 09-Feb-2022 14:06:20
 //
 
 // Include Files
@@ -17,68 +17,10 @@
 
 // Function Definitions
 //
-// Arguments    : const ::coder::array<double, 2U> &varargin_1
-// Return Type  : void
-//
-namespace coder {
-void quaternion::init(const ::coder::array<double, 2U> &varargin_1)
-{
-  array<double, 1U> b_varargin_1;
-  if (varargin_1.size(0) == 0) {
-    a.set_size(0, 4);
-    b.set_size(0, 4);
-    c.set_size(0, 4);
-    d.set_size(0, 4);
-  } else {
-    int i;
-    int loop_ub;
-    loop_ub = varargin_1.size(0);
-    b_varargin_1.set_size(varargin_1.size(0));
-    for (i = 0; i < loop_ub; i++) {
-      b_varargin_1[i] = varargin_1[i];
-    }
-    a.set_size(varargin_1.size(0), 1);
-    loop_ub = varargin_1.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      a[i] = b_varargin_1[i];
-    }
-    loop_ub = varargin_1.size(0);
-    b_varargin_1.set_size(varargin_1.size(0));
-    for (i = 0; i < loop_ub; i++) {
-      b_varargin_1[i] = varargin_1[i + varargin_1.size(0)];
-    }
-    b.set_size(varargin_1.size(0), 1);
-    loop_ub = varargin_1.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      b[i] = b_varargin_1[i];
-    }
-    loop_ub = varargin_1.size(0);
-    b_varargin_1.set_size(varargin_1.size(0));
-    for (i = 0; i < loop_ub; i++) {
-      b_varargin_1[i] = varargin_1[i + varargin_1.size(0) * 2];
-    }
-    c.set_size(varargin_1.size(0), 1);
-    loop_ub = varargin_1.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      c[i] = b_varargin_1[i];
-    }
-    loop_ub = varargin_1.size(0);
-    b_varargin_1.set_size(varargin_1.size(0));
-    for (i = 0; i < loop_ub; i++) {
-      b_varargin_1[i] = varargin_1[i + varargin_1.size(0) * 3];
-    }
-    d.set_size(varargin_1.size(0), 1);
-    loop_ub = varargin_1.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      d[i] = b_varargin_1[i];
-    }
-  }
-}
-
-//
 // Arguments    : void
 // Return Type  : void
 //
+namespace coder {
 void quaternion::init()
 {
   a.set_size(1, 1);

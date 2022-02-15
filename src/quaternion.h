@@ -5,7 +5,7 @@
 // File: quaternion.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// C/C++ source code generated on  : 09-Feb-2022 14:06:20
 //
 
 #ifndef QUATERNION_H
@@ -21,7 +21,6 @@
 namespace coder {
 class quaternion {
 public:
-  void init(const ::coder::array<double, 2U> &varargin_1);
   void rotmat(::coder::array<double, 3U> &r);
   void init();
   array<double, 2U> a;

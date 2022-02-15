@@ -2,14 +2,14 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: repelem.h
+// File: startsWith.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// C/C++ source code generated on  : 09-Feb-2022 14:06:20
 //
 
-#ifndef REPELEM_H
-#define REPELEM_H
+#ifndef STARTSWITH_H
+#define STARTSWITH_H
 
 // Include Files
 #include "rtwtypes.h"
@@ -17,19 +17,15 @@
 #include <cstddef>
 #include <cstdlib>
 
-// Type Declarations
-struct geometry_msgs_TwistStruct_T;
-
 // Function Declarations
 namespace coder {
-void repelem(const geometry_msgs_TwistStruct_T *x, double varargin_1,
-             ::coder::array<geometry_msgs_TwistStruct_T, 2U> &y);
+bool startsWith(const ::coder::array<char, 2U> &str);
 
 }
 
 #endif
 //
-// File trailer for repelem.h
+// File trailer for startsWith.h
 //
 // [EOF]
 //
