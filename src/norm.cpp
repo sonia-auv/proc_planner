@@ -5,7 +5,7 @@
 // File: norm.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 09-Feb-2022 14:06:20
+// C/C++ source code generated on  : 19-Feb-2022 14:46:56
 //
 
 // Include Files
@@ -17,50 +17,10 @@
 
 // Function Definitions
 //
-// Arguments    : const double x[3]
-// Return Type  : double
-//
-namespace coder {
-double b_norm(const double x[3])
-{
-  double absxk;
-  double scale;
-  double t;
-  double y;
-  scale = 3.3121686421112381E-170;
-  absxk = std::abs(x[0]);
-  if (absxk > 3.3121686421112381E-170) {
-    y = 1.0;
-    scale = absxk;
-  } else {
-    t = absxk / 3.3121686421112381E-170;
-    y = t * t;
-  }
-  absxk = std::abs(x[1]);
-  if (absxk > scale) {
-    t = scale / absxk;
-    y = y * t * t + 1.0;
-    scale = absxk;
-  } else {
-    t = absxk / scale;
-    y += t * t;
-  }
-  absxk = std::abs(x[2]);
-  if (absxk > scale) {
-    t = scale / absxk;
-    y = y * t * t + 1.0;
-    scale = absxk;
-  } else {
-    t = absxk / scale;
-    y += t * t;
-  }
-  return scale * std::sqrt(y);
-}
-
-//
 // Arguments    : const ::coder::array<double, 1U> &x
 // Return Type  : double
 //
+namespace coder {
 double b_norm(const ::coder::array<double, 1U> &x)
 {
   double y;

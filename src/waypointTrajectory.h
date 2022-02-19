@@ -5,7 +5,7 @@
 // File: waypointTrajectory.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 09-Feb-2022 14:06:20
+// C/C++ source code generated on  : 19-Feb-2022 14:46:56
 //
 
 #ifndef WAYPOINTTRAJECTORY_H
@@ -34,7 +34,8 @@ class waypointTrajectory {
 public:
   waypointTrajectory *init(const ::coder::array<double, 2U> &varargin_1,
                            const ::coder::array<double, 1U> &varargin_2,
-                           double varargin_4, const quaternion *varargin_8);
+                           double varargin_4, const quaternion *varargin_8,
+                           const ::coder::array<double, 2U> &varargin_10);
   void step(double varargout_1[3], b_quaternion *varargout_2,
             double varargout_3[3], double varargout_4[3],
             double varargout_5[3]);
