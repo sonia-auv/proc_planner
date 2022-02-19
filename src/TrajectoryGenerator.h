@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.h
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 09-Feb-2022 14:06:20
+// C/C++ source code generated on  : 19-Feb-2022 14:46:56
 //
 
 #ifndef TRAJECTORYGENERATOR_H
@@ -36,6 +36,7 @@ public:
   coder::array<double, 2U> pointList;
   coder::array<double, 2U> quatList;
   coder::array<double, 1U> timeList;
+  coder::array<double, 2U> courseList;
   double nbPoint;
   struct_T param;
 
