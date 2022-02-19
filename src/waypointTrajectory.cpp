@@ -5,7 +5,7 @@
 // File: waypointTrajectory.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 09-Feb-2022 14:06:20
+// C/C++ source code generated on  : 19-Feb-2022 14:46:56
 //
 
 // Include Files
@@ -259,13 +259,15 @@ static double rt_remd_snf(double u0, double u1)
 //                const ::coder::array<double, 1U> &varargin_2
 //                double varargin_4
 //                const quaternion *varargin_8
+//                const ::coder::array<double, 2U> &varargin_10
 // Return Type  : waypointTrajectory *
 //
 namespace coder {
 waypointTrajectory *
 waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
                          const ::coder::array<double, 1U> &varargin_2,
-                         double varargin_4, const quaternion *varargin_8)
+                         double varargin_4, const quaternion *varargin_8,
+                         const ::coder::array<double, 2U> &varargin_10)
 {
   quaternion b_obj;
   quaternion c_obj;
@@ -324,6 +326,11 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   }
   obj->SampleRate = varargin_4;
   obj->Quaternions = *varargin_8;
+  obj->Course.set_size(varargin_10.size(1));
+  loop_ub = varargin_10.size(1);
+  for (i = 0; i < loop_ub; i++) {
+    obj->Course[i] = varargin_10[i];
+  }
   aasq.set_size(obj->TimeOfArrival.size(0));
   loop_ub = obj->TimeOfArrival.size(0);
   for (i = 0; i < loop_ub; i++) {
@@ -334,10 +341,14 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   for (i = 0; i < loop_ub; i++) {
     waypoints[i] = obj->Waypoints[i];
   }
-  ac2.set_size(aasq.size(0));
-  loop_ub = aasq.size(0);
+  ac2.set_size(obj->Course.size(0));
+  loop_ub = obj->Course.size(0);
   for (i = 0; i < loop_ub; i++) {
-    ac2[i] = rtNaN;
+    ac2[i] = obj->Course[i];
+  }
+  loop_ub = ac2.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    ac2[i] = 0.017453292519943295 * ac2[i];
   }
   matlabshared::tracking::internal::scenario::clothoidG2fitMissingCourse(
       waypoints, ac2);

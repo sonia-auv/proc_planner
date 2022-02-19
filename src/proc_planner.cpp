@@ -5,7 +5,7 @@
 // File: proc_planner.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 09-Feb-2022 14:06:20
+// C/C++ source code generated on  : 19-Feb-2022 14:46:56
 //
 
 // Include Files
@@ -63,6 +63,7 @@ void proc_planner()
   coder::array<sonia_common_AddPoseStruct_T, 1U> Maddposemsg_Pose;
   coder::array<sonia_common_AddPoseStruct_T, 1U> t3_Pose;
   coder::array<double, 2U> c_TG;
+  coder::array<double, 2U> d_TG;
   coder::array<double, 1U> b_TG;
   coder::array<char, 2U> in;
   coder::array<char, 2U> parameterName;
@@ -367,7 +368,12 @@ void proc_planner()
         for (i = 0; i <= loop_ub; i++) {
           b_TG[i] = TG.timeList[i];
         }
-        trajObj.init(c_TG, b_TG, 1.0 / TG.param.ts, &obj);
+        d_TG.set_size(1, TG.courseList.size(1));
+        loop_ub = TG.courseList.size(0) * TG.courseList.size(1) - 1;
+        for (i = 0; i <= loop_ub; i++) {
+          d_TG[i] = TG.courseList[i];
+        }
+        trajObj.init(c_TG, b_TG, 1.0 / TG.param.ts, &obj, d_TG);
         //  Initialiser le message trajectoire.
         trajectory_msgs_MultiDOFJointTrajectoryPointStruct(&trajMsg);
         //  message point

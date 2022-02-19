@@ -5,15 +5,15 @@
 // File: TrajectoryGenerator.cpp
 //
 // MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 09-Feb-2022 14:06:20
+// C/C++ source code generated on  : 19-Feb-2022 14:46:56
 //
 
 // Include Files
 #include "TrajectoryGenerator.h"
-#include "norm.h"
 #include "proc_planner_internal_types.h"
 #include "proc_planner_rtwutil.h"
 #include "proc_planner_types.h"
+#include "quat2eul.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <cmath>
@@ -44,19 +44,18 @@ TrajectoryGenerator *TrajectoryGenerator::init(
     double icMsg_Orientation_Z, double icMsg_Orientation_W)
 {
   TrajectoryGenerator *this_;
-  double qRel[4];
-  double c[3];
-  double s[3];
+  double q[4];
+  double b_dv[3];
+  double eul[3];
   double b_d;
   double d;
-  double q_idx_0;
-  double q_idx_1;
-  double q_idx_2;
-  double q_idx_3;
-  double q_tmp;
+  double r_idx_1;
   double r_idx_2;
   double r_idx_3;
-  double vl;
+  double s_idx_0;
+  double s_idx_1;
+  double s_idx_2;
+  double scale;
   int b_i;
   int b_this;
   int i;
@@ -100,6 +99,11 @@ TrajectoryGenerator *TrajectoryGenerator::init(
   for (i = 0; i < idx; i++) {
     this_->timeList[i] = 0.0;
   }
+  idx = static_cast<int>(this_->n);
+  this_->courseList.set_size(1, idx);
+  for (i = 0; i < idx; i++) {
+    this_->courseList[i] = 0.0;
+  }
   //  Initialiser les parametres
   this_->param.ts = 0.1;
   this_->param.amax = param_amax;
@@ -121,22 +125,30 @@ TrajectoryGenerator *TrajectoryGenerator::init(
   this_->quatList[this_->quatList.size(0) * 2] = icMsg_Orientation_Y;
   this_->quatList[this_->quatList.size(0) * 3] = icMsg_Orientation_Z;
   this_->timeList[0] = 0.0;
+  q[0] = this_->quatList[0];
+  q[1] = this_->quatList[this_->quatList.size(0)];
+  q[2] = this_->quatList[this_->quatList.size(0) * 2];
+  q[3] = this_->quatList[this_->quatList.size(0) * 3];
+  coder::quat2eul(q, b_dv);
+  eul[0] = 57.295779513082323 * b_dv[0];
+  this_->courseList[0] = eul[0];
   //  Copier le point 2 fois pour forcé accInit a 0.
-  s[0] = this_->pointList[0];
-  s[1] = this_->pointList[this_->pointList.size(0)];
-  s[2] = this_->pointList[this_->pointList.size(0) * 2];
-  this_->pointList[1] = s[0];
-  this_->pointList[this_->pointList.size(0) + 1] = s[1];
-  this_->pointList[this_->pointList.size(0) * 2 + 1] = s[2];
-  q_idx_0 = this_->quatList[0];
-  q_idx_1 = this_->quatList[this_->quatList.size(0)];
-  q_idx_2 = this_->quatList[this_->quatList.size(0) * 2];
-  q_idx_3 = this_->quatList[this_->quatList.size(0) * 3];
-  this_->quatList[1] = q_idx_0;
-  this_->quatList[this_->quatList.size(0) + 1] = q_idx_1;
-  this_->quatList[this_->quatList.size(0) * 2 + 1] = q_idx_2;
-  this_->quatList[this_->quatList.size(0) * 3 + 1] = q_idx_3;
+  s_idx_0 = this_->pointList[0];
+  s_idx_1 = this_->pointList[this_->pointList.size(0)];
+  s_idx_2 = this_->pointList[this_->pointList.size(0) * 2];
+  this_->pointList[1] = s_idx_0;
+  this_->pointList[this_->pointList.size(0) + 1] = s_idx_1;
+  this_->pointList[this_->pointList.size(0) * 2 + 1] = s_idx_2;
+  q[0] = this_->quatList[0];
+  q[1] = this_->quatList[this_->quatList.size(0)];
+  q[2] = this_->quatList[this_->quatList.size(0) * 2];
+  q[3] = this_->quatList[this_->quatList.size(0) * 3];
+  this_->quatList[1] = q[0];
+  this_->quatList[this_->quatList.size(0) + 1] = q[1];
+  this_->quatList[this_->quatList.size(0) * 2 + 1] = q[2];
+  this_->quatList[this_->quatList.size(0) * 3 + 1] = q[3];
   this_->timeList[1] = this_->param.ts;
+  this_->courseList[1] = eul[0];
   //  Process le message addpose
   // ==================================================================
   //  Fonction qui interprete les waypoints reçu par ROS
@@ -146,240 +158,302 @@ TrajectoryGenerator *TrajectoryGenerator::init(
   do {
     exitg1 = 0;
     if (b_i <= static_cast<int>(d) - 1) {
+      bool guard1{false};
       //  pour chaques waypoints
       //  transformer les angle d'euler quaternions
-      s[0] = this_->MAPM.Pose[b_i].Orientation.Z;
-      s[1] = this_->MAPM.Pose[b_i].Orientation.Y;
-      s[2] = this_->MAPM.Pose[b_i].Orientation.X;
-      vl = 0.017453292519943295 * s[0] / 2.0;
-      c[0] = std::cos(vl);
-      vl = std::sin(vl);
-      s[0] = vl;
-      vl = 0.017453292519943295 * s[1] / 2.0;
-      c[1] = std::cos(vl);
-      vl = std::sin(vl);
-      s[1] = vl;
-      vl = 0.017453292519943295 * s[2] / 2.0;
-      c[2] = std::cos(vl);
-      vl = std::sin(vl);
-      b_d = c[0] * c[1];
-      q_tmp = s[0] * s[1];
-      q_idx_0 = b_d * c[2] + q_tmp * vl;
-      q_idx_1 = b_d * vl - q_tmp * c[2];
-      b_d = s[0] * c[1];
-      q_tmp = c[0] * s[1];
-      q_idx_2 = q_tmp * c[2] + b_d * vl;
-      q_idx_3 = b_d * c[2] - q_tmp * vl;
+      s_idx_0 = this_->MAPM.Pose[b_i].Orientation.Z;
+      s_idx_1 = this_->MAPM.Pose[b_i].Orientation.Y;
+      s_idx_2 = this_->MAPM.Pose[b_i].Orientation.X;
+      scale = 0.017453292519943295 * s_idx_0 / 2.0;
+      eul[0] = std::cos(scale);
+      scale = std::sin(scale);
+      s_idx_0 = scale;
+      scale = 0.017453292519943295 * s_idx_1 / 2.0;
+      eul[1] = std::cos(scale);
+      scale = std::sin(scale);
+      s_idx_1 = scale;
+      scale = 0.017453292519943295 * s_idx_2 / 2.0;
+      eul[2] = std::cos(scale);
+      scale = std::sin(scale);
+      s_idx_2 = eul[0] * eul[1];
+      b_d = s_idx_0 * s_idx_1;
+      q[0] = s_idx_2 * eul[2] + b_d * scale;
+      q[1] = s_idx_2 * scale - b_d * eul[2];
+      s_idx_2 = s_idx_0 * eul[1];
+      b_d = eul[0] * s_idx_1;
+      q[2] = b_d * eul[2] + s_idx_2 * scale;
+      q[3] = s_idx_2 * eul[2] - b_d * scale;
       //  cree le vecteur pose
-      c[0] = this_->MAPM.Pose[b_i].Position.X;
-      c[1] = this_->MAPM.Pose[b_i].Position.Y;
-      c[2] = this_->MAPM.Pose[b_i].Position.Z;
+      eul[0] = this_->MAPM.Pose[b_i].Position.X;
+      eul[1] = this_->MAPM.Pose[b_i].Position.Y;
+      eul[2] = this_->MAPM.Pose[b_i].Position.Z;
       //  transformer le point en fonction du frame
+      guard1 = false;
       switch (this_->MAPM.Pose[b_i].Frame) {
       case 0U:
         //  position et angle absolue
-        this_->pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) -
-                         1] = c[0];
-        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           2.0) +
-                          this_->pointList.size(0)) -
-                         1] = c[1];
-        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           2.0) +
-                          this_->pointList.size(0) * 2) -
-                         1] = c[2];
         this_->quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                          2.0) -
-                        1] = q_idx_0;
+                        1] = q[0];
         this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) +
                          this_->quatList.size(0)) -
-                        1] = q_idx_1;
+                        1] = q[1];
         this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) +
                          this_->quatList.size(0) * 2) -
-                        1] = q_idx_2;
+                        1] = q[2];
         this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) +
                          this_->quatList.size(0) * 3) -
-                        1] = q_idx_3;
-        b_i++;
+                        1] = q[3];
+        this_->pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) -
+                         1] = eul[0];
+        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                           2.0) +
+                          this_->pointList.size(0)) -
+                         1] = eul[1];
+        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                           2.0) +
+                          this_->pointList.size(0) * 2) -
+                         1] = eul[2];
+        guard1 = true;
         break;
-      case 1U: {
-        bool dir;
+      case 1U:
         //  position et angle relatif
+        b_d = this_->quatList[static_cast<int>(
+                                  (static_cast<double>(b_i) + 1.0) + 1.0) -
+                              1];
+        r_idx_1 = this_->quatList[(static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                   this_->quatList.size(0)) -
+                                  1];
+        r_idx_2 = this_->quatList[(static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                   this_->quatList.size(0) * 2) -
+                                  1];
+        r_idx_3 = this_->quatList[(static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                   this_->quatList.size(0) * 3) -
+                                  1];
+        //            norm = dot(lq,q);
+        //              % conjuger le quaternion au besoin
+        //              %if  norm > 1 && dir == 0 || norm < 1 && dir == 1
+        //             if  norm < 0  && dir == 0 || norm >= 0 && dir == 1
+        //                  q = quatconj(q);
+        //                  this.lastConj =true;
+        //
+        //              end
+        // ==================================================================
+        //  Fonnction qui retoure le quaternion le plus court/long selon
+        //  l'utilisateur
+        this_->quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                         2.0) -
+                        1] =
+            ((b_d * q[0] - r_idx_1 * q[1]) - r_idx_2 * q[2]) - r_idx_3 * q[3];
+        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) +
+                         this_->quatList.size(0)) -
+                        1] =
+            (b_d * q[1] + q[0] * r_idx_1) + (r_idx_2 * q[3] - q[2] * r_idx_3);
+        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) +
+                         this_->quatList.size(0) * 2) -
+                        1] =
+            (b_d * q[2] + q[0] * r_idx_2) + (q[1] * r_idx_3 - r_idx_1 * q[3]);
+        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) +
+                         this_->quatList.size(0) * 3) -
+                        1] =
+            (b_d * q[3] + q[0] * r_idx_3) + (r_idx_1 * q[2] - q[1] * r_idx_2);
+        q[0] = this_->quatList[static_cast<int>(
+                                   (static_cast<double>(b_i) + 1.0) + 1.0) -
+                               1];
+        q[1] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                this_->quatList.size(0)) -
+                               1];
+        q[2] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                this_->quatList.size(0) * 2) -
+                               1];
+        q[3] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                this_->quatList.size(0) * 3) -
+                               1];
         // =================================================================
         //  Fonction qui tourne un vecteur selon un quaternion.
         //  quaternion partie scalaire
         //  quaternion partie vectoriel
         //  QuatRotate n'est pas compilable
-        vl = 2.0 * ((c[0] * q_idx_1 + c[1] * q_idx_2) + c[2] * q_idx_3);
-        b_d = q_idx_0 * q_idx_0 -
-              ((q_idx_1 * q_idx_1 + q_idx_2 * q_idx_2) + q_idx_3 * q_idx_3);
-        q_tmp = 2.0 * q_idx_0;
-        s[0] =
-            this_->pointList[b_i] + ((vl * q_idx_1 + b_d * c[0]) +
-                                     q_tmp * (q_idx_2 * c[2] - c[1] * q_idx_3));
-        s[1] = this_->pointList[b_i + this_->pointList.size(0)] +
-               ((vl * q_idx_2 + b_d * c[1]) +
-                q_tmp * (c[0] * q_idx_3 - q_idx_1 * c[2]));
-        s[2] = this_->pointList[b_i + this_->pointList.size(0) * 2] +
-               ((vl * q_idx_3 + b_d * c[2]) +
-                q_tmp * (q_idx_1 * c[1] - c[0] * q_idx_2));
+        s_idx_2 = 2.0 * ((eul[0] * q[1] + eul[1] * q[2]) + eul[2] * q[3]);
+        b_d = q[0] * q[0] - ((q[1] * q[1] + q[2] * q[2]) + q[3] * q[3]);
+        scale = 2.0 * q[0];
+        s_idx_0 = this_->pointList[static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) -
+                                   1] +
+                  ((s_idx_2 * q[1] + b_d * eul[0]) +
+                   scale * (q[2] * eul[2] - eul[1] * q[3]));
+        s_idx_1 =
+            this_->pointList[(static_cast<int>(
+                                  (static_cast<double>(b_i) + 1.0) + 1.0) +
+                              this_->pointList.size(0)) -
+                             1] +
+            ((s_idx_2 * q[2] + b_d * eul[1]) +
+             scale * (eul[0] * q[3] - q[1] * eul[2]));
+        s_idx_2 =
+            this_->pointList[(static_cast<int>(
+                                  (static_cast<double>(b_i) + 1.0) + 1.0) +
+                              this_->pointList.size(0) * 2) -
+                             1] +
+            ((s_idx_2 * q[3] + b_d * eul[2]) +
+             scale * (q[1] * eul[1] - eul[0] * q[2]));
         this_->pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) -
-                         1] = s[0];
+                         1] = s_idx_0;
         this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                            2.0) +
                           this_->pointList.size(0)) -
-                         1] = s[1];
+                         1] = s_idx_1;
         this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                            2.0) +
                           this_->pointList.size(0) * 2) -
-                         1] = s[2];
-        b_d = this_->quatList[b_i];
-        q_tmp = this_->quatList[b_i + this_->quatList.size(0)];
-        r_idx_2 = this_->quatList[b_i + this_->quatList.size(0) * 2];
-        r_idx_3 = this_->quatList[b_i + this_->quatList.size(0) * 3];
-        dir = this_->MAPM.Pose[b_i].Rotation;
-        // ==================================================================
-        //  Fonnction qui retoure le quaternion le plus court/long selon
-        //  l'utilisateur
-        vl = ((b_d * q_idx_0 + q_tmp * q_idx_1) + r_idx_2 * q_idx_2) +
-             r_idx_3 * q_idx_3;
-        //  conjuger le quaternion au besoin
-        // if  norm > 1 && dir == 0 || norm < 1 && dir == 1
-        if (((vl < 0.0) && (!dir)) || ((vl >= 0.0) && dir)) {
-          q_idx_0 = -q_idx_0;
-          q_idx_1 = -q_idx_1;
-          q_idx_2 = -q_idx_2;
-          q_idx_3 = -q_idx_3;
-        }
-        this_->quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                         2.0) -
-                        1] =
-            ((b_d * q_idx_0 - q_tmp * q_idx_1) - r_idx_2 * q_idx_2) -
-            r_idx_3 * q_idx_3;
-        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) +
-                         this_->quatList.size(0)) -
-                        1] = (b_d * q_idx_1 + q_idx_0 * q_tmp) +
-                             (r_idx_2 * q_idx_3 - q_idx_2 * r_idx_3);
-        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) +
-                         this_->quatList.size(0) * 2) -
-                        1] = (b_d * q_idx_2 + q_idx_0 * r_idx_2) +
-                             (q_idx_1 * r_idx_3 - q_tmp * q_idx_3);
-        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) +
-                         this_->quatList.size(0) * 3) -
-                        1] = (b_d * q_idx_3 + q_idx_0 * r_idx_3) +
-                             (q_tmp * q_idx_2 - q_idx_1 * r_idx_2);
-        b_i++;
-      } break;
+                         1] = s_idx_2;
+        guard1 = true;
+        break;
       case 2U:
         //  position relatif et angle absolue
+        this_->quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                         2.0) -
+                        1] = q[0];
+        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) +
+                         this_->quatList.size(0)) -
+                        1] = q[1];
+        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) +
+                         this_->quatList.size(0) * 2) -
+                        1] = q[2];
+        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) +
+                         this_->quatList.size(0) * 3) -
+                        1] = q[3];
+        q[0] = this_->quatList[static_cast<int>(
+                                   (static_cast<double>(b_i) + 1.0) + 1.0) -
+                               1];
+        q[1] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                this_->quatList.size(0)) -
+                               1];
+        q[2] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                this_->quatList.size(0) * 2) -
+                               1];
+        q[3] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                this_->quatList.size(0) * 3) -
+                               1];
         // =================================================================
         //  Fonction qui tourne un vecteur selon un quaternion.
         //  quaternion partie scalaire
         //  quaternion partie vectoriel
         //  QuatRotate n'est pas compilable
-        vl = 2.0 * ((c[0] * q_idx_1 + c[1] * q_idx_2) + c[2] * q_idx_3);
-        b_d = q_idx_0 * q_idx_0 -
-              ((q_idx_1 * q_idx_1 + q_idx_2 * q_idx_2) + q_idx_3 * q_idx_3);
-        q_tmp = 2.0 * q_idx_0;
-        s[0] =
-            this_->pointList[b_i] + ((vl * q_idx_1 + b_d * c[0]) +
-                                     q_tmp * (q_idx_2 * c[2] - c[1] * q_idx_3));
-        s[1] = this_->pointList[b_i + this_->pointList.size(0)] +
-               ((vl * q_idx_2 + b_d * c[1]) +
-                q_tmp * (c[0] * q_idx_3 - q_idx_1 * c[2]));
-        s[2] = this_->pointList[b_i + this_->pointList.size(0) * 2] +
-               ((vl * q_idx_3 + b_d * c[2]) +
-                q_tmp * (q_idx_1 * c[1] - c[0] * q_idx_2));
+        s_idx_2 = 2.0 * ((eul[0] * q[1] + eul[1] * q[2]) + eul[2] * q[3]);
+        b_d = q[0] * q[0] - ((q[1] * q[1] + q[2] * q[2]) + q[3] * q[3]);
+        scale = 2.0 * q[0];
+        s_idx_0 = this_->pointList[static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) -
+                                   1] +
+                  ((s_idx_2 * q[1] + b_d * eul[0]) +
+                   scale * (q[2] * eul[2] - eul[1] * q[3]));
+        s_idx_1 =
+            this_->pointList[(static_cast<int>(
+                                  (static_cast<double>(b_i) + 1.0) + 1.0) +
+                              this_->pointList.size(0)) -
+                             1] +
+            ((s_idx_2 * q[2] + b_d * eul[1]) +
+             scale * (eul[0] * q[3] - q[1] * eul[2]));
+        s_idx_2 =
+            this_->pointList[(static_cast<int>(
+                                  (static_cast<double>(b_i) + 1.0) + 1.0) +
+                              this_->pointList.size(0) * 2) -
+                             1] +
+            ((s_idx_2 * q[3] + b_d * eul[2]) +
+             scale * (q[1] * eul[1] - eul[0] * q[2]));
         this_->pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) -
-                         1] = s[0];
+                         1] = s_idx_0;
         this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                            2.0) +
                           this_->pointList.size(0)) -
-                         1] = s[1];
+                         1] = s_idx_1;
         this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                            2.0) +
                           this_->pointList.size(0) * 2) -
-                         1] = s[2];
-        this_->quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                         2.0) -
-                        1] = q_idx_0;
-        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) +
-                         this_->quatList.size(0)) -
-                        1] = q_idx_1;
-        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) +
-                         this_->quatList.size(0) * 2) -
-                        1] = q_idx_2;
-        this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) +
-                         this_->quatList.size(0) * 3) -
-                        1] = q_idx_3;
-        b_i++;
+                         1] = s_idx_2;
+        guard1 = true;
         break;
-      case 3U: {
-        bool dir;
+      case 3U:
         //  position absolue et angle relatif
-        this_->pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                          2.0) -
-                         1] = c[0];
-        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           2.0) +
-                          this_->pointList.size(0)) -
-                         1] = c[1];
-        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
-                                           2.0) +
-                          this_->pointList.size(0) * 2) -
-                         1] = c[2];
-        b_d = this_->quatList[b_i];
-        q_tmp = this_->quatList[b_i + this_->quatList.size(0)];
-        r_idx_2 = this_->quatList[b_i + this_->quatList.size(0) * 2];
-        r_idx_3 = this_->quatList[b_i + this_->quatList.size(0) * 3];
-        dir = this_->MAPM.Pose[b_i].Rotation;
+        b_d = this_->quatList[static_cast<int>(
+                                  (static_cast<double>(b_i) + 1.0) + 1.0) -
+                              1];
+        r_idx_1 = this_->quatList[(static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                   this_->quatList.size(0)) -
+                                  1];
+        r_idx_2 = this_->quatList[(static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                   this_->quatList.size(0) * 2) -
+                                  1];
+        r_idx_3 = this_->quatList[(static_cast<int>(
+                                       (static_cast<double>(b_i) + 1.0) + 1.0) +
+                                   this_->quatList.size(0) * 3) -
+                                  1];
+        //            norm = dot(lq,q);
+        //              % conjuger le quaternion au besoin
+        //              %if  norm > 1 && dir == 0 || norm < 1 && dir == 1
+        //             if  norm < 0  && dir == 0 || norm >= 0 && dir == 1
+        //                  q = quatconj(q);
+        //                  this.lastConj =true;
+        //
+        //              end
         // ==================================================================
         //  Fonnction qui retoure le quaternion le plus court/long selon
         //  l'utilisateur
-        vl = ((b_d * q_idx_0 + q_tmp * q_idx_1) + r_idx_2 * q_idx_2) +
-             r_idx_3 * q_idx_3;
-        //  conjuger le quaternion au besoin
-        // if  norm > 1 && dir == 0 || norm < 1 && dir == 1
-        if (((vl < 0.0) && (!dir)) || ((vl >= 0.0) && dir)) {
-          q_idx_0 = -q_idx_0;
-          q_idx_1 = -q_idx_1;
-          q_idx_2 = -q_idx_2;
-          q_idx_3 = -q_idx_3;
-        }
         this_->quatList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                          2.0) -
                         1] =
-            ((b_d * q_idx_0 - q_tmp * q_idx_1) - r_idx_2 * q_idx_2) -
-            r_idx_3 * q_idx_3;
+            ((b_d * q[0] - r_idx_1 * q[1]) - r_idx_2 * q[2]) - r_idx_3 * q[3];
         this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) +
                          this_->quatList.size(0)) -
-                        1] = (b_d * q_idx_1 + q_idx_0 * q_tmp) +
-                             (r_idx_2 * q_idx_3 - q_idx_2 * r_idx_3);
+                        1] =
+            (b_d * q[1] + q[0] * r_idx_1) + (r_idx_2 * q[3] - q[2] * r_idx_3);
         this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) +
                          this_->quatList.size(0) * 2) -
-                        1] = (b_d * q_idx_2 + q_idx_0 * r_idx_2) +
-                             (q_idx_1 * r_idx_3 - q_tmp * q_idx_3);
+                        1] =
+            (b_d * q[2] + q[0] * r_idx_2) + (q[1] * r_idx_3 - r_idx_1 * q[3]);
         this_->quatList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
                                           2.0) +
                          this_->quatList.size(0) * 3) -
-                        1] = (b_d * q_idx_3 + q_idx_0 * r_idx_3) +
-                             (q_tmp * q_idx_2 - q_idx_1 * r_idx_2);
-        b_i++;
-      } break;
+                        1] =
+            (b_d * q[3] + q[0] * r_idx_3) + (r_idx_1 * q[2] - q[1] * r_idx_2);
+        this_->pointList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                          2.0) -
+                         1] = eul[0];
+        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                           2.0) +
+                          this_->pointList.size(0)) -
+                         1] = eul[1];
+        this_->pointList[(static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                           2.0) +
+                          this_->pointList.size(0) * 2) -
+                         1] = eul[2];
+        guard1 = true;
+        break;
       default:
         //  Le referentiel n'est pas valide
         this_->status = false;
@@ -388,27 +462,56 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         exitg1 = 1;
         break;
       }
+      if (guard1) {
+        //  determiner le yaw pour le vecteur course
+        q[0] = this_->quatList[static_cast<int>(
+                                   (static_cast<double>(b_i) + 1.0) + 2.0) -
+                               1];
+        q[1] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 2.0) +
+                                this_->quatList.size(0)) -
+                               1];
+        q[2] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 2.0) +
+                                this_->quatList.size(0) * 2) -
+                               1];
+        q[3] = this_->quatList[(static_cast<int>(
+                                    (static_cast<double>(b_i) + 1.0) + 2.0) +
+                                this_->quatList.size(0) * 3) -
+                               1];
+        coder::quat2eul(q, b_dv);
+        eul[0] = 57.295779513082323 * b_dv[0];
+        if (eul[0] < 0.0) {
+          eul[0] += 360.0;
+        }
+        this_->courseList[static_cast<int>((static_cast<double>(b_i) + 1.0) +
+                                           2.0) -
+                          1] = eul[0];
+        b_i++;
+      }
     } else {
       //  Copier le dernier waypoint 2 fois pour éviter un comportement
       //  du generateur de trajecteur
       idx = this_->pointList.size(0) - 2;
       b_this = this_->pointList.size(0) - 1;
-      s[0] = this_->pointList[idx];
-      s[1] = this_->pointList[idx + this_->pointList.size(0)];
-      s[2] = this_->pointList[idx + this_->pointList.size(0) * 2];
-      this_->pointList[b_this] = s[0];
-      this_->pointList[b_this + this_->pointList.size(0)] = s[1];
-      this_->pointList[b_this + this_->pointList.size(0) * 2] = s[2];
+      s_idx_0 = this_->pointList[idx];
+      s_idx_1 = this_->pointList[idx + this_->pointList.size(0)];
+      s_idx_2 = this_->pointList[idx + this_->pointList.size(0) * 2];
+      this_->pointList[b_this] = s_idx_0;
+      this_->pointList[b_this + this_->pointList.size(0)] = s_idx_1;
+      this_->pointList[b_this + this_->pointList.size(0) * 2] = s_idx_2;
       idx = this_->quatList.size(0) - 2;
       b_this = this_->quatList.size(0) - 1;
-      q_idx_0 = this_->quatList[idx];
-      q_idx_1 = this_->quatList[idx + this_->quatList.size(0)];
-      q_idx_2 = this_->quatList[idx + this_->quatList.size(0) * 2];
-      q_idx_3 = this_->quatList[idx + this_->quatList.size(0) * 3];
-      this_->quatList[b_this] = q_idx_0;
-      this_->quatList[b_this + this_->quatList.size(0)] = q_idx_1;
-      this_->quatList[b_this + this_->quatList.size(0) * 2] = q_idx_2;
-      this_->quatList[b_this + this_->quatList.size(0) * 3] = q_idx_3;
+      q[0] = this_->quatList[idx];
+      q[1] = this_->quatList[idx + this_->quatList.size(0)];
+      q[2] = this_->quatList[idx + this_->quatList.size(0) * 2];
+      q[3] = this_->quatList[idx + this_->quatList.size(0) * 3];
+      this_->quatList[b_this] = q[0];
+      this_->quatList[b_this + this_->quatList.size(0)] = q[1];
+      this_->quatList[b_this + this_->quatList.size(0) * 2] = q[2];
+      this_->quatList[b_this + this_->quatList.size(0) * 3] = q[3];
+      this_->courseList[this_->courseList.size(1) - 1] =
+          this_->courseList[this_->courseList.size(1) - 2];
       exitg1 = 1;
     }
   } while (exitg1 == 0);
@@ -423,50 +526,102 @@ TrajectoryGenerator *TrajectoryGenerator::init(
       int k;
       //  pour chaques waypoints
       //  Trouver la distance Eucledienne entre 2 points
-      s[0] = this_->pointList[b_i + 1] - this_->pointList[b_i];
-      s[1] = this_->pointList[(b_i + this_->pointList.size(0)) + 1] -
-             this_->pointList[b_i + this_->pointList.size(0)];
-      s[2] = this_->pointList[(b_i + this_->pointList.size(0) * 2) + 1] -
-             this_->pointList[b_i + this_->pointList.size(0) * 2];
-      b_d = coder::b_norm(s);
+      eul[0] = this_->pointList[b_i + 1] - this_->pointList[b_i];
+      eul[1] = this_->pointList[(b_i + this_->pointList.size(0)) + 1] -
+               this_->pointList[b_i + this_->pointList.size(0)];
+      eul[2] = this_->pointList[(b_i + this_->pointList.size(0) * 2) + 1] -
+               this_->pointList[b_i + this_->pointList.size(0) * 2];
+      scale = 3.3121686421112381E-170;
+      s_idx_0 = std::abs(eul[0]);
+      if (s_idx_0 > 3.3121686421112381E-170) {
+        b_d = 1.0;
+        scale = s_idx_0;
+      } else {
+        s_idx_1 = s_idx_0 / 3.3121686421112381E-170;
+        b_d = s_idx_1 * s_idx_1;
+      }
+      s_idx_0 = std::abs(eul[1]);
+      if (s_idx_0 > scale) {
+        s_idx_1 = scale / s_idx_0;
+        b_d = b_d * s_idx_1 * s_idx_1 + 1.0;
+        scale = s_idx_0;
+      } else {
+        s_idx_1 = s_idx_0 / scale;
+        b_d += s_idx_1 * s_idx_1;
+      }
+      s_idx_0 = std::abs(eul[2]);
+      if (s_idx_0 > scale) {
+        s_idx_1 = scale / s_idx_0;
+        b_d = b_d * s_idx_1 * s_idx_1 + 1.0;
+        scale = s_idx_0;
+      } else {
+        s_idx_1 = s_idx_0 / scale;
+        b_d += s_idx_1 * s_idx_1;
+      }
+      b_d = scale * std::sqrt(b_d);
       //  Déterminer le temps selon aMax
-      vl = this_->param.amax;
-      vl = std::sqrt(vl);
-      tl = 4.0 * std::sqrt(3.0 * b_d) / (3.0 * vl);
+      s_idx_2 = this_->param.amax;
+      s_idx_2 = std::sqrt(s_idx_2);
+      tl = 4.0 * std::sqrt(3.0 * b_d) / (3.0 * s_idx_2);
       //  Déterminer la vitesse maximum de la trajectoire
-      vl = this_->param.amax * tl / 4.0;
+      s_idx_2 = this_->param.amax * tl / 4.0;
       //  Si la vitesse est plus grande que la vitesse maximum
-      if (vl > this_->param.vlmax) {
+      if (s_idx_2 > this_->param.vlmax) {
         //  Calculer le temps selon vmax
         tl = 4.0 * b_d / (3.0 * this_->param.vlmax);
       }
       //  Déterminer l'angle entre les 2 quaternions
-      q_idx_0 = this_->quatList[b_i];
-      q_idx_1 = this_->quatList[b_i + this_->quatList.size(0)];
-      q_idx_2 = this_->quatList[b_i + this_->quatList.size(0) * 2];
-      q_idx_3 = this_->quatList[b_i + this_->quatList.size(0) * 3];
-      q_idx_1 = -q_idx_1;
-      q_idx_2 = -q_idx_2;
-      q_idx_3 = -q_idx_3;
+      q[0] = this_->quatList[b_i];
+      q[1] = this_->quatList[b_i + this_->quatList.size(0)];
+      q[2] = this_->quatList[b_i + this_->quatList.size(0) * 2];
+      q[3] = this_->quatList[b_i + this_->quatList.size(0) * 3];
+      q[1] = -q[1];
+      q[2] = -q[2];
+      q[3] = -q[3];
       b_d = this_->quatList[b_i + 1];
-      q_tmp = this_->quatList[(b_i + this_->quatList.size(0)) + 1];
+      r_idx_1 = this_->quatList[(b_i + this_->quatList.size(0)) + 1];
       r_idx_2 = this_->quatList[(b_i + this_->quatList.size(0) * 2) + 1];
       r_idx_3 = this_->quatList[(b_i + this_->quatList.size(0) * 3) + 1];
-      qRel[0] = ((q_idx_0 * b_d - q_idx_1 * q_tmp) - q_idx_2 * r_idx_2) -
-                q_idx_3 * r_idx_3;
-      qRel[1] = (q_idx_0 * q_tmp + b_d * q_idx_1) +
-                (q_idx_2 * r_idx_3 - r_idx_2 * q_idx_3);
-      qRel[2] = (q_idx_0 * r_idx_2 + b_d * q_idx_2) +
-                (q_tmp * q_idx_3 - q_idx_1 * r_idx_3);
-      qRel[3] = (q_idx_0 * r_idx_3 + b_d * q_idx_3) +
-                (q_idx_1 * r_idx_2 - q_tmp * q_idx_2);
       //  Déterminer le temps angulaire
-      vl = 2.0 *
-           rt_atan2d_snf(coder::b_norm(*(double(*)[3]) & qRel[1]), qRel[0]) /
-           this_->param.vamax;
-      c[0] = tl;
-      c[1] = vl;
-      c[2] = this_->param.ts;
+      scale = 3.3121686421112381E-170;
+      s_idx_0 = std::abs((q[0] * r_idx_1 + b_d * q[1]) +
+                         (q[2] * r_idx_3 - r_idx_2 * q[3]));
+      if (s_idx_0 > 3.3121686421112381E-170) {
+        s_idx_2 = 1.0;
+        scale = s_idx_0;
+      } else {
+        s_idx_1 = s_idx_0 / 3.3121686421112381E-170;
+        s_idx_2 = s_idx_1 * s_idx_1;
+      }
+      s_idx_0 = std::abs((q[0] * r_idx_2 + b_d * q[2]) +
+                         (r_idx_1 * q[3] - q[1] * r_idx_3));
+      if (s_idx_0 > scale) {
+        s_idx_1 = scale / s_idx_0;
+        s_idx_2 = s_idx_2 * s_idx_1 * s_idx_1 + 1.0;
+        scale = s_idx_0;
+      } else {
+        s_idx_1 = s_idx_0 / scale;
+        s_idx_2 += s_idx_1 * s_idx_1;
+      }
+      s_idx_0 = std::abs((q[0] * r_idx_3 + b_d * q[3]) +
+                         (q[1] * r_idx_2 - r_idx_1 * q[2]));
+      if (s_idx_0 > scale) {
+        s_idx_1 = scale / s_idx_0;
+        s_idx_2 = s_idx_2 * s_idx_1 * s_idx_1 + 1.0;
+        scale = s_idx_0;
+      } else {
+        s_idx_1 = s_idx_0 / scale;
+        s_idx_2 += s_idx_1 * s_idx_1;
+      }
+      s_idx_2 = scale * std::sqrt(s_idx_2);
+      s_idx_2 = 2.0 *
+                rt_atan2d_snf(s_idx_2,
+                              ((q[0] * b_d - q[1] * r_idx_1) - q[2] * r_idx_2) -
+                                  q[3] * r_idx_3) /
+                this_->param.vamax;
+      eul[0] = tl;
+      eul[1] = s_idx_2;
+      eul[2] = this_->param.ts;
       if (!std::isnan(tl)) {
         idx = 1;
       } else {
@@ -475,7 +630,7 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         k = 2;
         exitg2 = false;
         while ((!exitg2) && (k <= 3)) {
-          if (!std::isnan(c[k - 1])) {
+          if (!std::isnan(eul[k - 1])) {
             idx = k;
             exitg2 = true;
           } else {
@@ -484,10 +639,10 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         }
       }
       if (idx != 0) {
-        tl = c[idx - 1];
+        tl = eul[idx - 1];
         b_this = idx + 1;
         for (k = b_this; k < 4; k++) {
-          d = c[k - 1];
+          d = eul[k - 1];
           if (tl < d) {
             tl = d;
           }
@@ -496,9 +651,9 @@ TrajectoryGenerator *TrajectoryGenerator::init(
       this_->timeList[b_i + 1] = this_->timeList[b_i] + tl;
     }
     //  Déterminer le nombre de points
-    vl = this_->timeList[this_->timeList.size(0) - 1] / this_->param.ts;
-    vl = std::floor(vl);
-    this_->nbPoint = vl;
+    s_idx_2 = this_->timeList[this_->timeList.size(0) - 1] / this_->param.ts;
+    s_idx_2 = std::floor(s_idx_2);
+    this_->nbPoint = s_idx_2;
   }
   return this_;
 }
