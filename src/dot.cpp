@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: dot.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -16,12 +16,32 @@
 
 // Function Definitions
 //
+// Arguments    : const double a[4]
+//                const double b[4]
+// Return Type  : double
+//
+namespace coder {
+double b_dot(const double a[4], const double b[4])
+{
+  return ((a[0] * b[0] + a[1] * b[1]) + a[2] * b[2]) + a[3] * b[3];
+}
+
+//
+// Arguments    : const double a[3]
+//                const double b[3]
+// Return Type  : double
+//
+double dot(const double a[3], const double b[3])
+{
+  return (a[0] * b[0] + a[1] * b[1]) + a[2] * b[2];
+}
+
+//
 // Arguments    : const ::coder::array<double, 2U> &a
 //                const ::coder::array<double, 2U> &b
 //                ::coder::array<double, 1U> &c
 // Return Type  : void
 //
-namespace coder {
 void dot(const ::coder::array<double, 2U> &a,
          const ::coder::array<double, 2U> &b, ::coder::array<double, 1U> &c)
 {
@@ -31,12 +51,9 @@ void dot(const ::coder::array<double, 2U> &a,
   vstride = a.size(0);
   i1 = -1;
   for (int j{0}; j < vstride; j++) {
-    int b_c_tmp;
-    int c_tmp;
     i1++;
-    c_tmp = i1 + vstride;
-    b_c_tmp = i1 + (vstride << 1);
-    c[j] = (a[i1] * b[i1] + a[c_tmp] * b[c_tmp]) + a[b_c_tmp] * b[b_c_tmp];
+    c[j] = (a[i1] * b[i1] + a[i1 + vstride] * b[i1 + vstride]) +
+           a[i1 + (vstride << 1)] * b[i1 + (vstride << 1)];
   }
 }
 

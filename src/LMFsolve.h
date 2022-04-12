@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: LMFsolve.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef LMFSOLVE_H
@@ -31,8 +31,6 @@ namespace internal {
 namespace scenario {
 void LMFsolve(const anonymous_function *FUN, ::coder::array<double, 1U> &x);
 
-void b_LMFsolve(const anonymous_function *FUN, ::coder::array<double, 1U> &x);
-
 void fletcher(double S, double Snew, const ::coder::array<double, 1U> &dx,
               const ::coder::array<double, 1U> &v,
               const ::coder::array<double, 2U> &Jtri, double *lambda,
@@ -50,6 +48,8 @@ void solveDampenedHessian(const ::coder::array<double, 2U> &Jtri, double lambda,
 } // namespace tracking
 } // namespace matlabshared
 } // namespace coder
+void j_binary_expand_op(coder::array<bool, 1U> &in1,
+                        const coder::array<double, 1U> &in2, const int in3[2]);
 
 #endif
 //

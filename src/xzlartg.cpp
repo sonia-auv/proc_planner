@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: xzlartg.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -35,6 +35,7 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn)
   double gs_re;
   double scale;
   double scale_tmp;
+  int count;
   bool guard1{false};
   scale_tmp = std::abs(f.re);
   f2 = std::abs(f.im);
@@ -54,18 +55,21 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn)
   fs_im = f.im;
   gs_re = g.re;
   gs_im = g.im;
+  count = 0;
   guard1 = false;
   if (scale >= 7.4428285367870146E+137) {
     do {
+      count++;
       fs_re *= 1.3435752215134178E-138;
       fs_im *= 1.3435752215134178E-138;
       gs_re *= 1.3435752215134178E-138;
       gs_im *= 1.3435752215134178E-138;
       scale *= 1.3435752215134178E-138;
-    } while (!(scale < 7.4428285367870146E+137));
+    } while ((scale >= 7.4428285367870146E+137) && (count < 20));
     guard1 = true;
   } else if (scale <= 1.3435752215134178E-138) {
-    if ((g.re == 0.0) && (g.im == 0.0)) {
+    if (((g.re == 0.0) && (g.im == 0.0)) ||
+        (std::isnan(g.re) || std::isnan(g.im))) {
       *cs = 1.0;
       sn->re = 0.0;
       sn->im = 0.0;
@@ -76,7 +80,7 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn)
         gs_re *= 7.4428285367870146E+137;
         gs_im *= 7.4428285367870146E+137;
         scale *= 7.4428285367870146E+137;
-      } while (!(scale > 1.3435752215134178E-138));
+      } while (!!(scale <= 1.3435752215134178E-138));
       guard1 = true;
     }
   } else {
@@ -87,7 +91,7 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn)
     f2 = fs_re * fs_re + fs_im * fs_im;
     g2 = gs_re * gs_re + gs_im * gs_im;
     scale = g2;
-    if (1.0 > g2) {
+    if (g2 < 1.0) {
       scale = 1.0;
     }
     if (f2 <= scale * 2.0041683600089728E-292) {
@@ -147,7 +151,7 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn,
   double scale;
   double scale_tmp;
   int count;
-  int rescaledir;
+  signed char rescaledir;
   bool guard1{false};
   scale_tmp = std::abs(f.re);
   f2s = std::abs(f.im);
@@ -178,11 +182,12 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn,
       gs_re *= 1.3435752215134178E-138;
       gs_im *= 1.3435752215134178E-138;
       scale *= 1.3435752215134178E-138;
-    } while (!(scale < 7.4428285367870146E+137));
+    } while ((scale >= 7.4428285367870146E+137) && (count + 1 < 20));
     rescaledir = 1;
     guard1 = true;
   } else if (scale <= 1.3435752215134178E-138) {
-    if ((g.re == 0.0) && (g.im == 0.0)) {
+    if (((g.re == 0.0) && (g.im == 0.0)) ||
+        (std::isnan(g.re) || std::isnan(g.im))) {
       *cs = 1.0;
       sn->re = 0.0;
       sn->im = 0.0;
@@ -195,7 +200,7 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn,
         gs_re *= 7.4428285367870146E+137;
         gs_im *= 7.4428285367870146E+137;
         scale *= 7.4428285367870146E+137;
-      } while (!(scale > 1.3435752215134178E-138));
+      } while (!!(scale <= 1.3435752215134178E-138));
       rescaledir = -1;
       guard1 = true;
     }
@@ -208,7 +213,7 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn,
     f2 = fs_re * fs_re + fs_im * fs_im;
     g2 = gs_re * gs_re + gs_im * gs_im;
     scale = g2;
-    if (1.0 > g2) {
+    if (g2 < 1.0) {
       scale = 1.0;
     }
     if (f2 <= scale * 2.0041683600089728E-292) {
@@ -251,12 +256,12 @@ void xzlartg(const creal_T f, const creal_T g, double *cs, creal_T *sn,
       sn->re = f2s * gs_re - scale * -gs_im;
       sn->im = f2s * -gs_im + scale * gs_re;
       if (rescaledir > 0) {
-        for (rescaledir = 0; rescaledir <= count; rescaledir++) {
+        for (int i{0}; i <= count; i++) {
           r->re *= 7.4428285367870146E+137;
           r->im *= 7.4428285367870146E+137;
         }
       } else if (rescaledir < 0) {
-        for (rescaledir = 0; rescaledir <= count; rescaledir++) {
+        for (int i{0}; i <= count; i++) {
           r->re *= 1.3435752215134178E-138;
           r->im *= 1.3435752215134178E-138;
         }

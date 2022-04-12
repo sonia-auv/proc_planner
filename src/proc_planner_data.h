@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: proc_planner_data.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef PROC_PLANNER_DATA_H
@@ -17,10 +17,10 @@
 #include <cstdlib>
 
 // Variable Declarations
+extern bool newMadpPose;
+extern bool newInitalPose;
 extern double freq;
 extern bool freq_not_empty;
-extern const char cv[32];
-extern const char cv1[25];
 extern bool isInitialized_proc_planner;
 
 #endif

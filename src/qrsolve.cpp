@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: qrsolve.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -37,7 +37,6 @@ void qrsolve(const ::coder::array<double, 2U> &A,
   array<int, 2U> jpvt;
   double atmp;
   double smax;
-  int b_i;
   int i;
   int lastc;
   int m;
@@ -109,7 +108,7 @@ void qrsolve(const ::coder::array<double, 2U> &A,
       vn1[pvt] = d;
       vn2[pvt] = d;
     }
-    for (b_i = 0; b_i < minmn; b_i++) {
+    for (int b_i{0}; b_i < minmn; b_i++) {
       double s;
       int ii;
       int ip1;
@@ -299,26 +298,26 @@ void qrsolve(const ::coder::array<double, 2U> &A,
     if (tau[pvt] != 0.0) {
       smax = work[pvt];
       i = pvt + 2;
-      for (b_i = i; b_i <= m; b_i++) {
+      for (int b_i{i}; b_i <= m; b_i++) {
         smax += b_A[(b_i + b_A.size(0) * pvt) - 1] * work[b_i - 1];
       }
       smax *= tau[pvt];
       if (smax != 0.0) {
         work[pvt] = work[pvt] - smax;
-        for (b_i = i; b_i <= m; b_i++) {
+        for (int b_i{i}; b_i <= m; b_i++) {
           work[b_i - 1] =
               work[b_i - 1] - b_A[(b_i + b_A.size(0) * pvt) - 1] * smax;
         }
       }
     }
   }
-  for (b_i = 0; b_i < rankA; b_i++) {
+  for (int b_i{0}; b_i < rankA; b_i++) {
     Y[jpvt[b_i] - 1] = work[b_i];
   }
   for (pvt = rankA; pvt >= 1; pvt--) {
     i = jpvt[pvt - 1];
     Y[i - 1] = Y[i - 1] / b_A[(pvt + b_A.size(0) * (pvt - 1)) - 1];
-    for (b_i = 0; b_i <= pvt - 2; b_i++) {
+    for (int b_i{0}; b_i <= pvt - 2; b_i++) {
       Y[jpvt[b_i] - 1] =
           Y[jpvt[b_i] - 1] -
           Y[jpvt[pvt - 1] - 1] * b_A[b_i + b_A.size(0) * (pvt - 1)];

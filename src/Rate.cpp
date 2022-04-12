@@ -4,15 +4,14 @@
 // government, commercial, or other organizational use.
 // File: Rate.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
 #include "Rate.h"
 #include "rt_nonfinite.h"
 #include "tic.h"
-#include "toc.h"
 #include "coder_posix_time.h"
 #include "mlroscpp_rate.h"
 #include "ros/ros.h"
@@ -31,37 +30,12 @@ Rate *Rate::init()
   double b_expl_temp;
   double expl_temp;
   obj = this;
-  obj->RateHelper = MATLABRate(1.0);
-  //(obj->RateHelper);
+  obj->RateHelper = MATLABRate_create(1.0);
+  MATLABRate_unused(&obj->RateHelper);
   obj->DesiredRate = 1.0;
   tic(&expl_temp, &b_expl_temp);
   tic(&obj->PreviousPeriod.tv_sec, &obj->PreviousPeriod.tv_nsec);
   return obj;
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void Rate::reset()
-{
-  double b_expl_temp;
-  double expl_temp;
-  //(&RateHelper);
-  this->RateHelper.rate.reset(); //();
-  tic(&expl_temp, &b_expl_temp);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void Rate::waitfor()
-{
-  //(&RateHelper);
-  this->RateHelper.rate.sleep(); //();
-  toc(PreviousPeriod.tv_sec, PreviousPeriod.tv_nsec);
-  tic(&PreviousPeriod.tv_sec, &PreviousPeriod.tv_nsec);
 }
 
 } // namespace ros

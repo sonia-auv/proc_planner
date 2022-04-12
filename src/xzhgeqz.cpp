@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: xzhgeqz.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -61,7 +61,6 @@ void xzhgeqz(const ::coder::array<creal_T, 2U> &A, int ilo, int ihi, int *info,
              ::coder::array<creal_T, 1U> &beta1)
 {
   array<creal_T, 2U> b_A;
-  creal_T b_ascale;
   creal_T ctemp;
   creal_T shift;
   double anorm;
@@ -271,11 +270,12 @@ void xzhgeqz(const ::coder::array<creal_T, 2U> &A, int ilo, int ihi, int *info,
             }
           } else {
             if (goto70) {
+              creal_T b_ascale;
               goto70 = false;
               iiter++;
               if (iiter - div_nzp_s32(iiter) * 10 != 0) {
-                double stemp_im;
-                double stemp_re;
+                double ad22_im;
+                double ad22_re;
                 double t1_im;
                 double t1_im_tmp;
                 double t1_re;
@@ -294,17 +294,17 @@ void xzhgeqz(const ::coder::array<creal_T, 2U> &A, int ilo, int ihi, int *info,
                 anorm = ascale * b_A[ilast + b_A.size(0) * ilast].re;
                 t = ascale * b_A[ilast + b_A.size(0) * ilast].im;
                 if (t == 0.0) {
-                  stemp_re = anorm / bscale;
-                  stemp_im = 0.0;
+                  ad22_re = anorm / bscale;
+                  ad22_im = 0.0;
                 } else if (anorm == 0.0) {
-                  stemp_re = 0.0;
-                  stemp_im = t / bscale;
+                  ad22_re = 0.0;
+                  ad22_im = t / bscale;
                 } else {
-                  stemp_re = anorm / bscale;
-                  stemp_im = t / bscale;
+                  ad22_re = anorm / bscale;
+                  ad22_im = t / bscale;
                 }
-                t1_re = 0.5 * (shift.re + stemp_re);
-                t1_im = 0.5 * (shift.im + stemp_im);
+                t1_re = 0.5 * (shift.re + ad22_re);
+                t1_im = 0.5 * (shift.im + ad22_im);
                 t1_im_tmp = t1_re * t1_im;
                 anorm = ascale * b_A[ilastm1 + b_A.size(0) * ilast].re;
                 t = ascale * b_A[ilastm1 + b_A.size(0) * ilast].im;
@@ -330,8 +330,8 @@ void xzhgeqz(const ::coder::array<creal_T, 2U> &A, int ilo, int ihi, int *info,
                   ssq = anorm / bscale;
                   anorm = t / bscale;
                 }
-                t = shift.re * stemp_re - shift.im * stemp_im;
-                scale = shift.re * stemp_im + shift.im * stemp_re;
+                t = shift.re * ad22_re - shift.im * ad22_im;
+                scale = shift.re * ad22_im + shift.im * ad22_re;
                 shift.re = ((t1_re * t1_re - t1_im * t1_im) +
                             (colscale * ssq - colssq * anorm)) -
                            t;
@@ -339,8 +339,8 @@ void xzhgeqz(const ::coder::array<creal_T, 2U> &A, int ilo, int ihi, int *info,
                             (colscale * anorm + colssq * ssq)) -
                            scale;
                 scalar::b_sqrt(&shift);
-                if ((t1_re - stemp_re) * shift.re +
-                        (t1_im - stemp_im) * shift.im <=
+                if ((t1_re - ad22_re) * shift.re +
+                        (t1_im - ad22_im) * shift.im <=
                     0.0) {
                   shift.re += t1_re;
                   shift.im += t1_im;

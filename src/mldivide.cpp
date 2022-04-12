@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: mldivide.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -41,7 +41,6 @@ void mldivide(const ::coder::array<double, 2U> &A,
     int LDA;
     int b_n;
     int i;
-    int k;
     int n;
     int u0;
     int yk;
@@ -69,7 +68,7 @@ void mldivide(const ::coder::array<double, 2U> &A,
     if (n > 0) {
       ipiv[0] = 1;
       yk = 1;
-      for (k = 2; k <= n; k++) {
+      for (int k{2}; k <= n; k++) {
         yk++;
         ipiv[k - 1] = yk;
       }
@@ -97,7 +96,7 @@ void mldivide(const ::coder::array<double, 2U> &A,
           n = 0;
           if (mmj_tmp > 1) {
             smax = std::abs(b_A[jj]);
-            for (k = 2; k <= mmj_tmp; k++) {
+            for (int k{2}; k <= mmj_tmp; k++) {
               double s;
               s = std::abs(b_A[(b + k) - 1]);
               if (s > smax) {
@@ -111,7 +110,7 @@ void mldivide(const ::coder::array<double, 2U> &A,
           if (n != 0) {
             yk = j + n;
             ipiv[j] = yk + 1;
-            for (k = 0; k < b_n; k++) {
+            for (int k{0}; k < b_n; k++) {
               n = k * LDA;
               jA = j + n;
               smax = b_A[jA];
@@ -150,26 +149,22 @@ void mldivide(const ::coder::array<double, 2U> &A,
         B[i - 1] = smax;
       }
     }
-    if (B.size(0) != 0) {
-      for (k = 0; k < b_n; k++) {
-        n = LDA * k;
-        if (B[k] != 0.0) {
-          i = k + 2;
-          for (yk = i; yk <= b_n; yk++) {
-            B[yk - 1] = B[yk - 1] - B[k] * b_A[(yk + n) - 1];
-          }
+    for (int k{0}; k < b_n; k++) {
+      n = LDA * k;
+      if (B[k] != 0.0) {
+        i = k + 2;
+        for (yk = i; yk <= b_n; yk++) {
+          B[yk - 1] = B[yk - 1] - B[k] * b_A[(yk + n) - 1];
         }
       }
     }
-    if (B.size(0) != 0) {
-      for (k = b_n; k >= 1; k--) {
-        n = LDA * (k - 1);
-        smax = B[k - 1];
-        if (smax != 0.0) {
-          B[k - 1] = smax / b_A[(k + n) - 1];
-          for (yk = 0; yk <= k - 2; yk++) {
-            B[yk] = B[yk] - B[k - 1] * b_A[yk + n];
-          }
+    for (int k{b_n}; k >= 1; k--) {
+      n = LDA * (k - 1);
+      smax = B[k - 1];
+      if (smax != 0.0) {
+        B[k - 1] = smax / b_A[(k + n) - 1];
+        for (yk = 0; yk <= k - 2; yk++) {
+          B[yk] = B[yk] - B[k - 1] * b_A[yk + n];
         }
       }
     }

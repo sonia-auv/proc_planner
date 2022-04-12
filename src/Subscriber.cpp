@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: Subscriber.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -17,7 +17,7 @@
 #include "sonia_common_MultiAddPoseStruct.h"
 #include "coder_array.h"
 #include "mlroscpp_sub.h"
-#include "mutex"
+#include <stdio.h>
 #include <string.h>
 
 // Function Definitions
@@ -27,27 +27,17 @@
 //
 namespace coder {
 namespace ros {
-void b_Subscriber::Subscriber_delete() const
-{
-  delete (SubscriberHelper);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void Subscriber::Subscriber_delete() const
-{
-  delete (SubscriberHelper);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
 void Subscriber::callback()
 {
   MessageCount = get_MessageCount() + 1.0;
+  if (IsInitialized) {
+    //  MultiAddPose (mad) callback
+    newMadpPose = true;
+    printf("INFO : proc planner : Poses received \n");
+    fflush(stdout);
+    printf("INFO : proc planner : Wait for initial pose \n");
+    fflush(stdout);
+  }
 }
 
 //
@@ -57,6 +47,12 @@ void Subscriber::callback()
 void b_Subscriber::callback()
 {
   MessageCount = get_MessageCount() + 1.0;
+  if (IsInitialized && newMadpPose) {
+    //  Initial condition (IC) callback
+    newInitalPose = true;
+    printf("INFO : proc planner : Initial poses received \n");
+    fflush(stdout);
+  }
 }
 
 //
@@ -78,143 +74,49 @@ double b_Subscriber::get_MessageCount() const
 }
 
 //
-// Arguments    : void
-// Return Type  : void
-//
-void b_Subscriber::lock()
-{
-  this->Mutex.lock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void Subscriber::lock()
-{
-  this->Mutex.lock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void Subscriber::matlabCodegenDestructor()
-{
-  if (!matlabCodegenIsDeleted) {
-    matlabCodegenIsDeleted = true;
-    Subscriber_delete();
-  }
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void b_Subscriber::matlabCodegenDestructor()
-{
-  if (!matlabCodegenIsDeleted) {
-    matlabCodegenIsDeleted = true;
-    Subscriber_delete();
-  }
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void Subscriber::unlock()
-{
-  this->Mutex.unlock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-void b_Subscriber::unlock()
-{
-  this->Mutex.unlock(); //(&Mutex);
-}
-
-//
-// Arguments    : void
-// Return Type  : Subscriber
-//
-Subscriber::Subscriber()
-{
-  matlabCodegenIsDeleted = true;
-}
-
-//
-// Arguments    : void
-// Return Type  : b_Subscriber
-//
-b_Subscriber::b_Subscriber()
-{
-  matlabCodegenIsDeleted = true;
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-Subscriber::~Subscriber()
-{
-  matlabCodegenDestructor();
-}
-
-//
-// Arguments    : void
-// Return Type  : void
-//
-b_Subscriber::~b_Subscriber()
-{
-  matlabCodegenDestructor();
-}
-
-//
-// Arguments    : char lastSubMsg_MessageType[18]
-//                geometry_msgs_PointStruct_T *lastSubMsg_Position
-//                geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation
-// Return Type  : void
-//
-void b_Subscriber::get_LatestMessage(
-    char lastSubMsg_MessageType[18],
-    geometry_msgs_PointStruct_T *lastSubMsg_Position,
-    geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation)
-{
-  lock();
-  for (int i{0}; i < 18; i++) {
-    lastSubMsg_MessageType[i] = MsgStruct.MessageType[i];
-  }
-  *lastSubMsg_Position = MsgStruct.Position;
-  *lastSubMsg_Orientation = MsgStruct.Orientation;
-  unlock();
-}
-
-//
-// Arguments    : char lastSubMsg_MessageType[25]
-//                ::coder::array<sonia_common_AddPoseStruct_T, 1U>
-//                &lastSubMsg_Pose
+// Arguments    : ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose
 // Return Type  : void
 //
 void Subscriber::get_LatestMessage(
-    char lastSubMsg_MessageType[25],
-    ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose)
+    ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose) const
 {
-  int i;
   int loop_ub;
-  lock();
-  for (i = 0; i < 25; i++) {
-    lastSubMsg_MessageType[i] = MsgStruct.MessageType[i];
-  }
+  MATLABSUBSCRIBER_lock(SubscriberHelper);
   lastSubMsg_Pose.set_size(MsgStruct.Pose.size(0));
   loop_ub = MsgStruct.Pose.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     lastSubMsg_Pose[i] = MsgStruct.Pose[i];
   }
-  unlock();
+  MATLABSUBSCRIBER_unlock(SubscriberHelper);
+}
+
+//
+// Arguments    : double *lastSubMsg_Position_X
+//                double *lastSubMsg_Position_Y
+//                double *lastSubMsg_Position_Z
+//                double *lastSubMsg_Orientation_X
+//                double *lastSubMsg_Orientation_Y
+//                double *lastSubMsg_Orientation_Z
+//                double *lastSubMsg_Orientation_W
+// Return Type  : void
+//
+void b_Subscriber::get_LatestMessage(double *lastSubMsg_Position_X,
+                                     double *lastSubMsg_Position_Y,
+                                     double *lastSubMsg_Position_Z,
+                                     double *lastSubMsg_Orientation_X,
+                                     double *lastSubMsg_Orientation_Y,
+                                     double *lastSubMsg_Orientation_Z,
+                                     double *lastSubMsg_Orientation_W) const
+{
+  MATLABSUBSCRIBER_lock(SubscriberHelper);
+  *lastSubMsg_Position_X = MsgStruct.Position.X;
+  *lastSubMsg_Position_Y = MsgStruct.Position.Y;
+  *lastSubMsg_Position_Z = MsgStruct.Position.Z;
+  *lastSubMsg_Orientation_X = MsgStruct.Orientation.X;
+  *lastSubMsg_Orientation_Y = MsgStruct.Orientation.Y;
+  *lastSubMsg_Orientation_Z = MsgStruct.Orientation.Z;
+  *lastSubMsg_Orientation_W = MsgStruct.Orientation.W;
+  MATLABSUBSCRIBER_unlock(SubscriberHelper);
 }
 
 //
@@ -223,27 +125,30 @@ void Subscriber::get_LatestMessage(
 //
 Subscriber *Subscriber::init()
 {
+  static const char topic[32]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l',
+                              'a', 'n', 'n', 'e', 'r', '/', 's', 'e',
+                              'n', 'd', '_', 'm', 'u', 'l', 't', 'i',
+                              '_', 'a', 'd', 'd', 'p', 'o', 's', 'e'};
   Subscriber *obj;
   obj = this;
+  obj->IsInitialized = false;
   for (int i{0}; i < 32; i++) {
-    obj->TopicName[i] = cv[i];
+    obj->TopicName[i] = topic[i];
   }
-  void *input;
   obj->BufferSize = 1.0;
-  obj->MessageCount = -1.0;
-  //(&obj->Mutex);
-  obj->lock();
-  obj->unlock();
+  obj->MessageCount = 0.0;
   sonia_common_MultiAddPoseStruct(&obj->MsgStruct);
   auto structPtr = (&obj->MsgStruct);
-  sonia_common::MultiAddPose *msgPtr = nullptr;        //();
-  auto sub = make_subscriber(this, msgPtr, structPtr); //();
-  sub->createSubscriber(&obj->TopicName[0], 32.0, obj->BufferSize);
-  obj->SubscriberHelper = sub; //();
-  input = obj->SubscriberHelper;
-  //(input);
+  obj->SubscriberHelper =
+      std::unique_ptr<MATLABSubscriber<sonia_common::MultiAddPose,
+                                       sonia_common_MultiAddPoseStruct_T>>(
+          new MATLABSubscriber<sonia_common::MultiAddPose,
+                               sonia_common_MultiAddPoseStruct_T>(
+              structPtr, [this] { this->callback(); })); //();
+  MATLABSUBSCRIBER_createSubscriber(obj->SubscriberHelper, &obj->TopicName[0],
+                                    32.0, obj->BufferSize);
   obj->callback();
-  obj->matlabCodegenIsDeleted = false;
+  obj->IsInitialized = true;
   return obj;
 }
 
@@ -253,27 +158,27 @@ Subscriber *Subscriber::init()
 //
 b_Subscriber *b_Subscriber::init()
 {
+  static const char topic[25]{'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n',
+                              'n', 'e', 'r', '/', 'i', 'n', 'i', 't', 'i',
+                              'a', 'l', '_', 'p', 'o', 's', 'e'};
   b_Subscriber *obj;
   obj = this;
+  obj->IsInitialized = false;
   for (int i{0}; i < 25; i++) {
-    obj->TopicName[i] = cv1[i];
+    obj->TopicName[i] = topic[i];
   }
-  void *input;
   obj->BufferSize = 1.0;
-  obj->MessageCount = -1.0;
-  //(&obj->Mutex);
-  obj->lock();
-  obj->unlock();
+  obj->MessageCount = 0.0;
   geometry_msgs_PoseStruct(&obj->MsgStruct);
   auto structPtr = (&obj->MsgStruct);
-  geometry_msgs::Pose *msgPtr = nullptr;               //();
-  auto sub = make_subscriber(this, msgPtr, structPtr); //();
-  sub->createSubscriber(&obj->TopicName[0], 25.0, obj->BufferSize);
-  obj->SubscriberHelper = sub; //();
-  input = obj->SubscriberHelper;
-  //(input);
+  obj->SubscriberHelper = std::unique_ptr<
+      MATLABSubscriber<geometry_msgs::Pose, geometry_msgs_PoseStruct_T>>(
+      new MATLABSubscriber<geometry_msgs::Pose, geometry_msgs_PoseStruct_T>(
+          structPtr, [this] { this->callback(); })); //();
+  MATLABSUBSCRIBER_createSubscriber(obj->SubscriberHelper, &obj->TopicName[0],
+                                    25.0, obj->BufferSize);
   obj->callback();
-  obj->matlabCodegenIsDeleted = false;
+  obj->IsInitialized = true;
   return obj;
 }
 

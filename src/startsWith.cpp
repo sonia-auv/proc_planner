@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: startsWith.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -22,7 +22,7 @@
 namespace coder {
 bool startsWith(const ::coder::array<char, 2U> &str)
 {
-  static const char b_cv[2]{'~', '/'};
+  static const char cv[2]{'~', '/'};
   int endPos;
   int matchPos;
   if (str.size(1) <= 2) {
@@ -36,7 +36,7 @@ bool startsWith(const ::coder::array<char, 2U> &str)
     exitg1 = 0;
     if (matchPos <= endPos) {
       matchPos = 1;
-      while ((matchPos <= 2) && (str[matchPos - 1] == b_cv[matchPos - 1])) {
+      while ((matchPos <= 2) && (str[matchPos - 1] == cv[matchPos - 1])) {
         matchPos++;
       }
       if (matchPos > 2) {
