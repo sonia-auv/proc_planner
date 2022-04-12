@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: xdhseqr.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -27,7 +27,6 @@ namespace internal {
 namespace reflapack {
 int eml_dlahqr(::coder::array<double, 2U> &h)
 {
-  double v[3];
   double aa;
   double ab;
   double ba;
@@ -43,20 +42,21 @@ int eml_dlahqr(::coder::array<double, 2U> &h)
   n = h.size(0);
   ldh = h.size(0);
   info = 0;
-  if ((n != 0) && (1 != n)) {
+  if ((n != 0) && (n != 1)) {
+    double v[3];
     double SMLNUM;
     double itmax;
     int i;
-    int j;
+    int iy;
     bool exitg1;
     v[0] = 0.0;
     v[1] = 0.0;
     v[2] = 0.0;
-    for (j = 0; j <= n - 4; j++) {
-      h[(j + h.size(0) * j) + 2] = 0.0;
-      h[(j + h.size(0) * j) + 3] = 0.0;
+    for (iy = 0; iy <= n - 4; iy++) {
+      h[(iy + h.size(0) * iy) + 2] = 0.0;
+      h[(iy + h.size(0) * iy) + 3] = 0.0;
     }
-    if (1 <= n - 2) {
+    if (n - 2 >= 1) {
       h[(n + h.size(0) * (n - 3)) - 1] = 0.0;
     }
     itmax = 30.0 * std::fmax(10.0, static_cast<double>(n));
@@ -67,17 +67,16 @@ int eml_dlahqr(::coder::array<double, 2U> &h)
     while ((!exitg1) && (i + 1 >= 1)) {
       int L;
       int hoffset;
-      int iy;
+      int its;
       int k;
-      int m;
       int nr;
       bool exitg2;
       bool goto150;
       L = 1;
       goto150 = false;
-      iy = 0;
+      its = 0;
       exitg2 = false;
-      while ((!exitg2) && (iy <= static_cast<int>(itmax))) {
+      while ((!exitg2) && (its <= static_cast<int>(itmax))) {
         bool exitg3;
         k = i;
         exitg3 = false;
@@ -132,14 +131,15 @@ int eml_dlahqr(::coder::array<double, 2U> &h)
           goto150 = true;
           exitg2 = true;
         } else {
-          if (iy == 10) {
+          int m;
+          if (its == 10) {
             s = std::abs(h[(k + h.size(0) * k) + 1]) +
                 std::abs(h[(k + h.size(0) * (k + 1)) + 2]);
             tst = 0.75 * s + h[k + h.size(0) * k];
             aa = -0.4375 * s;
             ab = s;
             bb = tst;
-          } else if (iy == 20) {
+          } else if (its == 20) {
             s = std::abs(h[i + h.size(0) * (i - 1)]) +
                 std::abs(h[(i + h.size(0) * (i - 2)) - 1]);
             tst = 0.75 * s + h[i + h.size(0) * i];
@@ -214,14 +214,16 @@ int eml_dlahqr(::coder::array<double, 2U> &h)
             }
           }
           for (int b_k{m}; b_k <= i; b_k++) {
-            nr = (i - b_k) + 2;
-            if (3 <= nr) {
+            hoffset = (i - b_k) + 2;
+            if (hoffset >= 3) {
               nr = 3;
+            } else {
+              nr = hoffset;
             }
             if (b_k > m) {
               hoffset = (b_k + ldh * (b_k - 2)) - 1;
-              for (j = 0; j < nr; j++) {
-                v[j] = h[j + hoffset];
+              for (iy = 0; iy < nr; iy++) {
+                v[iy] = h[iy + hoffset];
               }
             }
             tst = v[0];
@@ -242,49 +244,50 @@ int eml_dlahqr(::coder::array<double, 2U> &h)
             if (nr == 3) {
               s = v[2];
               tst = ba * v[2];
-              for (j = b_k; j <= n; j++) {
-                aa = (h[(b_k + h.size(0) * (j - 1)) - 1] +
-                      d * h[b_k + h.size(0) * (j - 1)]) +
-                     s * h[(b_k + h.size(0) * (j - 1)) + 1];
-                h[(b_k + h.size(0) * (j - 1)) - 1] =
-                    h[(b_k + h.size(0) * (j - 1)) - 1] - aa * ba;
-                h[b_k + h.size(0) * (j - 1)] =
-                    h[b_k + h.size(0) * (j - 1)] - aa * ab;
-                h[(b_k + h.size(0) * (j - 1)) + 1] =
-                    h[(b_k + h.size(0) * (j - 1)) + 1] - aa * tst;
+              for (iy = b_k; iy <= n; iy++) {
+                aa = (h[(b_k + h.size(0) * (iy - 1)) - 1] +
+                      d * h[b_k + h.size(0) * (iy - 1)]) +
+                     s * h[(b_k + h.size(0) * (iy - 1)) + 1];
+                h[(b_k + h.size(0) * (iy - 1)) - 1] =
+                    h[(b_k + h.size(0) * (iy - 1)) - 1] - aa * ba;
+                h[b_k + h.size(0) * (iy - 1)] =
+                    h[b_k + h.size(0) * (iy - 1)] - aa * ab;
+                h[(b_k + h.size(0) * (iy - 1)) + 1] =
+                    h[(b_k + h.size(0) * (iy - 1)) + 1] - aa * tst;
               }
               if (b_k + 3 <= i + 1) {
                 nr = b_k + 2;
               } else {
                 nr = i;
               }
-              for (j = 0; j <= nr; j++) {
-                aa = (h[j + h.size(0) * (b_k - 1)] +
-                      d * h[j + h.size(0) * b_k]) +
-                     s * h[j + h.size(0) * (b_k + 1)];
-                h[j + h.size(0) * (b_k - 1)] =
-                    h[j + h.size(0) * (b_k - 1)] - aa * ba;
-                h[j + h.size(0) * b_k] = h[j + h.size(0) * b_k] - aa * ab;
-                h[j + h.size(0) * (b_k + 1)] =
-                    h[j + h.size(0) * (b_k + 1)] - aa * tst;
+              for (iy = 0; iy <= nr; iy++) {
+                aa = (h[iy + h.size(0) * (b_k - 1)] +
+                      d * h[iy + h.size(0) * b_k]) +
+                     s * h[iy + h.size(0) * (b_k + 1)];
+                h[iy + h.size(0) * (b_k - 1)] =
+                    h[iy + h.size(0) * (b_k - 1)] - aa * ba;
+                h[iy + h.size(0) * b_k] = h[iy + h.size(0) * b_k] - aa * ab;
+                h[iy + h.size(0) * (b_k + 1)] =
+                    h[iy + h.size(0) * (b_k + 1)] - aa * tst;
               }
             } else if (nr == 2) {
-              for (j = b_k; j <= n; j++) {
-                tst = h[(b_k + h.size(0) * (j - 1)) - 1];
-                aa = tst + d * h[b_k + h.size(0) * (j - 1)];
-                h[(b_k + h.size(0) * (j - 1)) - 1] = tst - aa * ba;
-                h[b_k + h.size(0) * (j - 1)] =
-                    h[b_k + h.size(0) * (j - 1)] - aa * ab;
+              for (iy = b_k; iy <= n; iy++) {
+                tst = h[(b_k + h.size(0) * (iy - 1)) - 1];
+                aa = tst + d * h[b_k + h.size(0) * (iy - 1)];
+                h[(b_k + h.size(0) * (iy - 1)) - 1] = tst - aa * ba;
+                h[b_k + h.size(0) * (iy - 1)] =
+                    h[b_k + h.size(0) * (iy - 1)] - aa * ab;
               }
-              for (j = 0; j <= i; j++) {
-                aa = h[j + h.size(0) * (b_k - 1)] + d * h[j + h.size(0) * b_k];
-                h[j + h.size(0) * (b_k - 1)] =
-                    h[j + h.size(0) * (b_k - 1)] - aa * ba;
-                h[j + h.size(0) * b_k] = h[j + h.size(0) * b_k] - aa * ab;
+              for (iy = 0; iy <= i; iy++) {
+                aa =
+                    h[iy + h.size(0) * (b_k - 1)] + d * h[iy + h.size(0) * b_k];
+                h[iy + h.size(0) * (b_k - 1)] =
+                    h[iy + h.size(0) * (b_k - 1)] - aa * ba;
+                h[iy + h.size(0) * b_k] = h[iy + h.size(0) * b_k] - aa * ab;
               }
             }
           }
-          iy++;
+          its++;
         }
       }
       if (!goto150) {
@@ -306,10 +309,10 @@ int eml_dlahqr(::coder::array<double, 2U> &h)
               iy = i + (i + 1) * ldh;
               for (k = 0; k <= hoffset; k++) {
                 nr = iy + k * ldh;
-                m = nr - 1;
-                tst = rt2r * h[m] + rt1r * h[nr];
-                h[nr] = rt2r * h[nr] - rt1r * h[m];
-                h[m] = tst;
+                its = nr - 1;
+                tst = rt2r * h[its] + rt1r * h[nr];
+                h[nr] = rt2r * h[nr] - rt1r * h[its];
+                h[its] = tst;
               }
             }
           }
@@ -317,10 +320,10 @@ int eml_dlahqr(::coder::array<double, 2U> &h)
             hoffset = (i - 1) * ldh;
             iy = i * ldh;
             for (k = 0; k <= i - 2; k++) {
-              m = iy + k;
+              its = iy + k;
               nr = hoffset + k;
-              tst = rt2r * h[nr] + rt1r * h[m];
-              h[m] = rt2r * h[m] - rt1r * h[nr];
+              tst = rt2r * h[nr] + rt1r * h[its];
+              h[its] = rt2r * h[its] - rt1r * h[nr];
               h[nr] = tst;
             }
           }

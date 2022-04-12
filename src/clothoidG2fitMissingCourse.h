@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: clothoidG2fitMissingCourse.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef CLOTHOIDG2FITMISSINGCOURSE_H
@@ -23,8 +23,13 @@ namespace matlabshared {
 namespace tracking {
 namespace internal {
 namespace scenario {
-void clothoidG2fitMissingCourse(const ::coder::array<double, 2U> &waypoints,
-                                ::coder::array<double, 1U> &course);
+void fillPartitions(const ::coder::array<double, 2U> &waypoints,
+                    ::coder::array<double, 1U> &course,
+                    const ::coder::array<double, 1U> &ibegin,
+                    const ::coder::array<double, 1U> &iend);
+
+void fitCourse(const ::coder::array<double, 2U> &waypoints,
+               ::coder::array<double, 1U> &course);
 
 void fitCourse_anonFcn3(const ::coder::array<double, 2U> &waypoints,
                         const ::coder::array<double, 1U> &course,
@@ -32,11 +37,14 @@ void fitCourse_anonFcn3(const ::coder::array<double, 2U> &waypoints,
                         ::coder::array<double, 1U> &varargout_1,
                         ::coder::array<double, 2U> &varargout_2);
 
-void fitCourse_anonFcn4(const ::coder::array<double, 2U> &waypoints,
-                        const ::coder::array<double, 1U> &course,
-                        const ::coder::array<double, 1U> &x,
-                        ::coder::array<double, 1U> &varargout_1,
-                        ::coder::array<double, 2U> &varargout_2);
+void fitLoopCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
+                            const ::coder::array<double, 1U> &x,
+                            ::coder::array<double, 1U> &varargout_1,
+                            ::coder::array<double, 2U> &varargout_2);
+
+void partitionCourse(const ::coder::array<double, 1U> &course,
+                     ::coder::array<double, 1U> &ibegin,
+                     ::coder::array<double, 1U> &iend);
 
 } // namespace scenario
 } // namespace internal

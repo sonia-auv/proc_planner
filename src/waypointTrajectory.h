@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: waypointTrajectory.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef WAYPOINTTRAJECTORY_H
@@ -19,12 +19,12 @@
 #include <cstdlib>
 
 // Type Definitions
-struct b_struct_T {
+struct c_struct_T {
   coder::array<double, 2U> breaks;
   coder::array<double, 2U> coefs;
 };
 
-struct c_struct_T {
+struct d_struct_T {
   coder::array<double, 2U> breaks;
   coder::array<double, 3U> coefs;
 };
@@ -50,24 +50,26 @@ public:
   array<double, 1U> TimeOfArrival;
   array<double, 2U> Velocities;
   array<double, 1U> Course;
+  bool AutoPitch;
+  bool AutoBank;
   char ReferenceFrame[3];
 
 private:
   int isInitialized;
   quaternion Quaternions;
   array<double, 1U> HorizontalCumulativeDistance;
-  b_struct_T HorizontalDistancePiecewisePolynomial;
-  c_struct_T HorizontalSpeedPiecewisePolynomial;
-  c_struct_T HorizontalAccelerationPiecewisePolynomial;
-  c_struct_T HorizontalJerkPiecewisePolynomial;
+  c_struct_T HorizontalDistancePiecewisePolynomial;
+  d_struct_T HorizontalSpeedPiecewisePolynomial;
+  d_struct_T HorizontalAccelerationPiecewisePolynomial;
+  d_struct_T HorizontalJerkPiecewisePolynomial;
   array<double, 1U> HorizontalCurvatureInitial;
   array<double, 1U> HorizontalCurvatureFinal;
   array<creal_T, 1U> HorizontalInitialPosition;
   array<double, 1U> HorizontalPiecewiseLength;
-  b_struct_T VerticalDistancePiecewisePolynomial;
-  c_struct_T VerticalSpeedPiecewisePolynomial;
-  c_struct_T VerticalAccelerationPiecewisePolynomial;
-  c_struct_T VerticalJerkPiecewisePolynomial;
+  c_struct_T VerticalDistancePiecewisePolynomial;
+  d_struct_T VerticalSpeedPiecewisePolynomial;
+  d_struct_T VerticalAccelerationPiecewisePolynomial;
+  d_struct_T VerticalJerkPiecewisePolynomial;
   double PathDuration;
   array<double, 1U> SegmentTimes;
   array<double, 1U> RadianSlewAngles;

@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: clothoidG1fit2wp.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef CLOTHOIDG1FIT2WP_H
@@ -48,6 +48,10 @@ void clothoidG1fit2wp(const ::coder::array<creal_T, 1U> &z0,
 } // namespace tracking
 } // namespace matlabshared
 } // namespace coder
+void minus(coder::array<double, 1U> &in1, const coder::array<double, 1U> &in2,
+           const coder::array<double, 1U> &in3);
+
+void plus(coder::array<double, 1U> &in1, const coder::array<double, 1U> &in2);
 
 #endif
 //

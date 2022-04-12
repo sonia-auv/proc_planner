@@ -1,4 +1,4 @@
-// Copyright 2020 The MathWorks, Inc.
+// Copyright 2020-2021 The MathWorks, Inc.
 #ifndef _MLROSCPP_PUB_H
 #define _MLROSCPP_PUB_H
 
@@ -6,12 +6,16 @@
 #include <ros/ros.h>
 #include "ros_structmsg_conversion.h" // For struct2msg()
 
+
+#define MATLABPUBLISHER_createPublisher(obj,mlTopic,mlTopicSize,queueSize,latch) obj->createPublisher(mlTopic, mlTopicSize, queueSize, latch)
+#define MATLABPUBLISHER_publish(obj,msgStructPtr) obj->publish(msgStructPtr)
+#define MATLABPUBLISHER_getNumSubscribers(obj) obj->getNumSubscribers()
+
+
 template <class MsgType, class StructType>
 class MATLABPublisher {
   public:
-    MATLABPublisher()
-        : msgPtr_(new MsgType) {
-    }
+    MATLABPublisher() : msgPtr_(new MsgType) {}
 
     void createPublisher(const char* mlTopic, size_t mlTopicSize, uint32_t queueSize, bool latch) {
         std::string topic(mlTopic, mlTopicSize);
@@ -20,9 +24,8 @@ class MATLABPublisher {
         pub_ = nh.advertise<MsgType>(topic, queueSize, latch);
     }
 
-    void publish(StructType msgStruct) {
-        const StructType* structPtr = &msgStruct;
-        struct2msg(msgPtr_.get(), structPtr);
+    void publish(const StructType* msgStructPtr) {
+        struct2msg(msgPtr_.get(), msgStructPtr);
         pub_.publish(*msgPtr_);
     }
     

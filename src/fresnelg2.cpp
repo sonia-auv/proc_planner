@@ -4,307 +4,519 @@
 // government, commercial, or other organizational use.
 // File: fresnelg2.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
 #include "fresnelg2.h"
 #include "fresnel.h"
 #include "proc_planner_data.h"
+#include "repmat.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <cmath>
 #include <string.h>
 
 // Function Declarations
-namespace coder {
-namespace matlabshared {
-namespace tracking {
-namespace internal {
-namespace scenario {
-static void fresnelgzero(const ::coder::array<double, 2U> &x,
-                         const ::coder::array<double, 2U> &dk,
-                         const ::coder::array<double, 2U> &k,
-                         const ::coder::array<double, 2U> &theta,
-                         ::coder::array<creal_T, 1U> &z);
+static void binary_expand_op(creal_T *in1, const coder::array<double, 2U> &in3,
+                             const coder::array<creal_T, 2U> &in4,
+                             const coder::array<creal_T, 2U> &in5,
+                             const coder::array<creal_T, 2U> &in6);
 
-}
-} // namespace internal
-} // namespace tracking
-} // namespace matlabshared
-} // namespace coder
+static void binary_expand_op(coder::array<creal_T, 1U> &in1,
+                             const coder::array<creal_T, 2U> &in2, int in3,
+                             int in4);
+
+static void binary_expand_op(coder::array<creal_T, 1U> &in1,
+                             const coder::array<creal_T, 2U> &in2, int in3);
+
+static void binary_expand_op(coder::array<creal_T, 1U> &in1,
+                             const coder::array<creal_T, 2U> &in2, int in3,
+                             const coder::array<creal_T, 2U> &in4, int in5,
+                             int in6);
+
+static void binary_expand_op(creal_T *in1, const coder::array<creal_T, 1U> &in3,
+                             double in4, const signed char in5[2],
+                             const coder::array<creal_T, 2U> &in6);
+
+static void e_binary_expand_op(creal_T *in1,
+                               const coder::array<double, 2U> &in3,
+                               const coder::array<creal_T, 2U> &in4,
+                               const coder::array<creal_T, 2U> &in5,
+                               const coder::array<creal_T, 2U> &in6);
 
 // Function Definitions
 //
-// Arguments    : const ::coder::array<double, 2U> &x
-//                const ::coder::array<double, 2U> &dk
-//                const ::coder::array<double, 2U> &k
-//                const ::coder::array<double, 2U> &theta
-//                ::coder::array<creal_T, 1U> &z
+// Arguments    : creal_T *in1
+//                const coder::array<double, 2U> &in3
+//                const coder::array<creal_T, 2U> &in4
+//                const coder::array<creal_T, 2U> &in5
+//                const coder::array<creal_T, 2U> &in6
 // Return Type  : void
 //
-namespace coder {
-namespace matlabshared {
-namespace tracking {
-namespace internal {
-namespace scenario {
-static void fresnelgzero(const ::coder::array<double, 2U> &x,
-                         const ::coder::array<double, 2U> &dk,
-                         const ::coder::array<double, 2U> &k,
-                         const ::coder::array<double, 2U> &theta,
-                         ::coder::array<creal_T, 1U> &z)
+static void binary_expand_op(creal_T *in1, const coder::array<double, 2U> &in3,
+                             const coder::array<creal_T, 2U> &in4,
+                             const coder::array<creal_T, 2U> &in5,
+                             const coder::array<creal_T, 2U> &in6)
 {
-  array<creal_T, 2U> A;
-  array<creal_T, 2U> B;
-  array<creal_T, 2U> b_A;
-  array<creal_T, 2U> r1;
-  array<double, 2U> r;
-  double A_re;
-  double ai;
-  double b_r;
-  double b_re_tmp;
-  double re_tmp;
-  int b_k;
-  int iacol_tmp;
-  int ibcol;
-  int ibtile;
-  int jcol;
-  int jtilecol;
-  int ncols;
-  int nx;
-  r.set_size(x.size(0), x.size(1));
-  nx = x.size(0) * x.size(1);
-  for (b_k = 0; b_k < nx; b_k++) {
-    r[b_k] = x[b_k] * x[b_k];
-  }
-  r1.set_size(dk.size(0), dk.size(1));
-  nx = dk.size(0) * dk.size(1);
-  for (jcol = 0; jcol < nx; jcol++) {
-    r1[jcol].re = r[jcol] * (dk[jcol] * 0.0);
-    r1[jcol].im = r[jcol] * (dk[jcol] * 0.5);
-  }
-  A.set_size(r1.size(0), r1.size(1) * 5);
-  nx = r1.size(0);
-  ncols = r1.size(1);
-  for (jtilecol = 0; jtilecol < 5; jtilecol++) {
-    ibtile = jtilecol * (nx * ncols) - 1;
-    for (jcol = 0; jcol < ncols; jcol++) {
-      iacol_tmp = jcol * nx;
-      ibcol = ibtile + iacol_tmp;
-      for (b_k = 0; b_k < nx; b_k++) {
-        A[(ibcol + b_k) + 1] = r1[iacol_tmp + b_k];
-      }
-    }
-  }
-  b_A.set_size(A.size(0), 5);
-  if (A.size(0) != 0) {
-    nx = (A.size(1) != 1);
-    ncols = (A.size(0) != 1);
-    for (b_k = 0; b_k < 5; b_k++) {
-      ibtile = nx * b_k;
-      jcol = b_A.size(0) - 1;
-      for (ibcol = 0; ibcol <= jcol; ibcol++) {
-        iacol_tmp = ncols * ibcol;
-        b_r = A[iacol_tmp + A.size(0) * ibtile].re;
-        ai = A[iacol_tmp + A.size(0) * ibtile].im;
-        if (ai == 0.0) {
-          b_A[ibcol + b_A.size(0) * b_k].re =
-              b_r / (static_cast<double>(b_k) + 1.0);
-          b_A[ibcol + b_A.size(0) * b_k].im = 0.0;
-        } else if (b_r == 0.0) {
-          b_A[ibcol + b_A.size(0) * b_k].re = 0.0;
-          b_A[ibcol + b_A.size(0) * b_k].im =
-              ai / (static_cast<double>(b_k) + 1.0);
-        } else {
-          b_A[ibcol + b_A.size(0) * b_k].re =
-              b_r / (static_cast<double>(b_k) + 1.0);
-          b_A[ibcol + b_A.size(0) * b_k].im =
-              ai / (static_cast<double>(b_k) + 1.0);
-        }
-      }
-    }
-  }
-  if (b_A.size(0) != 0) {
-    for (b_k = 0; b_k < 4; b_k++) {
-      jcol = b_A.size(0);
-      for (ibcol = 0; ibcol < jcol; ibcol++) {
-        b_r = b_A[ibcol + b_A.size(0) * b_k].re;
-        re_tmp = b_A[ibcol + b_A.size(0) * (b_k + 1)].im;
-        ai = b_A[ibcol + b_A.size(0) * b_k].im;
-        b_re_tmp = b_A[ibcol + b_A.size(0) * (b_k + 1)].re;
-        b_A[ibcol + b_A.size(0) * (b_k + 1)].re = b_r * b_re_tmp - ai * re_tmp;
-        b_A[ibcol + b_A.size(0) * (b_k + 1)].im = b_r * re_tmp + ai * b_re_tmp;
-      }
-    }
-  }
-  r1.set_size(k.size(0), k.size(1));
-  nx = k.size(0) * k.size(1);
-  for (jcol = 0; jcol < nx; jcol++) {
-    r1[jcol].re = x[jcol] * (k[jcol] * 0.0);
-    r1[jcol].im = x[jcol] * k[jcol];
-  }
-  A.set_size(r1.size(0), r1.size(1) * 5);
-  nx = r1.size(0);
-  ncols = r1.size(1);
-  for (jtilecol = 0; jtilecol < 5; jtilecol++) {
-    ibtile = jtilecol * (nx * ncols) - 1;
-    for (jcol = 0; jcol < ncols; jcol++) {
-      iacol_tmp = jcol * nx;
-      ibcol = ibtile + iacol_tmp;
-      for (b_k = 0; b_k < nx; b_k++) {
-        A[(ibcol + b_k) + 1] = r1[iacol_tmp + b_k];
-      }
-    }
-  }
-  B.set_size(A.size(0), 5);
-  if (A.size(0) != 0) {
-    nx = (A.size(1) != 1);
-    ncols = (A.size(0) != 1);
-    for (b_k = 0; b_k < 5; b_k++) {
-      ibtile = nx * b_k;
-      jcol = B.size(0) - 1;
-      for (ibcol = 0; ibcol <= jcol; ibcol++) {
-        iacol_tmp = ncols * ibcol;
-        b_r = A[iacol_tmp + A.size(0) * ibtile].re;
-        ai = A[iacol_tmp + A.size(0) * ibtile].im;
-        if (ai == 0.0) {
-          B[ibcol + B.size(0) * b_k].re =
-              b_r / (static_cast<double>(b_k) + 1.0);
-          B[ibcol + B.size(0) * b_k].im = 0.0;
-        } else if (b_r == 0.0) {
-          B[ibcol + B.size(0) * b_k].re = 0.0;
-          B[ibcol + B.size(0) * b_k].im = ai / (static_cast<double>(b_k) + 1.0);
-        } else {
-          B[ibcol + B.size(0) * b_k].re =
-              b_r / (static_cast<double>(b_k) + 1.0);
-          B[ibcol + B.size(0) * b_k].im = ai / (static_cast<double>(b_k) + 1.0);
-        }
-      }
-    }
-  }
-  if (B.size(0) != 0) {
-    for (b_k = 0; b_k < 4; b_k++) {
-      jcol = B.size(0);
-      for (ibcol = 0; ibcol < jcol; ibcol++) {
-        b_r = B[ibcol + B.size(0) * b_k].re;
-        re_tmp = B[ibcol + B.size(0) * (b_k + 1)].im;
-        ai = B[ibcol + B.size(0) * b_k].im;
-        b_re_tmp = B[ibcol + B.size(0) * (b_k + 1)].re;
-        B[ibcol + B.size(0) * (b_k + 1)].re = b_r * b_re_tmp - ai * re_tmp;
-        B[ibcol + B.size(0) * (b_k + 1)].im = b_r * re_tmp + ai * b_re_tmp;
-      }
-    }
-  }
-  if ((x.size(0) == 0) || (x.size(1) == 0)) {
-    ncols = 0;
+  int aux_0_1;
+  int aux_1_1;
+  int aux_2_1;
+  int aux_3_1;
+  int i;
+  int loop_ub;
+  int stride_0_0;
+  int stride_0_1;
+  int stride_1_0;
+  int stride_1_1;
+  int stride_2_0;
+  int stride_2_1;
+  int stride_3_0;
+  int stride_3_1;
+  stride_0_0 = (in3.size(0) != 1);
+  stride_0_1 = (in3.size(1) != 1);
+  stride_1_0 = (in4.size(0) != 1);
+  stride_1_1 = (in4.size(1) != 1);
+  stride_2_0 = (in5.size(0) != 1);
+  stride_2_1 = (in5.size(1) != 1);
+  stride_3_0 = (in6.size(0) != 1);
+  stride_3_1 = (in6.size(1) != 1);
+  aux_0_1 = 0;
+  aux_1_1 = 0;
+  aux_2_1 = 0;
+  aux_3_1 = 0;
+  if (in6.size(1) == 1) {
+    i = in5.size(1);
   } else {
-    nx = x.size(0);
-    ncols = x.size(1);
-    if (nx >= ncols) {
-      ncols = nx;
-    }
+    i = in6.size(1);
   }
-  z.set_size(ncols);
-  for (jcol = 0; jcol < ncols; jcol++) {
-    z[jcol].re = 1.0;
-    z[jcol].im = 0.0;
-  }
-  for (iacol_tmp = 0; iacol_tmp < 5; iacol_tmp++) {
-    ncols = ((iacol_tmp + 1) << 1) + 1;
-    nx = z.size(0);
-    for (jcol = 0; jcol < nx; jcol++) {
-      b_r = b_A[jcol + b_A.size(0) * iacol_tmp].re;
-      ai = b_A[jcol + b_A.size(0) * iacol_tmp].im;
-      if (ai == 0.0) {
-        A_re = b_r / static_cast<double>(ncols);
-        b_r = 0.0;
-      } else if (b_r == 0.0) {
-        A_re = 0.0;
-        b_r = ai / static_cast<double>(ncols);
-      } else {
-        A_re = b_r / static_cast<double>(ncols);
-        b_r = ai / static_cast<double>(ncols);
-      }
-      z[jcol].re = z[jcol].re + A_re;
-      z[jcol].im = z[jcol].im + b_r;
-    }
-  }
-  for (ibcol = 0; ibcol < 5; ibcol++) {
-    nx = z.size(0);
-    for (jcol = 0; jcol < nx; jcol++) {
-      b_r = B[jcol + B.size(0) * ibcol].re;
-      ai = B[jcol + B.size(0) * ibcol].im;
-      if (ai == 0.0) {
-        re_tmp = b_r / ((static_cast<double>(ibcol) + 1.0) + 1.0);
-        b_r = 0.0;
-      } else if (b_r == 0.0) {
-        re_tmp = 0.0;
-        b_r = ai / ((static_cast<double>(ibcol) + 1.0) + 1.0);
-      } else {
-        re_tmp = b_r / ((static_cast<double>(ibcol) + 1.0) + 1.0);
-        b_r = ai / ((static_cast<double>(ibcol) + 1.0) + 1.0);
-      }
-      z[jcol].re = z[jcol].re + re_tmp;
-      z[jcol].im = z[jcol].im + b_r;
-    }
-  }
-  for (iacol_tmp = 0; iacol_tmp < 4; iacol_tmp++) {
-    jcol = (iacol_tmp + 1) << 1;
-    ibtile = 4 - jcol;
-    for (ibcol = 0; ibcol <= ibtile; ibcol++) {
-      ncols = (jcol + ibcol) + 2;
-      nx = z.size(0);
-      for (jtilecol = 0; jtilecol < nx; jtilecol++) {
-        b_r = b_A[jtilecol + b_A.size(0) * iacol_tmp].re;
-        ai = B[jtilecol + B.size(0) * ibcol].im;
-        re_tmp = b_A[jtilecol + b_A.size(0) * iacol_tmp].im;
-        b_re_tmp = B[jtilecol + B.size(0) * ibcol].re;
-        A_re = b_r * b_re_tmp - re_tmp * ai;
-        b_r = b_r * ai + re_tmp * b_re_tmp;
-        if (b_r == 0.0) {
-          A_re /= static_cast<double>(ncols);
-          b_r = 0.0;
-        } else if (A_re == 0.0) {
-          A_re = 0.0;
-          b_r /= static_cast<double>(ncols);
-        } else {
-          A_re /= static_cast<double>(ncols);
-          b_r /= static_cast<double>(ncols);
-        }
-        z[jtilecol].re = z[jtilecol].re + A_re;
-        z[jtilecol].im = z[jtilecol].im + b_r;
-      }
-    }
-  }
-  A.set_size(theta.size(0), theta.size(1));
-  nx = theta.size(0) * theta.size(1);
-  for (jcol = 0; jcol < nx; jcol++) {
-    A[jcol].re = theta[jcol] * 0.0;
-    A[jcol].im = theta[jcol];
-  }
-  nx = A.size(0) * A.size(1);
-  for (b_k = 0; b_k < nx; b_k++) {
-    if (A[b_k].im == 0.0) {
-      A[b_k].re = std::exp(A[b_k].re);
-      A[b_k].im = 0.0;
-    } else if (std::isinf(A[b_k].im) && std::isinf(A[b_k].re) &&
-               (A[b_k].re < 0.0)) {
-      A[b_k].re = 0.0;
-      A[b_k].im = 0.0;
+  if (i == 1) {
+    if (in4.size(1) == 1) {
+      loop_ub = in3.size(1);
     } else {
-      b_r = std::exp(A[b_k].re / 2.0);
-      re_tmp = A[b_k].im;
-      A[b_k].re = b_r * (b_r * std::cos(A[b_k].im));
-      A[b_k].im = b_r * (b_r * std::sin(re_tmp));
+      loop_ub = in4.size(1);
     }
+  } else if (in6.size(1) == 1) {
+    loop_ub = in5.size(1);
+  } else {
+    loop_ub = in6.size(1);
   }
-  nx = z.size(0);
-  for (jcol = 0; jcol < nx; jcol++) {
-    b_r = x[jcol] * z[jcol].re;
-    re_tmp = x[jcol] * z[jcol].im;
-    z[jcol].re = b_r * A[jcol].re - re_tmp * A[jcol].im;
-    z[jcol].im = b_r * A[jcol].im + re_tmp * A[jcol].re;
+  for (i = 0; i < loop_ub; i++) {
+    int b_loop_ub;
+    int i1;
+    if (in6.size(0) == 1) {
+      i1 = in5.size(0);
+    } else {
+      i1 = in6.size(0);
+    }
+    if (i1 == 1) {
+      if (in4.size(0) == 1) {
+        b_loop_ub = in3.size(0);
+      } else {
+        b_loop_ub = in4.size(0);
+      }
+    } else if (in6.size(0) == 1) {
+      b_loop_ub = in5.size(0);
+    } else {
+      b_loop_ub = in6.size(0);
+    }
+    for (i1 = 0; i1 < b_loop_ub; i1++) {
+      double in3_im;
+      double in3_re;
+      double in5_im;
+      double in5_re;
+      int in3_re_tmp;
+      int in5_re_tmp;
+      in3_re_tmp = i1 * stride_1_0;
+      in3_re = in3[i1 * stride_0_0 + in3.size(0) * aux_0_1] *
+               in4[in3_re_tmp + in4.size(0) * aux_1_1].re;
+      in3_im = in3[i1 * stride_0_0 + in3.size(0) * aux_0_1] *
+               in4[in3_re_tmp + in4.size(0) * aux_1_1].im;
+      in3_re_tmp = i1 * stride_2_0;
+      in5_re_tmp = i1 * stride_3_0;
+      in5_re = in5[in3_re_tmp + in5.size(0) * aux_2_1].re -
+               in6[in5_re_tmp + in6.size(0) * aux_3_1].re;
+      in5_im = in5[in3_re_tmp + in5.size(0) * aux_2_1].im -
+               in6[in5_re_tmp + in6.size(0) * aux_3_1].im;
+      in1->re = in3_re * in5_re - in3_im * in5_im;
+      in1->im = -(in3_re * in5_im + in3_im * in5_re);
+    }
+    aux_3_1 += stride_3_1;
+    aux_2_1 += stride_2_1;
+    aux_1_1 += stride_1_1;
+    aux_0_1 += stride_0_1;
+  }
+}
+
+//
+// Arguments    : coder::array<creal_T, 1U> &in1
+//                const coder::array<creal_T, 2U> &in2
+//                int in3
+//                int in4
+// Return Type  : void
+//
+static void binary_expand_op(coder::array<creal_T, 1U> &in1,
+                             const coder::array<creal_T, 2U> &in2, int in3,
+                             int in4)
+{
+  coder::array<creal_T, 1U> b_in1;
+  int i;
+  int loop_ub;
+  int stride_0_0;
+  int stride_1_0;
+  i = in2.size(0);
+  if (i == 1) {
+    stride_0_0 = in1.size(0);
+  } else {
+    stride_0_0 = i;
+  }
+  b_in1.set_size(stride_0_0);
+  stride_0_0 = (in1.size(0) != 1);
+  stride_1_0 = (i != 1);
+  if (i == 1) {
+    loop_ub = in1.size(0);
+  } else {
+    loop_ub = i;
+  }
+  for (i = 0; i < loop_ub; i++) {
+    double ai;
+    double in2_im;
+    double in2_re;
+    int ar_tmp;
+    ar_tmp = i * stride_1_0;
+    in2_im = in2[ar_tmp + in2.size(0) * in3].re;
+    ai = in2[ar_tmp + in2.size(0) * in3].im;
+    if (ai == 0.0) {
+      in2_re = in2_im / static_cast<double>(in4 + 1);
+      in2_im = 0.0;
+    } else if (in2_im == 0.0) {
+      in2_re = 0.0;
+      in2_im = ai / static_cast<double>(in4 + 1);
+    } else {
+      in2_re = in2_im / static_cast<double>(in4 + 1);
+      in2_im = ai / static_cast<double>(in4 + 1);
+    }
+    ar_tmp = i * stride_0_0;
+    b_in1[i].re = in1[ar_tmp].re + in2_re;
+    b_in1[i].im = in1[ar_tmp].im + in2_im;
+  }
+  in1.set_size(b_in1.size(0));
+  loop_ub = b_in1.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    in1[i] = b_in1[i];
+  }
+}
+
+//
+// Arguments    : coder::array<creal_T, 1U> &in1
+//                const coder::array<creal_T, 2U> &in2
+//                int in3
+// Return Type  : void
+//
+static void binary_expand_op(coder::array<creal_T, 1U> &in1,
+                             const coder::array<creal_T, 2U> &in2, int in3)
+{
+  coder::array<creal_T, 1U> b_in1;
+  int i;
+  int loop_ub;
+  int stride_0_0;
+  int stride_1_0;
+  i = in2.size(0);
+  if (i == 1) {
+    stride_0_0 = in1.size(0);
+  } else {
+    stride_0_0 = i;
+  }
+  b_in1.set_size(stride_0_0);
+  stride_0_0 = (in1.size(0) != 1);
+  stride_1_0 = (i != 1);
+  if (i == 1) {
+    loop_ub = in1.size(0);
+  } else {
+    loop_ub = i;
+  }
+  for (i = 0; i < loop_ub; i++) {
+    double ai;
+    double in2_im;
+    double in2_re;
+    int ar_tmp;
+    ar_tmp = i * stride_1_0;
+    in2_im = in2[ar_tmp + in2.size(0) * in3].re;
+    ai = in2[ar_tmp + in2.size(0) * in3].im;
+    if (ai == 0.0) {
+      in2_re = in2_im / ((static_cast<double>(in3) + 1.0) + 1.0);
+      in2_im = 0.0;
+    } else if (in2_im == 0.0) {
+      in2_re = 0.0;
+      in2_im = ai / ((static_cast<double>(in3) + 1.0) + 1.0);
+    } else {
+      in2_re = in2_im / ((static_cast<double>(in3) + 1.0) + 1.0);
+      in2_im = ai / ((static_cast<double>(in3) + 1.0) + 1.0);
+    }
+    ar_tmp = i * stride_0_0;
+    b_in1[i].re = in1[ar_tmp].re + in2_re;
+    b_in1[i].im = in1[ar_tmp].im + in2_im;
+  }
+  in1.set_size(b_in1.size(0));
+  loop_ub = b_in1.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    in1[i] = b_in1[i];
+  }
+}
+
+//
+// Arguments    : coder::array<creal_T, 1U> &in1
+//                const coder::array<creal_T, 2U> &in2
+//                int in3
+//                const coder::array<creal_T, 2U> &in4
+//                int in5
+//                int in6
+// Return Type  : void
+//
+static void binary_expand_op(coder::array<creal_T, 1U> &in1,
+                             const coder::array<creal_T, 2U> &in2, int in3,
+                             const coder::array<creal_T, 2U> &in4, int in5,
+                             int in6)
+{
+  coder::array<creal_T, 1U> b_in1;
+  int b_in2_re_tmp;
+  int i;
+  int in2_re_tmp;
+  int loop_ub;
+  int stride_0_0;
+  int stride_1_0;
+  int stride_2_0;
+  i = in2.size(0);
+  in2_re_tmp = in4.size(0);
+  if (in2_re_tmp == 1) {
+    b_in2_re_tmp = i;
+  } else {
+    b_in2_re_tmp = in2_re_tmp;
+  }
+  if (b_in2_re_tmp == 1) {
+    b_in2_re_tmp = in1.size(0);
+  } else if (in2_re_tmp == 1) {
+    b_in2_re_tmp = i;
+  } else {
+    b_in2_re_tmp = in2_re_tmp;
+  }
+  b_in1.set_size(b_in2_re_tmp);
+  stride_0_0 = (in1.size(0) != 1);
+  stride_1_0 = (i != 1);
+  stride_2_0 = (in2_re_tmp != 1);
+  if (in2_re_tmp == 1) {
+    b_in2_re_tmp = i;
+  } else {
+    b_in2_re_tmp = in2_re_tmp;
+  }
+  if (b_in2_re_tmp == 1) {
+    loop_ub = in1.size(0);
+  } else if (in2_re_tmp == 1) {
+    loop_ub = i;
+  } else {
+    loop_ub = in2_re_tmp;
+  }
+  for (i = 0; i < loop_ub; i++) {
+    double c_in2_re_tmp;
+    double d_in2_re_tmp;
+    double e_in2_re_tmp;
+    double in2_im;
+    double in2_re;
+    in2_re_tmp = i * stride_1_0;
+    b_in2_re_tmp = i * stride_2_0;
+    in2_im = in2[in2_re_tmp + in2.size(0) * in3].re;
+    c_in2_re_tmp = in4[b_in2_re_tmp + in4.size(0) * in5].im;
+    d_in2_re_tmp = in2[in2_re_tmp + in2.size(0) * in3].im;
+    e_in2_re_tmp = in4[b_in2_re_tmp + in4.size(0) * in5].re;
+    in2_re = in2_im * e_in2_re_tmp - d_in2_re_tmp * c_in2_re_tmp;
+    in2_im = in2_im * c_in2_re_tmp + d_in2_re_tmp * e_in2_re_tmp;
+    if (in2_im == 0.0) {
+      in2_re /= static_cast<double>(in6 + 2);
+      in2_im = 0.0;
+    } else if (in2_re == 0.0) {
+      in2_re = 0.0;
+      in2_im /= static_cast<double>(in6 + 2);
+    } else {
+      in2_re /= static_cast<double>(in6 + 2);
+      in2_im /= static_cast<double>(in6 + 2);
+    }
+    in2_re_tmp = i * stride_0_0;
+    b_in1[i].re = in1[in2_re_tmp].re + in2_re;
+    b_in1[i].im = in1[in2_re_tmp].im + in2_im;
+  }
+  in1.set_size(b_in1.size(0));
+  loop_ub = b_in1.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    in1[i] = b_in1[i];
+  }
+}
+
+//
+// Arguments    : creal_T *in1
+//                const coder::array<creal_T, 1U> &in3
+//                double in4
+//                const signed char in5[2]
+//                const coder::array<creal_T, 2U> &in6
+// Return Type  : void
+//
+static void binary_expand_op(creal_T *in1, const coder::array<creal_T, 1U> &in3,
+                             double in4, const signed char in5[2],
+                             const coder::array<creal_T, 2U> &in6)
+{
+  int aux_2_1;
+  int in3_idx_0;
+  int in5_idx_0;
+  int in5_idx_1;
+  int loop_ub;
+  int stride_0_0;
+  int stride_2_0;
+  int stride_2_1;
+  in3_idx_0 = in3.size(0);
+  in5_idx_0 = in5[0];
+  in5_idx_1 = in5[1];
+  stride_0_0 = (in3_idx_0 != 1);
+  stride_2_0 = (in6.size(0) != 1);
+  stride_2_1 = (in6.size(1) != 1);
+  aux_2_1 = 0;
+  if (in6.size(1) == 1) {
+    if (in5_idx_1 == 1) {
+      loop_ub = 1;
+    } else {
+      loop_ub = in5_idx_1;
+    }
+  } else {
+    loop_ub = in6.size(1);
+  }
+  for (int i{0}; i < loop_ub; i++) {
+    int b_loop_ub;
+    if (in6.size(0) == 1) {
+      if (in5_idx_0 == 1) {
+        b_loop_ub = in3_idx_0;
+      } else {
+        b_loop_ub = in5_idx_0;
+      }
+    } else {
+      b_loop_ub = in6.size(0);
+    }
+    for (int i1{0}; i1 < b_loop_ub; i1++) {
+      double b_re_tmp;
+      double in3_im;
+      double in3_re;
+      double re_tmp;
+      in5_idx_1 = i1 * stride_0_0;
+      in3_re = in4 * in3[in5_idx_1].re;
+      in3_im = in4 * in3[in5_idx_1].im;
+      in5_idx_1 = i1 * stride_2_0;
+      re_tmp = in6[in5_idx_1 + in6.size(0) * aux_2_1].im;
+      b_re_tmp = in6[in5_idx_1 + in6.size(0) * aux_2_1].re;
+      in1->re = in3_re * b_re_tmp - in3_im * re_tmp;
+      in1->im = in3_re * re_tmp + in3_im * b_re_tmp;
+    }
+    aux_2_1 += stride_2_1;
+  }
+}
+
+//
+// Arguments    : creal_T *in1
+//                const coder::array<double, 2U> &in3
+//                const coder::array<creal_T, 2U> &in4
+//                const coder::array<creal_T, 2U> &in5
+//                const coder::array<creal_T, 2U> &in6
+// Return Type  : void
+//
+static void e_binary_expand_op(creal_T *in1,
+                               const coder::array<double, 2U> &in3,
+                               const coder::array<creal_T, 2U> &in4,
+                               const coder::array<creal_T, 2U> &in5,
+                               const coder::array<creal_T, 2U> &in6)
+{
+  int aux_0_1;
+  int aux_1_1;
+  int aux_2_1;
+  int aux_3_1;
+  int i;
+  int loop_ub;
+  int stride_0_0;
+  int stride_0_1;
+  int stride_1_0;
+  int stride_1_1;
+  int stride_2_0;
+  int stride_2_1;
+  int stride_3_0;
+  int stride_3_1;
+  stride_0_0 = (in3.size(0) != 1);
+  stride_0_1 = (in3.size(1) != 1);
+  stride_1_0 = (in4.size(0) != 1);
+  stride_1_1 = (in4.size(1) != 1);
+  stride_2_0 = (in5.size(0) != 1);
+  stride_2_1 = (in5.size(1) != 1);
+  stride_3_0 = (in6.size(0) != 1);
+  stride_3_1 = (in6.size(1) != 1);
+  aux_0_1 = 0;
+  aux_1_1 = 0;
+  aux_2_1 = 0;
+  aux_3_1 = 0;
+  if (in6.size(1) == 1) {
+    i = in5.size(1);
+  } else {
+    i = in6.size(1);
+  }
+  if (i == 1) {
+    if (in4.size(1) == 1) {
+      loop_ub = in3.size(1);
+    } else {
+      loop_ub = in4.size(1);
+    }
+  } else if (in6.size(1) == 1) {
+    loop_ub = in5.size(1);
+  } else {
+    loop_ub = in6.size(1);
+  }
+  for (i = 0; i < loop_ub; i++) {
+    int b_loop_ub;
+    int i1;
+    if (in6.size(0) == 1) {
+      i1 = in5.size(0);
+    } else {
+      i1 = in6.size(0);
+    }
+    if (i1 == 1) {
+      if (in4.size(0) == 1) {
+        b_loop_ub = in3.size(0);
+      } else {
+        b_loop_ub = in4.size(0);
+      }
+    } else if (in6.size(0) == 1) {
+      b_loop_ub = in5.size(0);
+    } else {
+      b_loop_ub = in6.size(0);
+    }
+    for (i1 = 0; i1 < b_loop_ub; i1++) {
+      double in3_im;
+      double in3_re;
+      double in5_im;
+      double in5_re;
+      int in3_re_tmp;
+      int in5_re_tmp;
+      in3_re_tmp = i1 * stride_1_0;
+      in3_re = in3[i1 * stride_0_0 + in3.size(0) * aux_0_1] *
+               in4[in3_re_tmp + in4.size(0) * aux_1_1].re;
+      in3_im = in3[i1 * stride_0_0 + in3.size(0) * aux_0_1] *
+               in4[in3_re_tmp + in4.size(0) * aux_1_1].im;
+      in3_re_tmp = i1 * stride_2_0;
+      in5_re_tmp = i1 * stride_3_0;
+      in5_re = in5[in3_re_tmp + in5.size(0) * aux_2_1].re -
+               in6[in5_re_tmp + in6.size(0) * aux_3_1].re;
+      in5_im = in5[in3_re_tmp + in5.size(0) * aux_2_1].im -
+               in6[in5_re_tmp + in6.size(0) * aux_3_1].im;
+      in1->re = in3_re * in5_re - in3_im * in5_im;
+      in1->im = in3_re * in5_im + in3_im * in5_re;
+    }
+    aux_3_1 += stride_3_1;
+    aux_2_1 += stride_2_1;
+    aux_1_1 += stride_1_1;
+    aux_0_1 += stride_0_1;
   }
 }
 
@@ -315,22 +527,26 @@ static void fresnelgzero(const ::coder::array<double, 2U> &x,
 //                double theta
 // Return Type  : creal_T
 //
+namespace coder {
+namespace matlabshared {
+namespace tracking {
+namespace internal {
+namespace scenario {
 creal_T fresnelg2(double x, double dk, double k, double theta)
 {
+  array<creal_T, 2U> A;
+  array<creal_T, 2U> B;
+  array<creal_T, 2U> c_z;
   array<creal_T, 2U> e;
   array<creal_T, 2U> hidkxx;
   array<creal_T, 2U> m2C;
-  array<creal_T, 2U> r1;
   array<creal_T, 2U> z0;
   array<creal_T, 2U> z1;
-  array<creal_T, 1U> r;
-  array<double, 2U> b_k;
+  array<creal_T, 1U> b_z;
   array<double, 2U> b_x;
   array<double, 2U> c_x;
   array<double, 2U> d_x;
-  array<double, 2U> r2;
-  array<double, 2U> y;
-  array<signed char, 2U> igt;
+  array<double, 2U> igt;
   array<signed char, 2U> ii;
   array<signed char, 2U> ilt;
   array<signed char, 2U> ism;
@@ -338,13 +554,16 @@ creal_T fresnelg2(double x, double dk, double k, double theta)
   double d;
   double re;
   double thresh;
-  double thresh_tmp;
+  double thresh_tmp_tmp;
+  double varargout_1;
   double x_im;
-  double z1_re;
+  double x_re;
+  double z1_im;
+  int acoef;
+  int ar_tmp;
   int i;
-  int loop_ub;
-  thresh_tmp = k * k;
-  thresh = dk / thresh_tmp;
+  thresh_tmp_tmp = k * k;
+  thresh = dk / thresh_tmp_tmp;
   if (thresh > 1.0E-6) {
     ii.set_size(1, 1);
     ii[0] = 1;
@@ -352,9 +571,9 @@ creal_T fresnelg2(double x, double dk, double k, double theta)
     ii.set_size(0, 0);
   }
   igt.set_size(ii.size(0), ii.size(1));
-  loop_ub = ii.size(0) * ii.size(1);
-  for (i = 0; i < loop_ub; i++) {
-    igt[0] = 1;
+  acoef = ii.size(0) * ii.size(1);
+  for (i = 0; i < acoef; i++) {
+    igt[0] = 1.0;
   }
   if (thresh < -1.0E-6) {
     ii.set_size(1, 1);
@@ -363,23 +582,24 @@ creal_T fresnelg2(double x, double dk, double k, double theta)
     ii.set_size(0, 0);
   }
   ilt.set_size(ii.size(0), ii.size(1));
-  loop_ub = ii.size(0) * ii.size(1);
-  for (i = 0; i < loop_ub; i++) {
+  acoef = ii.size(0) * ii.size(1);
+  for (i = 0; i < acoef; i++) {
     ilt[0] = 1;
   }
-  if ((-1.0E-6 <= thresh) && (thresh <= 1.0E-6)) {
+  if ((thresh >= -1.0E-6) && (thresh <= 1.0E-6)) {
     ii.set_size(1, 1);
     ii[0] = 1;
   } else {
     ii.set_size(0, 0);
   }
   ism.set_size(ii.size(0), ii.size(1));
-  loop_ub = ii.size(0) * ii.size(1);
-  for (i = 0; i < loop_ub; i++) {
+  acoef = ii.size(0) * ii.size(1);
+  for (i = 0; i < acoef; i++) {
     ism[0] = 1;
   }
-  d = x * x;
-  if ((std::abs(dk) * d < 0.001) && (std::abs(k * x) < 0.001)) {
+  varargout_1 = x * x;
+  d = k * x;
+  if ((std::abs(dk) * varargout_1 < 0.001) && (std::abs(d) < 0.001)) {
     ii.set_size(1, 1);
     ii[0] = 1;
   } else {
@@ -400,36 +620,53 @@ creal_T fresnelg2(double x, double dk, double k, double theta)
     b_x.set_size(1, 1);
     b_x[0] = 3.1415926535897931 * dk;
     b_x[0] = std::sqrt(b_x[0]);
-    b_k.set_size(1, 1);
-    b_k[0] = k / b_x[0];
-    fresnel(b_k, z0);
-    r1.set_size(1, 1);
-    thresh = theta - thresh_tmp / (2.0 * dk);
-    r1[0].re = thresh * 0.0;
-    r1[0].im = thresh;
-    if (r1[0].im == 0.0) {
-      re = std::exp(r1[0].re);
+    c_x.set_size(1, 1);
+    c_x[0] = k / b_x[0];
+    fresnel(c_x, z0);
+    m2C.set_size(1, 1);
+    thresh = theta - thresh_tmp_tmp / (2.0 * dk);
+    m2C[0].re = thresh * 0.0;
+    m2C[0].im = thresh;
+    if (m2C[0].im == 0.0) {
+      re = std::exp(m2C[0].re);
       thresh = 0.0;
     } else {
-      thresh = std::exp(r1[0].re / 2.0);
-      re = thresh * (thresh * std::cos(r1[0].im));
-      thresh *= thresh * std::sin(r1[0].im);
+      thresh = std::exp(m2C[0].re / 2.0);
+      re = thresh * (thresh * std::cos(m2C[0].im));
+      thresh *= thresh * std::sin(m2C[0].im);
     }
-    r1[0].re = re;
-    r1[0].im = thresh;
-    r1[0].re = re;
-    r1[0].im = thresh;
-    r1[0].re = re;
-    r1[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    z.re = 0.0;
+    z.im = 0.0;
     b_x.set_size(1, 1);
     b_x[0] = 3.1415926535897931 / dk;
     b_x[0] = std::sqrt(b_x[0]);
-    thresh = b_x[0] * r1[0].re;
-    x_im = b_x[0] * r1[0].im;
-    z1_re = z1[0].re - z0[0].re;
-    re = z1[0].im - z0[0].im;
-    z.re = thresh * z1_re - x_im * re;
-    z.im = thresh * re + x_im * z1_re;
+    if (z1.size(0) == 1) {
+      i = z0.size(0);
+    } else {
+      i = z1.size(0);
+    }
+    if (z1.size(1) == 1) {
+      ar_tmp = z0.size(1);
+    } else {
+      ar_tmp = z1.size(1);
+    }
+    if ((z1.size(0) == z0.size(0)) && (z1.size(1) == z0.size(1)) && (i == 1) &&
+        (ar_tmp == 1)) {
+      x_re = b_x[0] * m2C[0].re;
+      x_im = b_x[0] * m2C[0].im;
+      thresh = z1[0].re - z0[0].re;
+      z1_im = z1[0].im - z0[0].im;
+      z.re = x_re * thresh - x_im * z1_im;
+      z.im = x_re * z1_im + x_im * thresh;
+    } else {
+      e_binary_expand_op(&z, b_x, m2C, z1, z0);
+    }
   }
   if ((ilt.size(0) != 0) && (ilt.size(1) != 0)) {
     b_x.set_size(1, 1);
@@ -444,35 +681,50 @@ creal_T fresnelg2(double x, double dk, double k, double theta)
     b_x.set_size(1, 1);
     b_x[0] = -3.1415926535897931 * dk;
     b_x[0] = std::sqrt(b_x[0]);
-    b_k.set_size(1, 1);
-    b_k[0] = -k / b_x[0];
-    fresnel(b_k, z0);
-    r1.set_size(1, 1);
-    r1[0].re = (theta - k * k / (2.0 * dk)) * 0.0;
-    r1[0].im = -(theta - k * k / (2.0 * dk));
-    if (r1[0].im == 0.0) {
-      re = std::exp(r1[0].re);
+    c_x.set_size(1, 1);
+    c_x[0] = -k / b_x[0];
+    fresnel(c_x, z0);
+    m2C.set_size(1, 1);
+    m2C[0].re = (theta - k * k / (2.0 * dk)) * 0.0;
+    m2C[0].im = -(theta - k * k / (2.0 * dk));
+    if (m2C[0].im == 0.0) {
+      re = std::exp(m2C[0].re);
       thresh = 0.0;
     } else {
-      thresh = std::exp(r1[0].re / 2.0);
-      re = thresh * (thresh * std::cos(r1[0].im));
-      thresh *= thresh * std::sin(r1[0].im);
+      thresh = std::exp(m2C[0].re / 2.0);
+      re = thresh * (thresh * std::cos(m2C[0].im));
+      thresh *= thresh * std::sin(m2C[0].im);
     }
-    r1[0].re = re;
-    r1[0].im = thresh;
-    r1[0].re = re;
-    r1[0].im = thresh;
-    r1[0].re = re;
-    r1[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
     b_x.set_size(1, 1);
     b_x[0] = -3.1415926535897931 / dk;
     b_x[0] = std::sqrt(b_x[0]);
-    thresh = b_x[0] * r1[0].re;
-    x_im = b_x[0] * r1[0].im;
-    z1_re = z1[0].re - z0[0].re;
-    re = z1[0].im - z0[0].im;
-    z.re = thresh * z1_re - x_im * re;
-    z.im = -(thresh * re + x_im * z1_re);
+    if (z1.size(0) == 1) {
+      i = z0.size(0);
+    } else {
+      i = z1.size(0);
+    }
+    if (z1.size(1) == 1) {
+      ar_tmp = z0.size(1);
+    } else {
+      ar_tmp = z1.size(1);
+    }
+    if ((z1.size(0) == z0.size(0)) && (z1.size(1) == z0.size(1)) && (i == 1) &&
+        (ar_tmp == 1)) {
+      x_re = b_x[0] * m2C[0].re;
+      x_im = b_x[0] * m2C[0].im;
+      thresh = z1[0].re - z0[0].re;
+      z1_im = z1[0].im - z0[0].im;
+      z.re = x_re * thresh - x_im * z1_im;
+      z.im = -(x_re * z1_im + x_im * thresh);
+    } else {
+      binary_expand_op(&z, b_x, m2C, z1, z0);
+    }
   }
   if ((ism.size(0) != 0) && (ism.size(1) != 0)) {
     z1.set_size(1, 1);
@@ -492,25 +744,25 @@ creal_T fresnelg2(double x, double dk, double k, double theta)
     hidkxx.set_size(1, 1);
     hidkxx[0].re = dk * 0.0;
     hidkxx[0].im = dk * 0.5;
-    y.set_size(1, 1);
-    y[0] = thresh_tmp;
+    igt.set_size(1, 1);
+    igt[0] = thresh_tmp_tmp;
     m2C.set_size(1, 1);
     if (hidkxx[0].im == 0.0) {
-      thresh = hidkxx[0].re / y[0];
-      x_im = 0.0;
+      thresh = hidkxx[0].re / igt[0];
+      z1_im = 0.0;
     } else if (hidkxx[0].re == 0.0) {
       thresh = 0.0;
-      x_im = hidkxx[0].im / y[0];
+      z1_im = hidkxx[0].im / igt[0];
     } else {
       thresh = rtNaN;
-      x_im = hidkxx[0].im / y[0];
+      z1_im = hidkxx[0].im / igt[0];
     }
     m2C[0].re = -2.0 * thresh;
-    m2C[0].im = -2.0 * x_im;
-    r2.set_size(1, 1);
-    r2[0] = d;
-    hidkxx[0].re = r2[0] * hidkxx[0].re;
-    hidkxx[0].im = r2[0] * hidkxx[0].im;
+    m2C[0].im = -2.0 * z1_im;
+    igt.set_size(1, 1);
+    igt[0] = varargout_1;
+    hidkxx[0].re = igt[0] * hidkxx[0].re;
+    hidkxx[0].im = igt[0] * hidkxx[0].im;
     e.set_size(1, 1);
     e[0].re = -z1[0].re;
     e[0].im = -z1[0].im;
@@ -552,99 +804,305 @@ creal_T fresnelg2(double x, double dk, double k, double theta)
         thresh = -((1.0 - e[0].re) / z1[0].im);
       }
     } else {
-      z1_re = std::abs(z1[0].re);
+      x_im = std::abs(z1[0].re);
       thresh = std::abs(z1[0].im);
-      if (z1_re > thresh) {
+      if (x_im > thresh) {
         thresh = z1[0].im / z1[0].re;
-        x_im = z1[0].re + thresh * z1[0].im;
-        re = ((1.0 - e[0].re) + thresh * (0.0 - e[0].im)) / x_im;
-        thresh = ((0.0 - e[0].im) - thresh * (1.0 - e[0].re)) / x_im;
-      } else if (thresh == z1_re) {
+        z1_im = z1[0].re + thresh * z1[0].im;
+        re = ((1.0 - e[0].re) + thresh * (0.0 - e[0].im)) / z1_im;
+        thresh = ((0.0 - e[0].im) - thresh * (1.0 - e[0].re)) / z1_im;
+      } else if (thresh == x_im) {
         if (z1[0].re > 0.0) {
           thresh = 0.5;
         } else {
           thresh = -0.5;
         }
         if (z1[0].im > 0.0) {
-          x_im = 0.5;
+          z1_im = 0.5;
         } else {
-          x_im = -0.5;
+          z1_im = -0.5;
         }
-        re = ((1.0 - e[0].re) * thresh + (0.0 - e[0].im) * x_im) / z1_re;
-        thresh = ((0.0 - e[0].im) * thresh - (1.0 - e[0].re) * x_im) / z1_re;
+        re = ((1.0 - e[0].re) * thresh + (0.0 - e[0].im) * z1_im) / x_im;
+        thresh = ((0.0 - e[0].im) * thresh - (1.0 - e[0].re) * z1_im) / x_im;
       } else {
         thresh = z1[0].re / z1[0].im;
-        x_im = z1[0].im + thresh * z1[0].re;
-        re = (thresh * (1.0 - e[0].re) + (0.0 - e[0].im)) / x_im;
-        thresh = (thresh * (0.0 - e[0].im) - (1.0 - e[0].re)) / x_im;
+        z1_im = z1[0].im + thresh * z1[0].re;
+        re = (thresh * (1.0 - e[0].re) + (0.0 - e[0].im)) / z1_im;
+        thresh = (thresh * (0.0 - e[0].im) - (1.0 - e[0].re)) / z1_im;
       }
     }
     z1[0].re = re;
     z1[0].im = thresh;
     e[0].re = -e[0].re;
     e[0].im = -e[0].im;
-    r1.set_size(1, 1);
-    r1[0] = z1[0];
-    for (loop_ub = 0; loop_ub < 20; loop_ub++) {
+    c_z.set_size(1, 1);
+    c_z[0] = z1[0];
+    for (acoef = 0; acoef < 20; acoef++) {
+      i = 2 * (acoef + 1) - 1;
       z1.set_size(1, 1);
-      i = 2 * (loop_ub + 1) - 1;
-      thresh = (static_cast<double>(loop_ub) + 1.0) + z0[0].re;
+      thresh = (static_cast<double>(acoef) + 1.0) + z0[0].re;
       re = static_cast<double>(i) * z1[0].re +
            (e[0].re * thresh - e[0].im * z0[0].im);
       thresh = static_cast<double>(i) * z1[0].im +
                (e[0].re * z0[0].im + e[0].im * thresh);
       z1[0].re = m2C[0].re * re - m2C[0].im * thresh;
       z1[0].im = m2C[0].re * thresh + m2C[0].im * re;
-      r1[0].re = r1[0].re + z1[0].re;
-      r1[0].im = r1[0].im + z1[0].im;
+      c_z[0].re = c_z[0].re + z1[0].re;
+      c_z[0].im = c_z[0].im + z1[0].im;
       thresh = e[0].re * hidkxx[0].re - e[0].im * hidkxx[0].im;
-      x_im = e[0].re * hidkxx[0].im + e[0].im * hidkxx[0].re;
-      if (x_im == 0.0) {
-        e[0].re = thresh / ((static_cast<double>(loop_ub) + 1.0) + 1.0);
+      z1_im = e[0].re * hidkxx[0].im + e[0].im * hidkxx[0].re;
+      if (z1_im == 0.0) {
+        e[0].re = thresh / ((static_cast<double>(acoef) + 1.0) + 1.0);
         e[0].im = 0.0;
       } else if (thresh == 0.0) {
         e[0].re = 0.0;
-        e[0].im = x_im / ((static_cast<double>(loop_ub) + 1.0) + 1.0);
+        e[0].im = z1_im / ((static_cast<double>(acoef) + 1.0) + 1.0);
       } else {
-        e[0].re = thresh / ((static_cast<double>(loop_ub) + 1.0) + 1.0);
-        e[0].im = x_im / ((static_cast<double>(loop_ub) + 1.0) + 1.0);
+        e[0].re = thresh / ((static_cast<double>(acoef) + 1.0) + 1.0);
+        e[0].im = z1_im / ((static_cast<double>(acoef) + 1.0) + 1.0);
       }
     }
-    z1.set_size(1, 1);
-    z1[0].re = theta * 0.0;
-    z1[0].im = theta;
-    if (z1[0].im == 0.0) {
-      re = std::exp(z1[0].re);
+    m2C.set_size(1, 1);
+    m2C[0].re = theta * 0.0;
+    m2C[0].im = theta;
+    if (m2C[0].im == 0.0) {
+      re = std::exp(m2C[0].re);
       thresh = 0.0;
     } else {
-      thresh = std::exp(z1[0].re / 2.0);
-      re = thresh * (thresh * std::cos(z1[0].im));
-      thresh *= thresh * std::sin(z1[0].im);
+      thresh = std::exp(m2C[0].re / 2.0);
+      re = thresh * (thresh * std::cos(m2C[0].im));
+      thresh *= thresh * std::sin(m2C[0].im);
     }
-    z1[0].re = re;
-    z1[0].im = thresh;
-    z1[0].re = re;
-    z1[0].im = thresh;
-    z1[0].re = re;
-    z1[0].im = thresh;
-    r1.set_size(1, 1);
-    thresh = x * r1[0].re;
-    x_im = x * r1[0].im;
-    r1[0].re = thresh * z1[0].re - x_im * z1[0].im;
-    r1[0].im = thresh * z1[0].im + x_im * z1[0].re;
-    z = r1[0];
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    x_re = x * c_z[0].re;
+    x_im = x * c_z[0].im;
+    re = x_re * m2C[0].re - x_im * m2C[0].im;
+    thresh = x_re * m2C[0].im + x_im * m2C[0].re;
+    z.re = re;
+    z.im = thresh;
   }
   if ((ii.size(0) != 0) && (ii.size(1) != 0)) {
-    b_x.set_size(1, 1);
-    b_x[0] = x;
-    c_x.set_size(1, 1);
-    c_x[0] = dk;
-    b_k.set_size(1, 1);
-    b_k[0] = k;
-    d_x.set_size(1, 1);
-    d_x[0] = theta;
-    fresnelgzero(b_x, c_x, b_k, d_x, r);
-    z = r[0];
+    int b_acoef;
+    int b_k;
+    int c_k;
+    int varargin_2;
+    signed char size_tmp[2];
+    size_tmp[0] = 1;
+    size_tmp[1] = 1;
+    igt.set_size(1, 1);
+    igt[0] = varargout_1;
+    z0.set_size(1, 1);
+    z0[0].re = igt[0] * (dk * 0.0);
+    z0[0].im = igt[0] * (dk * 0.5);
+    repmat(z0, z1);
+    A.set_size(z1.size(0), 5);
+    if (z1.size(0) != 0) {
+      acoef = (z1.size(1) != 1);
+      b_acoef = (z1.size(0) != 1);
+      for (b_k = 0; b_k < 5; b_k++) {
+        varargin_2 = acoef * b_k;
+        i = A.size(0) - 1;
+        for (c_k = 0; c_k <= i; c_k++) {
+          ar_tmp = b_acoef * c_k;
+          thresh = z1[ar_tmp + z1.size(0) * varargin_2].re;
+          x_im = z1[ar_tmp + z1.size(0) * varargin_2].im;
+          if (x_im == 0.0) {
+            A[c_k + A.size(0) * b_k].re =
+                thresh / (static_cast<double>(b_k) + 1.0);
+            A[c_k + A.size(0) * b_k].im = 0.0;
+          } else if (thresh == 0.0) {
+            A[c_k + A.size(0) * b_k].re = 0.0;
+            A[c_k + A.size(0) * b_k].im =
+                x_im / (static_cast<double>(b_k) + 1.0);
+          } else {
+            A[c_k + A.size(0) * b_k].re =
+                thresh / (static_cast<double>(b_k) + 1.0);
+            A[c_k + A.size(0) * b_k].im =
+                x_im / (static_cast<double>(b_k) + 1.0);
+          }
+        }
+      }
+    }
+    if (A.size(0) != 0) {
+      for (b_k = 0; b_k < 4; b_k++) {
+        i = A.size(0);
+        for (c_k = 0; c_k < i; c_k++) {
+          thresh = A[c_k + A.size(0) * b_k].re;
+          z1_im = A[c_k + A.size(0) * (b_k + 1)].im;
+          x_im = A[c_k + A.size(0) * b_k].im;
+          x_re = A[c_k + A.size(0) * (b_k + 1)].re;
+          A[c_k + A.size(0) * (b_k + 1)].re = thresh * x_re - x_im * z1_im;
+          A[c_k + A.size(0) * (b_k + 1)].im = thresh * z1_im + x_im * x_re;
+        }
+      }
+    }
+    z0.set_size(1, 1);
+    z0[0].re = x * (k * 0.0);
+    z0[0].im = d;
+    repmat(z0, z1);
+    B.set_size(z1.size(0), 5);
+    if (z1.size(0) != 0) {
+      acoef = (z1.size(1) != 1);
+      b_acoef = (z1.size(0) != 1);
+      for (b_k = 0; b_k < 5; b_k++) {
+        varargin_2 = acoef * b_k;
+        i = B.size(0) - 1;
+        for (c_k = 0; c_k <= i; c_k++) {
+          ar_tmp = b_acoef * c_k;
+          thresh = z1[ar_tmp + z1.size(0) * varargin_2].re;
+          x_im = z1[ar_tmp + z1.size(0) * varargin_2].im;
+          if (x_im == 0.0) {
+            B[c_k + B.size(0) * b_k].re =
+                thresh / (static_cast<double>(b_k) + 1.0);
+            B[c_k + B.size(0) * b_k].im = 0.0;
+          } else if (thresh == 0.0) {
+            B[c_k + B.size(0) * b_k].re = 0.0;
+            B[c_k + B.size(0) * b_k].im =
+                x_im / (static_cast<double>(b_k) + 1.0);
+          } else {
+            B[c_k + B.size(0) * b_k].re =
+                thresh / (static_cast<double>(b_k) + 1.0);
+            B[c_k + B.size(0) * b_k].im =
+                x_im / (static_cast<double>(b_k) + 1.0);
+          }
+        }
+      }
+    }
+    if (B.size(0) != 0) {
+      for (b_k = 0; b_k < 4; b_k++) {
+        i = B.size(0);
+        for (c_k = 0; c_k < i; c_k++) {
+          thresh = B[c_k + B.size(0) * b_k].re;
+          z1_im = B[c_k + B.size(0) * (b_k + 1)].im;
+          x_im = B[c_k + B.size(0) * b_k].im;
+          x_re = B[c_k + B.size(0) * (b_k + 1)].re;
+          B[c_k + B.size(0) * (b_k + 1)].re = thresh * x_re - x_im * z1_im;
+          B[c_k + B.size(0) * (b_k + 1)].im = thresh * z1_im + x_im * x_re;
+        }
+      }
+    }
+    b_z.set_size(1);
+    b_z[0].re = 1.0;
+    b_z[0].im = 0.0;
+    for (b_acoef = 0; b_acoef < 5; b_acoef++) {
+      b_k = (b_acoef + 1) << 1;
+      acoef = b_z.size(0);
+      if (b_z.size(0) == A.size(0)) {
+        for (i = 0; i < acoef; i++) {
+          thresh = A[i + A.size(0) * b_acoef].re;
+          x_im = A[i + A.size(0) * b_acoef].im;
+          if (x_im == 0.0) {
+            thresh_tmp_tmp = thresh / (static_cast<double>(b_k) + 1.0);
+            thresh = 0.0;
+          } else if (thresh == 0.0) {
+            thresh_tmp_tmp = 0.0;
+            thresh = x_im / (static_cast<double>(b_k) + 1.0);
+          } else {
+            thresh_tmp_tmp = thresh / (static_cast<double>(b_k) + 1.0);
+            thresh = x_im / (static_cast<double>(b_k) + 1.0);
+          }
+          b_z[i].re = b_z[i].re + thresh_tmp_tmp;
+          b_z[i].im = b_z[i].im + thresh;
+        }
+      } else {
+        binary_expand_op(b_z, A, b_acoef, b_k);
+      }
+    }
+    for (varargin_2 = 0; varargin_2 < 5; varargin_2++) {
+      acoef = b_z.size(0);
+      if (b_z.size(0) == B.size(0)) {
+        for (i = 0; i < acoef; i++) {
+          thresh = B[i + B.size(0) * varargin_2].re;
+          x_im = B[i + B.size(0) * varargin_2].im;
+          if (x_im == 0.0) {
+            z1_im = thresh / ((static_cast<double>(varargin_2) + 1.0) + 1.0);
+            thresh = 0.0;
+          } else if (thresh == 0.0) {
+            z1_im = 0.0;
+            thresh = x_im / ((static_cast<double>(varargin_2) + 1.0) + 1.0);
+          } else {
+            z1_im = thresh / ((static_cast<double>(varargin_2) + 1.0) + 1.0);
+            thresh = x_im / ((static_cast<double>(varargin_2) + 1.0) + 1.0);
+          }
+          b_z[i].re = b_z[i].re + z1_im;
+          b_z[i].im = b_z[i].im + thresh;
+        }
+      } else {
+        binary_expand_op(b_z, B, varargin_2);
+      }
+    }
+    for (b_acoef = 0; b_acoef < 4; b_acoef++) {
+      i = (b_acoef + 1) << 1;
+      c_k = 4 - i;
+      for (varargin_2 = 0; varargin_2 <= c_k; varargin_2++) {
+        b_k = i + varargin_2;
+        acoef = b_z.size(0);
+        if (A.size(0) == 1) {
+          ar_tmp = B.size(0);
+        } else {
+          ar_tmp = A.size(0);
+        }
+        if ((A.size(0) == B.size(0)) && (b_z.size(0) == ar_tmp)) {
+          for (ar_tmp = 0; ar_tmp < acoef; ar_tmp++) {
+            thresh = A[ar_tmp + A.size(0) * b_acoef].re;
+            z1_im = B[ar_tmp + B.size(0) * varargin_2].im;
+            x_im = A[ar_tmp + A.size(0) * b_acoef].im;
+            x_re = B[ar_tmp + B.size(0) * varargin_2].re;
+            thresh_tmp_tmp = thresh * x_re - x_im * z1_im;
+            thresh = thresh * z1_im + x_im * x_re;
+            if (thresh == 0.0) {
+              thresh_tmp_tmp /= static_cast<double>(b_k) + 2.0;
+              thresh = 0.0;
+            } else if (thresh_tmp_tmp == 0.0) {
+              thresh_tmp_tmp = 0.0;
+              thresh /= static_cast<double>(b_k) + 2.0;
+            } else {
+              thresh_tmp_tmp /= static_cast<double>(b_k) + 2.0;
+              thresh /= static_cast<double>(b_k) + 2.0;
+            }
+            b_z[ar_tmp].re = b_z[ar_tmp].re + thresh_tmp_tmp;
+            b_z[ar_tmp].im = b_z[ar_tmp].im + thresh;
+          }
+        } else {
+          binary_expand_op(b_z, A, b_acoef, B, varargin_2, b_k);
+        }
+      }
+    }
+    m2C.set_size(1, 1);
+    m2C[0].re = theta * 0.0;
+    m2C[0].im = theta;
+    if (m2C[0].im == 0.0) {
+      re = std::exp(m2C[0].re);
+      thresh = 0.0;
+    } else {
+      thresh = std::exp(m2C[0].re / 2.0);
+      re = thresh * (thresh * std::cos(m2C[0].im));
+      thresh *= thresh * std::sin(m2C[0].im);
+    }
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    m2C[0].re = re;
+    m2C[0].im = thresh;
+    if (b_z.size(0) == 1) {
+      i = 1;
+    } else {
+      i = b_z.size(0);
+    }
+    if ((b_z.size(0) == 1) && (i == 1)) {
+      thresh = x * b_z[0].re;
+      z1_im = x * b_z[0].im;
+      z.re = thresh * m2C[0].re - z1_im * m2C[0].im;
+      z.im = thresh * m2C[0].im + z1_im * m2C[0].re;
+    } else {
+      binary_expand_op(&z, b_z, x, size_tmp, m2C);
+    }
   }
   return z;
 }

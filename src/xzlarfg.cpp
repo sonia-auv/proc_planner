@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: xzlarfg.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -43,28 +43,27 @@ double xzlarfg(int n, double *alpha1, ::coder::array<double, 2U> &x, int ix0)
       }
       if (std::abs(beta1) < 1.0020841800044864E-292) {
         int i;
-        int k;
         int knt;
-        knt = -1;
+        knt = 0;
         i = (ix0 + n) - 2;
         do {
           knt++;
-          for (k = ix0; k <= i; k++) {
+          for (int k{ix0}; k <= i; k++) {
             x[k - 1] = 9.9792015476736E+291 * x[k - 1];
           }
           beta1 *= 9.9792015476736E+291;
           *alpha1 *= 9.9792015476736E+291;
-        } while (!(std::abs(beta1) >= 1.0020841800044864E-292));
+        } while ((std::abs(beta1) < 1.0020841800044864E-292) && (knt < 20));
         beta1 = rt_hypotd_snf(*alpha1, blas::xnrm2(n - 1, x, ix0));
         if (*alpha1 >= 0.0) {
           beta1 = -beta1;
         }
         tau = (beta1 - *alpha1) / beta1;
         xnorm = 1.0 / (*alpha1 - beta1);
-        for (k = ix0; k <= i; k++) {
+        for (int k{ix0}; k <= i; k++) {
           x[k - 1] = xnorm * x[k - 1];
         }
-        for (k = 0; k <= knt; k++) {
+        for (int k{0}; k < knt; k++) {
           beta1 *= 1.0020841800044864E-292;
         }
         *alpha1 = beta1;
@@ -103,27 +102,26 @@ double xzlarfg(int n, double *alpha1, double x[3])
         beta1 = -beta1;
       }
       if (std::abs(beta1) < 1.0020841800044864E-292) {
-        int k;
         int knt;
-        knt = -1;
+        knt = 0;
         do {
           knt++;
-          for (k = 2; k <= n; k++) {
+          for (int k{2}; k <= n; k++) {
             x[k - 1] *= 9.9792015476736E+291;
           }
           beta1 *= 9.9792015476736E+291;
           *alpha1 *= 9.9792015476736E+291;
-        } while (!(std::abs(beta1) >= 1.0020841800044864E-292));
+        } while ((std::abs(beta1) < 1.0020841800044864E-292) && (knt < 20));
         beta1 = rt_hypotd_snf(*alpha1, blas::xnrm2(n - 1, x));
         if (*alpha1 >= 0.0) {
           beta1 = -beta1;
         }
         tau = (beta1 - *alpha1) / beta1;
         xnorm = 1.0 / (*alpha1 - beta1);
-        for (k = 2; k <= n; k++) {
+        for (int k{2}; k <= n; k++) {
           x[k - 1] *= xnorm;
         }
-        for (k = 0; k <= knt; k++) {
+        for (int k{0}; k < knt; k++) {
           beta1 *= 1.0020841800044864E-292;
         }
         *alpha1 = beta1;
