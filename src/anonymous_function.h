@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: anonymous_function.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef ANONYMOUS_FUNCTION_H
@@ -21,7 +21,7 @@
 namespace coder {
 class anonymous_function {
 public:
-  d_struct_T workspace;
+  e_struct_T workspace;
 };
 
 } // namespace coder

@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: norm.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef NORM_H
@@ -19,9 +19,11 @@
 
 // Function Declarations
 namespace coder {
+double b_norm(const double x[3]);
+
 double b_norm(const ::coder::array<double, 1U> &x);
 
-}
+} // namespace coder
 
 #endif
 //

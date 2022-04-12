@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: accumarray.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -30,16 +30,15 @@ void accumarray(const ::coder::array<double, 2U> &subs,
   array<int, 2U> counts;
   array<bool, 2U> filled;
   if (val.size(0) == 1) {
-    int k;
     int loop_ub_tmp;
     int nsubs;
     nsubs = subs.size(0);
     counts.set_size(static_cast<int>(sz[0]), static_cast<int>(sz[1]));
     loop_ub_tmp = static_cast<int>(sz[0]) * static_cast<int>(sz[1]);
-    for (k = 0; k < loop_ub_tmp; k++) {
+    for (int k{0}; k < loop_ub_tmp; k++) {
       counts[k] = 0;
     }
-    for (k = 0; k < nsubs; k++) {
+    for (int k{0}; k < nsubs; k++) {
       double s_idx_0;
       double s_idx_1;
       s_idx_0 = subs[k];
@@ -52,7 +51,7 @@ void accumarray(const ::coder::array<double, 2U> &subs,
                   1;
     }
     A.set_size(static_cast<int>(sz[0]), static_cast<int>(sz[1]));
-    for (k = 0; k < loop_ub_tmp; k++) {
+    for (int k{0}; k < loop_ub_tmp; k++) {
       if (counts[k] == 0) {
         A[k] = 0.0;
       } else {
@@ -60,18 +59,17 @@ void accumarray(const ::coder::array<double, 2U> &subs,
       }
     }
   } else {
-    int k;
     int loop_ub_tmp;
     int nsubs;
     nsubs = subs.size(0);
     filled.set_size(static_cast<int>(sz[0]), static_cast<int>(sz[1]));
     loop_ub_tmp = static_cast<int>(sz[0]) * static_cast<int>(sz[1]);
     A.set_size(static_cast<int>(sz[0]), static_cast<int>(sz[1]));
-    for (k = 0; k < loop_ub_tmp; k++) {
+    for (int k{0}; k < loop_ub_tmp; k++) {
       filled[k] = true;
       A[k] = 0.0;
     }
-    for (k = 0; k < nsubs; k++) {
+    for (int k{0}; k < nsubs; k++) {
       double s_idx_0;
       double s_idx_1;
       s_idx_0 = subs[k];

@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: schur.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -48,7 +48,7 @@ void schur(::coder::array<double, 2U> &A, ::coder::array<double, 2U> &V)
       V[i] = rtNaN;
     }
     nx = A.size(0);
-    if ((A.size(0) != 0) && (A.size(1) != 0) && (1 < A.size(0))) {
+    if ((A.size(0) != 0) && (A.size(1) != 0) && (A.size(0) > 1)) {
       int jend;
       istart = 2;
       if (A.size(0) - 2 < A.size(1) - 1) {
@@ -64,7 +64,6 @@ void schur(::coder::array<double, 2U> &A, ::coder::array<double, 2U> &V)
       }
     }
   } else {
-    int b_i;
     int i;
     int ic0;
     int jend;
@@ -82,7 +81,7 @@ void schur(::coder::array<double, 2U> &A, ::coder::array<double, 2U> &V)
       work[i] = 0.0;
     }
     i = A.size(0);
-    for (b_i = 0; b_i <= i - 2; b_i++) {
+    for (int b_i{0}; b_i <= i - 2; b_i++) {
       double temp;
       int exitg1;
       int ia;
@@ -220,7 +219,7 @@ void schur(::coder::array<double, 2U> &A, ::coder::array<double, 2U> &V)
     }
     internal::reflapack::eml_dlahqr(V);
     nx = V.size(0);
-    if ((V.size(0) != 0) && (V.size(1) != 0) && (3 < V.size(0))) {
+    if ((V.size(0) != 0) && (V.size(1) != 0) && (V.size(0) > 3)) {
       istart = 4;
       if (V.size(0) - 4 < V.size(1) - 1) {
         jend = V.size(0) - 3;
@@ -228,7 +227,7 @@ void schur(::coder::array<double, 2U> &A, ::coder::array<double, 2U> &V)
         jend = V.size(1);
       }
       for (ic0 = 0; ic0 < jend; ic0++) {
-        for (b_i = istart; b_i <= nx; b_i++) {
+        for (int b_i{istart}; b_i <= nx; b_i++) {
           V[(b_i + V.size(0) * ic0) - 1] = 0.0;
         }
         istart++;

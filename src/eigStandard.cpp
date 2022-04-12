@@ -4,12 +4,13 @@
 // government, commercial, or other organizational use.
 // File: eigStandard.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
 #include "eigStandard.h"
+#include "div.h"
 #include "proc_planner_data.h"
 #include "proc_planner_rtwutil.h"
 #include "rt_nonfinite.h"
@@ -337,65 +338,69 @@ void eigStandard(const ::coder::array<double, 2U> &A,
       }
     }
   }
-  ii = V.size(0);
-  for (nzcount = 0; nzcount < ii; nzcount++) {
-    double ai;
-    anrm = V[nzcount].re;
-    ai = V[nzcount].im;
-    stemp_im_tmp = beta1[nzcount].re;
-    cfrom1 = beta1[nzcount].im;
-    if (cfrom1 == 0.0) {
-      if (ai == 0.0) {
-        anrmto = anrm / stemp_im_tmp;
-        absxk = 0.0;
-      } else if (anrm == 0.0) {
-        anrmto = 0.0;
-        absxk = ai / stemp_im_tmp;
-      } else {
-        anrmto = anrm / stemp_im_tmp;
-        absxk = ai / stemp_im_tmp;
-      }
-    } else if (stemp_im_tmp == 0.0) {
-      if (anrm == 0.0) {
-        anrmto = ai / cfrom1;
-        absxk = 0.0;
-      } else if (ai == 0.0) {
-        anrmto = 0.0;
-        absxk = -(anrm / cfrom1);
-      } else {
-        anrmto = ai / cfrom1;
-        absxk = -(anrm / cfrom1);
-      }
-    } else {
-      cto1 = std::abs(stemp_im_tmp);
-      absxk = std::abs(cfrom1);
-      if (cto1 > absxk) {
-        ctoc = cfrom1 / stemp_im_tmp;
-        absxk = stemp_im_tmp + ctoc * cfrom1;
-        anrmto = (anrm + ctoc * ai) / absxk;
-        absxk = (ai - ctoc * anrm) / absxk;
-      } else if (absxk == cto1) {
-        if (stemp_im_tmp > 0.0) {
-          ctoc = 0.5;
+  if (V.size(0) == beta1.size(0)) {
+    ii = V.size(0);
+    for (nzcount = 0; nzcount < ii; nzcount++) {
+      double ai;
+      anrm = V[nzcount].re;
+      ai = V[nzcount].im;
+      stemp_im_tmp = beta1[nzcount].re;
+      cfrom1 = beta1[nzcount].im;
+      if (cfrom1 == 0.0) {
+        if (ai == 0.0) {
+          anrmto = anrm / stemp_im_tmp;
+          absxk = 0.0;
+        } else if (anrm == 0.0) {
+          anrmto = 0.0;
+          absxk = ai / stemp_im_tmp;
         } else {
-          ctoc = -0.5;
+          anrmto = anrm / stemp_im_tmp;
+          absxk = ai / stemp_im_tmp;
         }
-        if (cfrom1 > 0.0) {
-          absxk = 0.5;
+      } else if (stemp_im_tmp == 0.0) {
+        if (anrm == 0.0) {
+          anrmto = ai / cfrom1;
+          absxk = 0.0;
+        } else if (ai == 0.0) {
+          anrmto = 0.0;
+          absxk = -(anrm / cfrom1);
         } else {
-          absxk = -0.5;
+          anrmto = ai / cfrom1;
+          absxk = -(anrm / cfrom1);
         }
-        anrmto = (anrm * ctoc + ai * absxk) / cto1;
-        absxk = (ai * ctoc - anrm * absxk) / cto1;
       } else {
-        ctoc = stemp_im_tmp / cfrom1;
-        absxk = cfrom1 + ctoc * stemp_im_tmp;
-        anrmto = (ctoc * anrm + ai) / absxk;
-        absxk = (ctoc * ai - anrm) / absxk;
+        cto1 = std::abs(stemp_im_tmp);
+        absxk = std::abs(cfrom1);
+        if (cto1 > absxk) {
+          ctoc = cfrom1 / stemp_im_tmp;
+          absxk = stemp_im_tmp + ctoc * cfrom1;
+          anrmto = (anrm + ctoc * ai) / absxk;
+          absxk = (ai - ctoc * anrm) / absxk;
+        } else if (absxk == cto1) {
+          if (stemp_im_tmp > 0.0) {
+            ctoc = 0.5;
+          } else {
+            ctoc = -0.5;
+          }
+          if (cfrom1 > 0.0) {
+            absxk = 0.5;
+          } else {
+            absxk = -0.5;
+          }
+          anrmto = (anrm * ctoc + ai * absxk) / cto1;
+          absxk = (ai * ctoc - anrm * absxk) / cto1;
+        } else {
+          ctoc = stemp_im_tmp / cfrom1;
+          absxk = cfrom1 + ctoc * stemp_im_tmp;
+          anrmto = (ctoc * anrm + ai) / absxk;
+          absxk = (ctoc * ai - anrm) / absxk;
+        }
       }
+      V[nzcount].re = anrmto;
+      V[nzcount].im = absxk;
     }
-    V[nzcount].re = anrmto;
-    V[nzcount].im = absxk;
+  } else {
+    rdivide(V, beta1);
   }
 }
 

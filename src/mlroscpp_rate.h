@@ -1,22 +1,25 @@
-/* Copyright 2020 The MathWorks, Inc. */
+// Copyright 2020-2021 The MathWorks, Inc.
 #ifndef RATE_HELPER_H
 #define RATE_HELPER_H
 
 #include <ros/ros.h>
 
-namespace coder {
-namespace ros {
+#define MATLABRate_create(desiredRate) std::unique_ptr<MATLABRate>(new MATLABRate(desiredRate))
+#define MATLABRate_isSimTime(obj) obj->isSimTime()
+#define MATLABRate_reset(obj) obj->reset()
+#define MATLABRate_sleep(obj) obj->sleep()
+#define MATLABRate_unused(obj)
+
+
 class MATLABRate {
   public:
-    MATLABRate()
-        : rate(1){};
-    MATLABRate(double r)
-        : rate(r){};
-    bool isSimTime(){return ::ros::Time::isSimTime();};
-  public:
+    MATLABRate(double r) : rate(r) {}
+    bool isSimTime() {return ::ros::Time::isSimTime();}
+    void sleep() {rate.sleep();}
+    void reset() {rate.reset();}
+
+  private:
     ::ros::Rate rate;
 };
-} // namespace ros
-} // namespace coder
 
 #endif

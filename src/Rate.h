@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: Rate.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef RATE_H
@@ -24,12 +24,8 @@ namespace ros {
 class Rate {
 public:
   Rate *init();
-  void reset();
-  void waitfor();
-  MATLABRate RateHelper;
+  std::unique_ptr<MATLABRate> RateHelper;
   double DesiredRate;
-
-protected:
   coderTimespec PreviousPeriod;
 };
 

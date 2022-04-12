@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: diff.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -42,20 +42,13 @@ void diff(const ::coder::array<creal_T, 2U> &x, ::coder::array<creal_T, 2U> &y)
       if (x.size(1) - 1 != 0) {
         work[0] = x[0];
         for (u0 = 2; u0 <= dimSize; u0++) {
-          double tmp1_im;
-          double tmp1_re;
           double tmp2_im;
           double tmp2_re;
-          tmp1_re = x[u0 - 1].re;
-          tmp1_im = x[u0 - 1].im;
           tmp2_re = work[0].re;
           tmp2_im = work[0].im;
-          work[0].re = tmp1_re;
-          work[0].im = tmp1_im;
-          tmp1_re -= tmp2_re;
-          tmp1_im -= tmp2_im;
-          y[u0 - 2].re = tmp1_re;
-          y[u0 - 2].im = tmp1_im;
+          work[0] = x[u0 - 1];
+          y[u0 - 2].re = x[u0 - 1].re - tmp2_re;
+          y[u0 - 2].im = x[u0 - 1].im - tmp2_im;
         }
       }
     }

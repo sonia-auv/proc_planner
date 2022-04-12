@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: fresnel.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -41,7 +41,6 @@ void fresnel(const ::coder::array<double, 2U> &x,
   array<int, 1U> r1;
   array<bool, 2U> b_x_tmp;
   double r;
-  int i;
   int k;
   int nx;
   z.set_size(x.size(0), x.size(1));
@@ -121,7 +120,7 @@ void fresnel(const ::coder::array<double, 2U> &x,
   b_x_tmp.set_size(x_tmp.size(0), x_tmp.size(1));
   nx = x_tmp.size(0) * x_tmp.size(1);
   for (k = 0; k < nx; k++) {
-    b_x_tmp[k] = ((2.5625 <= x_tmp[k]) && (x_tmp[k] <= 1.367076676E+9));
+    b_x_tmp[k] = ((x_tmp[k] >= 2.5625) && (x_tmp[k] <= 1.367076676E+9));
   }
   b_eml_find(b_x_tmp, ii);
   x4.set_size(ii.size(0));
@@ -257,14 +256,14 @@ void fresnel(const ::coder::array<double, 2U> &x,
   }
   k = xabs.size(0) * xabs.size(1) - 1;
   nx = 0;
-  for (i = 0; i <= k; i++) {
+  for (int i{0}; i <= k; i++) {
     if (xabs[i] * xabs[i] > 1.367076676E+9) {
       nx++;
     }
   }
   b_r.set_size(nx);
   nx = 0;
-  for (i = 0; i <= k; i++) {
+  for (int i{0}; i <= k; i++) {
     if (xabs[i] * xabs[i] > 1.367076676E+9) {
       b_r[nx] = i + 1;
       nx++;
@@ -277,14 +276,14 @@ void fresnel(const ::coder::array<double, 2U> &x,
   }
   k = x.size(0) * x.size(1) - 1;
   nx = 0;
-  for (i = 0; i <= k; i++) {
+  for (int i{0}; i <= k; i++) {
     if (x[i] < 0.0) {
       nx++;
     }
   }
   r1.set_size(nx);
   nx = 0;
-  for (i = 0; i <= k; i++) {
+  for (int i{0}; i <= k; i++) {
     if (x[i] < 0.0) {
       r1[nx] = i + 1;
       nx++;
@@ -315,17 +314,16 @@ void fresnelr(const ::coder::array<double, 1U> &x,
   array<double, 1U> ismall;
   array<double, 1U> x4;
   array<double, 1U> xabs;
-  array<int, 1U> b_r;
-  array<int, 1U> ii;
+  array<int, 1U> r;
   array<int, 1U> r1;
+  array<int, 1U> r2;
   array<bool, 1U> b_ibig;
-  double r;
-  int i;
+  double b_r;
   int loop_ub;
   int nx;
   z.set_size(x.size(0));
   loop_ub = x.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     z[i].re = rtNaN;
     z[i].im = 0.0;
   }
@@ -336,36 +334,36 @@ void fresnelr(const ::coder::array<double, 1U> &x,
   }
   ibig.set_size(xabs.size(0));
   loop_ub = xabs.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     ibig[i] = xabs[i] * xabs[i];
   }
   b_ibig.set_size(ibig.size(0));
   loop_ub = ibig.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     b_ibig[i] = (ibig[i] < 2.5625);
   }
-  eml_find(b_ibig, ii);
-  ismall.set_size(ii.size(0));
-  loop_ub = ii.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    ismall[i] = ii[i];
+  eml_find(b_ibig, r);
+  ismall.set_size(r.size(0));
+  loop_ub = r.size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    ismall[i] = r[i];
   }
   x4.set_size(ismall.size(0));
   loop_ub = ismall.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    r = xabs[static_cast<int>(ismall[i]) - 1];
-    x4[i] = r * r;
+  for (int i{0}; i < loop_ub; i++) {
+    b_r = xabs[static_cast<int>(ismall[i]) - 1];
+    x4[i] = b_r * b_r;
   }
   loop_ub = x4.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     x4[i] = x4[i] * x4[i];
   }
   loop_ub = ismall.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     nx = static_cast<int>(ismall[i]) - 1;
-    r = xabs[nx];
+    b_r = xabs[nx];
     z[nx].re =
-        r *
+        b_r *
         ((((((-4.9884311457357354E-8 * x4[i] + 9.5042806282985963E-6) * x4[i] +
              -0.00064519143568396507) *
                 x4[i] +
@@ -385,54 +383,54 @@ void fresnelr(const ::coder::array<double, 1U> &x,
               x4[i] +
           1.0));
     z[nx].im =
-        r * (r * r *
-             (((((-2991.8191940101983 * x4[i] + 708840.04525773856) * x4[i] +
-                 -6.2974148620586254E+7) *
-                    x4[i] +
-                2.5489088057337637E+9) *
-                   x4[i] +
-               -4.429795180596978E+10) *
-                  x4[i] +
-              3.1801629787656781E+11) /
-             ((((((x4[i] + 281.37626888999432) * x4[i] + 45584.781080653258) *
+        b_r * (b_r * b_r *
+               (((((-2991.8191940101983 * x4[i] + 708840.04525773856) * x4[i] +
+                   -6.2974148620586254E+7) *
+                      x4[i] +
+                  2.5489088057337637E+9) *
                      x4[i] +
-                 5.1734388877009638E+6) *
+                 -4.429795180596978E+10) *
                     x4[i] +
-                4.1932024589811122E+8) *
-                   x4[i] +
-               2.2441179564534092E+10) *
-                  x4[i] +
-              6.0736638949008459E+11));
+                3.1801629787656781E+11) /
+               ((((((x4[i] + 281.37626888999432) * x4[i] + 45584.781080653258) *
+                       x4[i] +
+                   5.1734388877009638E+6) *
+                      x4[i] +
+                  4.1932024589811122E+8) *
+                     x4[i] +
+                 2.2441179564534092E+10) *
+                    x4[i] +
+                6.0736638949008459E+11));
   }
   b_ibig.set_size(ibig.size(0));
   loop_ub = ibig.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    b_ibig[i] = ((2.5625 <= ibig[i]) && (ibig[i] <= 1.367076676E+9));
+  for (int i{0}; i < loop_ub; i++) {
+    b_ibig[i] = ((ibig[i] >= 2.5625) && (ibig[i] <= 1.367076676E+9));
   }
-  eml_find(b_ibig, ii);
-  ibig.set_size(ii.size(0));
-  loop_ub = ii.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    ibig[i] = ii[i];
+  eml_find(b_ibig, r);
+  ibig.set_size(r.size(0));
+  loop_ub = r.size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    ibig[i] = r[i];
   }
   ismall.set_size(ibig.size(0));
   loop_ub = ibig.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    r = xabs[static_cast<int>(ibig[i]) - 1];
-    ismall[i] = 1.0 / (3.1415926535897931 * (r * r));
+  for (int i{0}; i < loop_ub; i++) {
+    b_r = xabs[static_cast<int>(ibig[i]) - 1];
+    ismall[i] = 1.0 / (3.1415926535897931 * (b_r * b_r));
   }
   x4.set_size(ismall.size(0));
   loop_ub = ismall.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     x4[i] = ismall[i] * ismall[i];
   }
   b_x.set_size(ibig.size(0));
   loop_ub = ibig.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    r = xabs[static_cast<int>(ibig[i]) - 1];
-    r *= r;
-    b_x[i].re = r * 0.0;
-    b_x[i].im = r * 1.5707963267948966;
+  for (int i{0}; i < loop_ub; i++) {
+    b_r = xabs[static_cast<int>(ibig[i]) - 1];
+    b_r *= b_r;
+    b_x[i].re = b_r * 0.0;
+    b_x[i].im = b_r * 1.5707963267948966;
   }
   nx = b_x.size(0);
   for (loop_ub = 0; loop_ub < nx; loop_ub++) {
@@ -444,18 +442,19 @@ void fresnelr(const ::coder::array<double, 1U> &x,
       b_x[loop_ub].re = 0.0;
       b_x[loop_ub].im = 0.0;
     } else {
-      r = std::exp(b_x[loop_ub].re / 2.0);
-      b_x[loop_ub].re = r * (r * std::cos(b_x[loop_ub].im));
-      b_x[loop_ub].im = r * (r * std::sin(b_x[loop_ub].im));
+      b_r = std::exp(b_x[loop_ub].re / 2.0);
+      b_x[loop_ub].re = b_r * (b_r * std::cos(b_x[loop_ub].im));
+      b_x[loop_ub].im = b_r * (b_r * std::sin(b_x[loop_ub].im));
     }
   }
   loop_ub = x4.size(0);
-  for (i = 0; i < loop_ub; i++) {
+  for (int i{0}; i < loop_ub; i++) {
     double b_re;
     double im;
     double re;
     double x4_im;
-    r = x4[i] *
+    b_r =
+        x4[i] *
             (((((((((0.42154355504367752 * x4[i] + 0.1434079197807589) * x4[i] +
                     0.011522095507358577) *
                        x4[i] +
@@ -530,71 +529,71 @@ void fresnelr(const ::coder::array<double, 1U> &x,
           8.3915881628311874E-19) *
              x4[i] +
          1.8695871016278324E-22);
-    re = 0.0 * r - x4_im;
-    im = 0.0 * x4_im + r;
-    r = b_x[i].im;
+    re = 0.0 * b_r - x4_im;
+    im = 0.0 * x4_im + b_r;
+    b_r = b_x[i].im;
     x4_im = b_x[i].re;
-    b_re = re * x4_im - im * r;
-    im = re * r + im * x4_im;
+    b_re = re * x4_im - im * b_r;
+    im = re * b_r + im * x4_im;
     nx = static_cast<int>(ibig[i]) - 1;
-    r = 3.1415926535897931 * xabs[nx];
+    b_r = 3.1415926535897931 * xabs[nx];
     if (im == 0.0) {
-      re = b_re / r;
+      re = b_re / b_r;
       im = 0.0;
     } else if (b_re == 0.0) {
       re = 0.0;
-      im /= r;
+      im /= b_r;
     } else {
-      re = b_re / r;
-      im /= r;
+      re = b_re / b_r;
+      im /= b_r;
     }
     z[nx].re = re + 0.5;
     z[nx].im = im + 0.5;
   }
   loop_ub = xabs.size(0) - 1;
   nx = 0;
-  for (i = 0; i <= loop_ub; i++) {
+  for (int i{0}; i <= loop_ub; i++) {
     if (xabs[i] * xabs[i] > 1.367076676E+9) {
-      nx++;
-    }
-  }
-  b_r.set_size(nx);
-  nx = 0;
-  for (i = 0; i <= loop_ub; i++) {
-    if (xabs[i] * xabs[i] > 1.367076676E+9) {
-      b_r[nx] = i + 1;
-      nx++;
-    }
-  }
-  loop_ub = b_r.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    z[b_r[i] - 1].re = 0.5;
-    z[b_r[i] - 1].im = 0.5;
-  }
-  loop_ub = x.size(0) - 1;
-  nx = 0;
-  for (i = 0; i <= loop_ub; i++) {
-    if (x[i] < 0.0) {
       nx++;
     }
   }
   r1.set_size(nx);
   nx = 0;
-  for (i = 0; i <= loop_ub; i++) {
-    if (x[i] < 0.0) {
+  for (int i{0}; i <= loop_ub; i++) {
+    if (xabs[i] * xabs[i] > 1.367076676E+9) {
       r1[nx] = i + 1;
       nx++;
     }
   }
-  b_x.set_size(r1.size(0));
   loop_ub = r1.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    b_x[i].re = -z[r1[i] - 1].re;
-    b_x[i].im = -z[r1[i] - 1].im;
+  for (int i{0}; i < loop_ub; i++) {
+    z[r1[i] - 1].re = 0.5;
+    z[r1[i] - 1].im = 0.5;
+  }
+  loop_ub = x.size(0) - 1;
+  nx = 0;
+  for (int i{0}; i <= loop_ub; i++) {
+    if (x[i] < 0.0) {
+      nx++;
+    }
+  }
+  r2.set_size(nx);
+  nx = 0;
+  for (int i{0}; i <= loop_ub; i++) {
+    if (x[i] < 0.0) {
+      r2[nx] = i + 1;
+      nx++;
+    }
+  }
+  b_x.set_size(r2.size(0));
+  loop_ub = r2.size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    b_x[i].re = -z[r2[i] - 1].re;
+    b_x[i].im = -z[r2[i] - 1].im;
   }
   loop_ub = b_x.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    z[r1[i] - 1] = b_x[i];
+  for (int i{0}; i < loop_ub; i++) {
+    z[r2[i] - 1] = b_x[i];
   }
 }
 

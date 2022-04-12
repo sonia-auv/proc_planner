@@ -4,14 +4,15 @@
 // government, commercial, or other organizational use.
 // File: clothoidG2fitMissingCourse.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
 #include "clothoidG2fitMissingCourse.h"
 #include "LMFsolve.h"
 #include "anonymous_function.h"
+#include "cat.h"
 #include "clothoidG1fit2wp.h"
 #include "colon.h"
 #include "dclothoidwp.h"
@@ -24,19 +25,21 @@
 #include <string.h>
 
 // Function Declarations
+static void binary_expand_op(coder::array<double, 1U> &in1,
+                             const coder::array<double, 1U> &in2, int in3,
+                             const coder::array<double, 1U> &in4, int in5,
+                             int in6);
+
+static void binary_expand_op(coder::array<double, 1U> &in1,
+                             const coder::array<double, 1U> &in2,
+                             const coder::array<double, 1U> &in3, int in4,
+                             int in5, int in6);
+
 namespace coder {
 namespace matlabshared {
 namespace tracking {
 namespace internal {
 namespace scenario {
-static void fillPartitions(const ::coder::array<double, 2U> &waypoints,
-                           ::coder::array<double, 1U> &course,
-                           const ::coder::array<double, 1U> &ibegin,
-                           const ::coder::array<double, 1U> &iend);
-
-static void fitCourse(const ::coder::array<double, 2U> &waypoints,
-                      ::coder::array<double, 1U> &course);
-
 static void fitCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
                                const ::coder::array<double, 1U> &x,
                                ::coder::array<double, 1U> &varargout_1,
@@ -48,467 +51,114 @@ static void fitCourse_anonFcn2(const ::coder::array<double, 2U> &waypoints,
                                ::coder::array<double, 1U> &varargout_1,
                                ::coder::array<double, 2U> &varargout_2);
 
-static void fitLoopCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
-                                   const ::coder::array<double, 1U> &x,
-                                   ::coder::array<double, 1U> &varargout_1,
-                                   ::coder::array<double, 2U> &varargout_2);
-
-static void partitionCourse(const ::coder::array<double, 1U> &course,
-                            ::coder::array<double, 1U> &ibegin,
-                            ::coder::array<double, 1U> &iend);
+static void fitCourse_anonFcn4(const ::coder::array<double, 2U> &waypoints,
+                               const ::coder::array<double, 1U> &course,
+                               const ::coder::array<double, 1U> &x,
+                               ::coder::array<double, 1U> &varargout_1,
+                               ::coder::array<double, 2U> &varargout_2);
 
 } // namespace scenario
 } // namespace internal
 } // namespace tracking
 } // namespace matlabshared
 } // namespace coder
+static void e_binary_expand_op(coder::array<double, 1U> &in1,
+                               const coder::array<double, 1U> &in2, int in3,
+                               const coder::array<double, 1U> &in4, int in5,
+                               int in6);
+
+static void e_binary_expand_op(coder::array<double, 1U> &in1,
+                               const coder::array<double, 1U> &in2,
+                               const coder::array<double, 1U> &in3, int in4,
+                               int in5, int in6);
+
+static void f_binary_expand_op(coder::array<double, 1U> &in1,
+                               const coder::array<double, 1U> &in2,
+                               const coder::array<double, 1U> &in3, int in4,
+                               int in5, int in6);
 
 // Function Definitions
 //
-// Arguments    : const ::coder::array<double, 2U> &waypoints
-//                ::coder::array<double, 1U> &course
-//                const ::coder::array<double, 1U> &ibegin
-//                const ::coder::array<double, 1U> &iend
+// Arguments    : coder::array<double, 1U> &in1
+//                const coder::array<double, 1U> &in2
+//                int in3
+//                const coder::array<double, 1U> &in4
+//                int in5
+//                int in6
 // Return Type  : void
 //
-namespace coder {
-namespace matlabshared {
-namespace tracking {
-namespace internal {
-namespace scenario {
-static void fillPartitions(const ::coder::array<double, 2U> &waypoints,
-                           ::coder::array<double, 1U> &course,
-                           const ::coder::array<double, 1U> &ibegin,
-                           const ::coder::array<double, 1U> &iend)
+static void binary_expand_op(coder::array<double, 1U> &in1,
+                             const coder::array<double, 1U> &in2, int in3,
+                             const coder::array<double, 1U> &in4, int in5,
+                             int in6)
 {
-  array<double, 2U> b_waypoints;
-  array<double, 2U> range;
-  array<double, 1U> r1;
-  array<int, 2U> r;
-  int i;
-  i = ibegin.size(0);
-  for (int b_i{0}; b_i < i; b_i++) {
-    int i1;
-    int loop_ub;
-    if (std::isnan(ibegin[b_i]) || std::isnan(iend[b_i])) {
-      range.set_size(1, 1);
-      range[0] = rtNaN;
-    } else if (iend[b_i] < ibegin[b_i]) {
-      range.set_size(1, 0);
-    } else if ((std::isinf(ibegin[b_i]) || std::isinf(iend[b_i])) &&
-               (ibegin[b_i] == iend[b_i])) {
-      range.set_size(1, 1);
-      range[0] = rtNaN;
-    } else if (std::floor(ibegin[b_i]) == ibegin[b_i]) {
-      loop_ub = static_cast<int>(std::floor(iend[b_i] - ibegin[b_i]));
-      range.set_size(1, loop_ub + 1);
-      for (i1 = 0; i1 <= loop_ub; i1++) {
-        range[i1] = ibegin[b_i] + static_cast<double>(i1);
-      }
-    } else {
-      eml_float_colon(ibegin[b_i], iend[b_i], range);
-    }
-    r.set_size(1, range.size(1));
-    loop_ub = range.size(1);
-    for (i1 = 0; i1 < loop_ub; i1++) {
-      r[i1] = static_cast<int>(range[i1]);
-    }
-    r1.set_size(range.size(1));
-    loop_ub = range.size(1);
-    for (i1 = 0; i1 < loop_ub; i1++) {
-      r1[i1] = course[static_cast<int>(range[i1]) - 1];
-    }
-    b_waypoints.set_size(range.size(1), 3);
-    loop_ub = range.size(1);
-    for (i1 = 0; i1 < 3; i1++) {
-      for (int i2{0}; i2 < loop_ub; i2++) {
-        b_waypoints[i2 + b_waypoints.size(0) * i1] =
-            waypoints[(static_cast<int>(range[i2]) + waypoints.size(0) * i1) -
-                      1];
-      }
-    }
-    fitCourse(b_waypoints, r1);
-    loop_ub = r.size(1);
-    for (i1 = 0; i1 < loop_ub; i1++) {
-      course[r[i1] - 1] = r1[i1];
-    }
+  coder::array<double, 1U> b_in2;
+  int b_in6;
+  int loop_ub;
+  int stride_1_0;
+  if ((in6 - in5) + 1 == 1) {
+    b_in6 = in3 + 1;
+  } else {
+    b_in6 = (in6 - in5) + 1;
   }
+  b_in2.set_size(b_in6);
+  b_in6 = (in3 + 1 != 1);
+  stride_1_0 = ((in6 - in5) + 1 != 1);
+  if ((in6 - in5) + 1 == 1) {
+    loop_ub = in3 + 1;
+  } else {
+    loop_ub = (in6 - in5) + 1;
+  }
+  for (int i{0}; i < loop_ub; i++) {
+    b_in2[i] = in2[i * b_in6] - in4[in5 + i * stride_1_0];
+  }
+  in1.set_size(b_in2.size(0) + 1);
+  loop_ub = b_in2.size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    in1[i] = b_in2[i];
+  }
+  in1[b_in2.size(0)] = in2[in2.size(0) - 1];
 }
 
 //
-// Arguments    : const ::coder::array<double, 2U> &waypoints
-//                ::coder::array<double, 1U> &course
+// Arguments    : coder::array<double, 1U> &in1
+//                const coder::array<double, 1U> &in2
+//                const coder::array<double, 1U> &in3
+//                int in4
+//                int in5
+//                int in6
 // Return Type  : void
 //
-static void fitCourse(const ::coder::array<double, 2U> &waypoints,
-                      ::coder::array<double, 1U> &course)
+static void binary_expand_op(coder::array<double, 1U> &in1,
+                             const coder::array<double, 1U> &in2,
+                             const coder::array<double, 1U> &in3, int in4,
+                             int in5, int in6)
 {
-  anonymous_function b_this;
-  anonymous_function c_this;
-  array<double, 2U> Jtri;
-  array<double, 2U> varargout_2;
-  array<double, 1U> courselsq;
-  array<double, 1U> dx;
-  array<double, 1U> r;
-  array<double, 1U> v;
-  array<double, 1U> varargout_1;
-  array<double, 1U> xnew;
-  array<bool, 1U> b_x;
-  double th[2];
-  double x[2];
-  double lambda;
-  double lambdac;
-  double maxiter;
-  int b_i;
-  int i;
+  coder::array<double, 1U> b_in2;
+  int b_in6;
   int loop_ub;
-  int nx;
-  bool freelead;
-  bool freetail;
-  freelead = std::isnan(course[0]);
-  freetail = std::isnan(course[course.size(0) - 1]);
-  maxiter = course[0];
-  x[0] = std::cos(maxiter);
-  maxiter = std::sin(maxiter);
-  th[0] = maxiter;
-  maxiter = course[course.size(0) - 1];
-  x[1] = std::cos(maxiter);
-  maxiter = std::sin(maxiter);
-  th[1] = maxiter;
-  loop_ub = waypoints.size(0);
-  r.set_size(waypoints.size(0));
-  for (i = 0; i < loop_ub; i++) {
-    r[i] = waypoints[i];
-  }
-  loop_ub = waypoints.size(0);
-  dx.set_size(waypoints.size(0));
-  for (i = 0; i < loop_ub; i++) {
-    dx[i] = waypoints[i + waypoints.size(0)];
-  }
-  dclothoidwp(r, dx, x, th, xnew, v);
-  i = waypoints.size(0);
-  for (b_i = 0; b_i <= i - 3; b_i++) {
-    nx = static_cast<int>((static_cast<double>(b_i) + 1.0) * 128.0 + 1.0) - 1;
-    loop_ub = (b_i + 1) * 128 - 1;
-    course[b_i + 1] =
-        rt_atan2d_snf(v[nx] - v[loop_ub], xnew[nx] - xnew[loop_ub]);
-  }
-  if (freelead) {
-    course[0] = rt_atan2d_snf(v[1] - v[0], xnew[1] - xnew[0]);
-  }
-  if (freetail) {
-    course[course.size(0) - 1] =
-        rt_atan2d_snf(v[v.size(0) - 1] - v[v.size(0) - 2],
-                      xnew[xnew.size(0) - 1] - xnew[xnew.size(0) - 2]);
-  }
-  if (freelead && freetail) {
-    double S;
-    double iter;
-    bool exitg1;
-    courselsq.set_size(course.size(0));
-    loop_ub = course.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      courselsq[i] = course[i];
-    }
-    maxiter = 100.0 * static_cast<double>(course.size(0));
-    fitCourse_anonFcn1(waypoints, course, r, Jtri);
-    mulJt(Jtri, r, v);
-    S = 0.0;
-    loop_ub = r.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      S += r[i] * r[i];
-    }
-    lambda = 0.0;
-    lambdac = 0.75;
-    iter = 0.0;
-    nx = course.size(0);
-    dx.set_size(nx);
-    for (i = 0; i < nx; i++) {
-      dx[i] = 1.0E-7;
-    }
-    exitg1 = false;
-    while ((!exitg1) && (iter < maxiter)) {
-      bool exitg2;
-      nx = dx.size(0);
-      xnew.set_size(dx.size(0));
-      for (loop_ub = 0; loop_ub < nx; loop_ub++) {
-        xnew[loop_ub] = std::abs(dx[loop_ub]);
-      }
-      b_x.set_size(xnew.size(0));
-      loop_ub = xnew.size(0);
-      for (i = 0; i < loop_ub; i++) {
-        b_x[i] = (xnew[i] >= 1.0E-7);
-      }
-      freelead = false;
-      nx = 1;
-      exitg2 = false;
-      while ((!exitg2) && (nx <= b_x.size(0))) {
-        if (b_x[nx - 1]) {
-          freelead = true;
-          exitg2 = true;
-        } else {
-          nx++;
-        }
-      }
-      if (freelead) {
-        nx = r.size(0);
-        xnew.set_size(r.size(0));
-        for (loop_ub = 0; loop_ub < nx; loop_ub++) {
-          xnew[loop_ub] = std::abs(r[loop_ub]);
-        }
-        b_x.set_size(xnew.size(0));
-        loop_ub = xnew.size(0);
-        for (i = 0; i < loop_ub; i++) {
-          b_x[i] = (xnew[i] >= 1.0E-7);
-        }
-        freelead = false;
-        nx = 1;
-        exitg2 = false;
-        while ((!exitg2) && (nx <= b_x.size(0))) {
-          if (b_x[nx - 1]) {
-            freelead = true;
-            exitg2 = true;
-          } else {
-            nx++;
-          }
-        }
-        if (freelead) {
-          double b_varargout_1;
-          iter++;
-          solveDampenedHessian(Jtri, lambda, v, dx);
-          xnew.set_size(courselsq.size(0));
-          loop_ub = courselsq.size(0);
-          for (i = 0; i < loop_ub; i++) {
-            xnew[i] = courselsq[i] - dx[i];
-          }
-          fitCourse_anonFcn1(waypoints, xnew, varargout_1, varargout_2);
-          b_varargout_1 = 0.0;
-          loop_ub = varargout_1.size(0);
-          for (i = 0; i < loop_ub; i++) {
-            b_varargout_1 += varargout_1[i] * varargout_1[i];
-          }
-          fletcher(S, b_varargout_1, dx, v, Jtri, &lambda, &lambdac);
-          if (b_varargout_1 < S) {
-            S = b_varargout_1;
-            courselsq.set_size(xnew.size(0));
-            loop_ub = xnew.size(0);
-            for (i = 0; i < loop_ub; i++) {
-              courselsq[i] = xnew[i];
-            }
-            r.set_size(varargout_1.size(0));
-            loop_ub = varargout_1.size(0);
-            for (i = 0; i < loop_ub; i++) {
-              r[i] = varargout_1[i];
-            }
-            Jtri.set_size(varargout_2.size(0), 3);
-            loop_ub = varargout_2.size(0) * 3;
-            for (i = 0; i < loop_ub; i++) {
-              Jtri[i] = varargout_2[i];
-            }
-            mulJt(varargout_2, varargout_1, v);
-          }
-        } else {
-          exitg1 = true;
-        }
-      } else {
-        exitg1 = true;
-      }
-    }
-  } else if (freelead) {
-    double S;
-    double iter;
-    bool exitg1;
-    if (1.0 > static_cast<double>(course.size(0)) - 1.0) {
-      loop_ub = 0;
-    } else {
-      loop_ub = course.size(0) - 1;
-    }
-    courselsq.set_size(loop_ub);
-    for (i = 0; i < loop_ub; i++) {
-      courselsq[i] = course[i];
-    }
-    maxiter = 100.0 * static_cast<double>(loop_ub);
-    fitCourse_anonFcn2(waypoints, course, courselsq, r, Jtri);
-    mulJt(Jtri, r, v);
-    S = 0.0;
-    nx = r.size(0);
-    for (i = 0; i < nx; i++) {
-      S += r[i] * r[i];
-    }
-    lambda = 0.0;
-    lambdac = 0.75;
-    iter = 0.0;
-    dx.set_size(loop_ub);
-    for (i = 0; i < loop_ub; i++) {
-      dx[i] = 1.0E-7;
-    }
-    exitg1 = false;
-    while ((!exitg1) && (iter < maxiter)) {
-      bool exitg2;
-      nx = dx.size(0);
-      xnew.set_size(dx.size(0));
-      for (loop_ub = 0; loop_ub < nx; loop_ub++) {
-        xnew[loop_ub] = std::abs(dx[loop_ub]);
-      }
-      b_x.set_size(xnew.size(0));
-      loop_ub = xnew.size(0);
-      for (i = 0; i < loop_ub; i++) {
-        b_x[i] = (xnew[i] >= 1.0E-7);
-      }
-      freelead = false;
-      nx = 1;
-      exitg2 = false;
-      while ((!exitg2) && (nx <= b_x.size(0))) {
-        if (b_x[nx - 1]) {
-          freelead = true;
-          exitg2 = true;
-        } else {
-          nx++;
-        }
-      }
-      if (freelead) {
-        nx = r.size(0);
-        xnew.set_size(r.size(0));
-        for (loop_ub = 0; loop_ub < nx; loop_ub++) {
-          xnew[loop_ub] = std::abs(r[loop_ub]);
-        }
-        b_x.set_size(xnew.size(0));
-        loop_ub = xnew.size(0);
-        for (i = 0; i < loop_ub; i++) {
-          b_x[i] = (xnew[i] >= 1.0E-7);
-        }
-        freelead = false;
-        nx = 1;
-        exitg2 = false;
-        while ((!exitg2) && (nx <= b_x.size(0))) {
-          if (b_x[nx - 1]) {
-            freelead = true;
-            exitg2 = true;
-          } else {
-            nx++;
-          }
-        }
-        if (freelead) {
-          double b_varargout_1;
-          iter++;
-          solveDampenedHessian(Jtri, lambda, v, dx);
-          xnew.set_size(courselsq.size(0));
-          loop_ub = courselsq.size(0);
-          for (i = 0; i < loop_ub; i++) {
-            xnew[i] = courselsq[i] - dx[i];
-          }
-          fitCourse_anonFcn2(waypoints, course, xnew, varargout_1, varargout_2);
-          b_varargout_1 = 0.0;
-          loop_ub = varargout_1.size(0);
-          for (i = 0; i < loop_ub; i++) {
-            b_varargout_1 += varargout_1[i] * varargout_1[i];
-          }
-          fletcher(S, b_varargout_1, dx, v, Jtri, &lambda, &lambdac);
-          if (b_varargout_1 < S) {
-            S = b_varargout_1;
-            courselsq.set_size(xnew.size(0));
-            loop_ub = xnew.size(0);
-            for (i = 0; i < loop_ub; i++) {
-              courselsq[i] = xnew[i];
-            }
-            r.set_size(varargout_1.size(0));
-            loop_ub = varargout_1.size(0);
-            for (i = 0; i < loop_ub; i++) {
-              r[i] = varargout_1[i];
-            }
-            Jtri.set_size(varargout_2.size(0), 3);
-            loop_ub = varargout_2.size(0) * 3;
-            for (i = 0; i < loop_ub; i++) {
-              Jtri[i] = varargout_2[i];
-            }
-            mulJt(varargout_2, varargout_1, v);
-          }
-        } else {
-          exitg1 = true;
-        }
-      } else {
-        exitg1 = true;
-      }
-    }
-    i = courselsq.size(0);
-    courselsq.set_size(courselsq.size(0) + 1);
-    courselsq[i] = course[waypoints.size(0) - 1];
-  } else if (freetail) {
-    if (2 > course.size(0)) {
-      i = 0;
-      nx = 0;
-    } else {
-      i = 1;
-      nx = course.size(0);
-    }
-    c_this.workspace.waypoints.set_size(waypoints.size(0), 3);
-    loop_ub = waypoints.size(0) * 3;
-    for (b_i = 0; b_i < loop_ub; b_i++) {
-      c_this.workspace.waypoints[b_i] = waypoints[b_i];
-    }
-    c_this.workspace.course.set_size(course.size(0));
-    loop_ub = course.size(0);
-    for (b_i = 0; b_i < loop_ub; b_i++) {
-      c_this.workspace.course[b_i] = course[b_i];
-    }
-    loop_ub = nx - i;
-    courselsq.set_size(loop_ub);
-    for (nx = 0; nx < loop_ub; nx++) {
-      courselsq[nx] = course[i + nx];
-    }
-    LMFsolve(&c_this, courselsq);
-    r.set_size(courselsq.size(0) + 1);
-    r[0] = course[0];
-    loop_ub = courselsq.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      r[i + 1] = courselsq[i];
-    }
-    courselsq.set_size(r.size(0));
-    loop_ub = r.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      courselsq[i] = r[i];
-    }
+  int stride_1_0;
+  if ((in6 - in5) + 1 == 1) {
+    b_in6 = in4 + 1;
   } else {
-    if (2.0 > static_cast<double>(course.size(0)) - 1.0) {
-      i = 0;
-      nx = 0;
-    } else {
-      i = 1;
-      nx = course.size(0) - 1;
-    }
-    b_this.workspace.waypoints.set_size(waypoints.size(0), 3);
-    loop_ub = waypoints.size(0) * 3;
-    for (b_i = 0; b_i < loop_ub; b_i++) {
-      b_this.workspace.waypoints[b_i] = waypoints[b_i];
-    }
-    b_this.workspace.course.set_size(course.size(0));
-    loop_ub = course.size(0);
-    for (b_i = 0; b_i < loop_ub; b_i++) {
-      b_this.workspace.course[b_i] = course[b_i];
-    }
-    loop_ub = nx - i;
-    courselsq.set_size(loop_ub);
-    for (nx = 0; nx < loop_ub; nx++) {
-      courselsq[nx] = course[i + nx];
-    }
-    b_LMFsolve(&b_this, courselsq);
-    r.set_size(courselsq.size(0) + 2);
-    r[0] = course[0];
-    loop_ub = courselsq.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      r[i + 1] = courselsq[i];
-    }
-    r[courselsq.size(0) + 1] = course[waypoints.size(0) - 1];
-    courselsq.set_size(r.size(0));
-    loop_ub = r.size(0);
-    for (i = 0; i < loop_ub; i++) {
-      courselsq[i] = r[i];
-    }
+    b_in6 = (in6 - in5) + 1;
   }
-  course.set_size(courselsq.size(0));
-  loop_ub = courselsq.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    course[i] = courselsq[i];
+  b_in2.set_size(b_in6);
+  b_in6 = (in4 + 1 != 1);
+  stride_1_0 = ((in6 - in5) + 1 != 1);
+  if ((in6 - in5) + 1 == 1) {
+    loop_ub = in4 + 1;
+  } else {
+    loop_ub = (in6 - in5) + 1;
+  }
+  for (int i{0}; i < loop_ub; i++) {
+    b_in2[i] = in2[i * b_in6] - in3[in5 + i * stride_1_0];
+  }
+  in1.set_size(b_in2.size(0) + 1);
+  in1[0] = in2[in2.size(0) - 1] - in3[0];
+  loop_ub = b_in2.size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    in1[i + 1] = b_in2[i];
   }
 }
 
@@ -519,6 +169,11 @@ static void fitCourse(const ::coder::array<double, 2U> &waypoints,
 //                ::coder::array<double, 2U> &varargout_2
 // Return Type  : void
 //
+namespace coder {
+namespace matlabshared {
+namespace tracking {
+namespace internal {
+namespace scenario {
 static void fitCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
                                const ::coder::array<double, 1U> &x,
                                ::coder::array<double, 1U> &varargout_1,
@@ -540,7 +195,6 @@ static void fitCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
   int i1;
   int i2;
   int i3;
-  int i4;
   int loop_ub;
   loop_ub = waypoints.size(0);
   hip.set_size(waypoints.size(0));
@@ -548,14 +202,14 @@ static void fitCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
     hip[i].re = waypoints[i];
     hip[i].im = waypoints[i + waypoints.size(0)];
   }
-  if (1 > waypoints.size(0) - 1) {
+  if (waypoints.size(0) - 1 < 1) {
     loop_ub = 0;
     b_loop_ub = 0;
   } else {
     loop_ub = waypoints.size(0) - 1;
     b_loop_ub = waypoints.size(0) - 1;
   }
-  if (2 > waypoints.size(0)) {
+  if (waypoints.size(0) < 2) {
     i = 0;
     i1 = 0;
     i2 = 0;
@@ -567,11 +221,11 @@ static void fitCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
     i3 = waypoints.size(0);
   }
   b_hip.set_size(loop_ub);
-  for (i4 = 0; i4 < loop_ub; i4++) {
+  for (int i4{0}; i4 < loop_ub; i4++) {
     b_hip[i4] = hip[i4];
   }
   b_x.set_size(b_loop_ub);
-  for (i4 = 0; i4 < b_loop_ub; i4++) {
+  for (int i4{0}; i4 < b_loop_ub; i4++) {
     b_x[i4] = x[i4];
   }
   loop_ub = i1 - i;
@@ -586,40 +240,63 @@ static void fitCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
   }
   clothoidG1fit2wp(b_hip, b_x, hip, c_x, k0, k1, a__5, dk0_dc0, dk0_dc1,
                    dk1_dc0, dk1_dc1);
-  if (1 > k1.size(0) - 1) {
+  if (k1.size(0) - 1 < 1) {
     loop_ub = 1;
   } else {
     loop_ub = k1.size(0);
   }
-  i = (2 <= k0.size(0));
-  varargout_1.set_size(loop_ub + 1);
-  varargout_1[0] = 0.0 - k0[0];
-  for (i1 = 0; i1 <= loop_ub - 2; i1++) {
-    varargout_1[i1 + 1] = k1[i1] - k0[i + i1];
-  }
-  varargout_1[loop_ub] = k1[k1.size(0) - 1];
-  if (1 > waypoints.size(0) - 2) {
-    loop_ub = 1;
+  if (k0.size(0) < 2) {
+    i = 0;
+    i1 = 0;
   } else {
-    loop_ub = waypoints.size(0) - 1;
+    i = 1;
+    i1 = k0.size(0);
   }
-  i = (2 <= waypoints.size(0) - 1);
-  varargout_2.set_size(dk1_dc0.size(0) + 1, 3);
-  b_loop_ub = dk1_dc0.size(0);
-  for (i1 = 0; i1 < b_loop_ub; i1++) {
-    varargout_2[i1] = dk1_dc0[i1];
+  if (loop_ub - 1 == i1 - i) {
+    varargout_1.set_size(loop_ub + 1);
+    varargout_1[0] = 0.0 - k0[0];
+    for (i1 = 0; i1 <= loop_ub - 2; i1++) {
+      varargout_1[i1 + 1] = k1[i1] - k0[i + i1];
+    }
+    varargout_1[loop_ub] = k1[k1.size(0) - 1];
+  } else {
+    e_binary_expand_op(varargout_1, k0, k1, loop_ub - 2, i, i1 - 1);
   }
-  varargout_2[dk1_dc0.size(0)] = 0.0;
-  varargout_2[varargout_2.size(0)] = 0.0 - dk0_dc0[0];
-  for (i1 = 0; i1 <= loop_ub - 2; i1++) {
-    varargout_2[(i1 + varargout_2.size(0)) + 1] = dk1_dc1[i1] - dk0_dc0[i + i1];
+  if (waypoints.size(0) - 2 < 1) {
+    loop_ub = -1;
+  } else {
+    loop_ub = waypoints.size(0) - 3;
   }
-  varargout_2[loop_ub + varargout_2.size(0)] = dk1_dc1[waypoints.size(0) - 2];
-  loop_ub = dk0_dc1.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    varargout_2[i + varargout_2.size(0) * 2] = -dk0_dc1[i];
+  if (waypoints.size(0) - 1 < 2) {
+    i = 0;
+    i1 = 0;
+  } else {
+    i = 1;
+    i1 = waypoints.size(0) - 1;
   }
-  varargout_2[dk0_dc1.size(0) + varargout_2.size(0) * 2] = 0.0;
+  if (loop_ub + 1 == i1 - i) {
+    varargout_2.set_size(dk1_dc0.size(0) + 1, 3);
+    b_loop_ub = dk1_dc0.size(0);
+    for (i1 = 0; i1 < b_loop_ub; i1++) {
+      varargout_2[i1] = dk1_dc0[i1];
+    }
+    varargout_2[dk1_dc0.size(0)] = 0.0;
+    varargout_2[varargout_2.size(0)] = 0.0 - dk0_dc0[0];
+    for (i1 = 0; i1 <= loop_ub; i1++) {
+      varargout_2[(i1 + varargout_2.size(0)) + 1] =
+          dk1_dc1[i1] - dk0_dc0[i + i1];
+    }
+    varargout_2[(loop_ub + varargout_2.size(0)) + 2] =
+        dk1_dc1[waypoints.size(0) - 2];
+    loop_ub = dk0_dc1.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      varargout_2[i + varargout_2.size(0) * 2] = -dk0_dc1[i];
+    }
+    varargout_2[dk0_dc1.size(0) + varargout_2.size(0) * 2] = 0.0;
+  } else {
+    binary_expand_op(varargout_2, dk1_dc0, dk0_dc0, dk1_dc1, loop_ub, i, i1 - 1,
+                     waypoints, dk0_dc1);
+  }
 }
 
 //
@@ -647,7 +324,6 @@ static void fitCourse_anonFcn2(const ::coder::array<double, 2U> &waypoints,
   array<double, 1U> dk1_dc1;
   array<double, 1U> k0;
   array<double, 1U> k1;
-  array<int, 2U> r;
   int b_loop_ub;
   int i;
   int i1;
@@ -666,27 +342,22 @@ static void fitCourse_anonFcn2(const ::coder::array<double, 2U> &waypoints,
     hip[i].re = waypoints[i];
     hip[i].im = waypoints[i + waypoints.size(0)];
   }
-  if (1 > course.size(0) - 1) {
+  if (course.size(0) - 1 < 1) {
     loop_ub = 0;
   } else {
     loop_ub = course.size(0) - 1;
   }
-  r.set_size(1, loop_ub);
   for (i = 0; i < loop_ub; i++) {
-    r[i] = i;
+    b_course[i] = x[i];
   }
-  loop_ub = r.size(1);
-  for (i = 0; i < loop_ub; i++) {
-    b_course[r[i]] = x[i];
-  }
-  if (1 > waypoints.size(0) - 1) {
+  if (waypoints.size(0) - 1 < 1) {
     loop_ub = 0;
     b_loop_ub = 0;
   } else {
     loop_ub = waypoints.size(0) - 1;
     b_loop_ub = waypoints.size(0) - 1;
   }
-  if (2 > waypoints.size(0)) {
+  if (waypoints.size(0) < 2) {
     i = 0;
     i1 = 0;
     i2 = 0;
@@ -717,270 +388,421 @@ static void fitCourse_anonFcn2(const ::coder::array<double, 2U> &waypoints,
   b_course.set_size(loop_ub_tmp);
   clothoidG1fit2wp(b_hip, c_course, hip, b_course, k0, k1, a__3, dk0_dc0,
                    dk0_dc1, dk1_dc0, dk1_dc1);
-  if (1 > k1.size(0) - 1) {
+  if (k1.size(0) - 1 < 1) {
     loop_ub = 1;
   } else {
     loop_ub = k1.size(0);
   }
-  i = (2 <= k0.size(0));
-  varargout_1.set_size(loop_ub);
-  varargout_1[0] = 0.0 - k0[0];
-  for (i1 = 0; i1 <= loop_ub - 2; i1++) {
-    varargout_1[i1 + 1] = k1[i1] - k0[i + i1];
-  }
-  if (1 > dk0_dc1.size(0) - 1) {
-    loop_ub = 0;
+  if (k0.size(0) < 2) {
+    i = 0;
+    i1 = 0;
   } else {
-    loop_ub = dk0_dc1.size(0) - 1;
+    i = 1;
+    i1 = k0.size(0);
   }
-  if (1 > dk1_dc0.size(0) - 1) {
+  if (loop_ub - 1 == i1 - i) {
+    varargout_1.set_size(loop_ub);
+    varargout_1[0] = 0.0 - k0[0];
+    for (i1 = 0; i1 <= loop_ub - 2; i1++) {
+      varargout_1[i1 + 1] = k1[i1] - k0[i + i1];
+    }
+  } else {
+    f_binary_expand_op(varargout_1, k0, k1, loop_ub - 2, i, i1 - 1);
+  }
+  if (dk0_dc1.size(0) - 1 < 1) {
+    loop_ub = -1;
+  } else {
+    loop_ub = dk0_dc1.size(0) - 2;
+  }
+  if (dk1_dc0.size(0) - 1 < 1) {
     b_loop_ub = 1;
   } else {
     b_loop_ub = dk1_dc0.size(0);
   }
-  if (1 > waypoints.size(0) - 2) {
-    loop_ub_tmp = 2;
+  if (waypoints.size(0) - 2 < 1) {
+    loop_ub_tmp = -1;
   } else {
-    loop_ub_tmp = waypoints.size(0);
+    loop_ub_tmp = waypoints.size(0) - 3;
   }
-  i = (2 <= waypoints.size(0) - 1);
-  varargout_2.set_size(b_loop_ub, 3);
-  for (i1 = 0; i1 <= b_loop_ub - 2; i1++) {
-    varargout_2[i1] = dk1_dc0[i1];
+  if (waypoints.size(0) - 1 < 2) {
+    i = 0;
+    i1 = 0;
+  } else {
+    i = 1;
+    i1 = waypoints.size(0) - 1;
   }
-  varargout_2[b_loop_ub - 1] = 0.0;
-  varargout_2[varargout_2.size(0)] = 0.0 - dk0_dc0[0];
-  for (i1 = 0; i1 <= loop_ub_tmp - 3; i1++) {
-    varargout_2[(i1 + varargout_2.size(0)) + 1] = dk1_dc1[i1] - dk0_dc0[i + i1];
+  if (loop_ub_tmp + 1 == i1 - i) {
+    varargout_2.set_size(b_loop_ub, 3);
+    for (i1 = 0; i1 <= b_loop_ub - 2; i1++) {
+      varargout_2[i1] = dk1_dc0[i1];
+    }
+    varargout_2[b_loop_ub - 1] = 0.0;
+    varargout_2[varargout_2.size(0)] = 0.0 - dk0_dc0[0];
+    for (i1 = 0; i1 <= loop_ub_tmp; i1++) {
+      varargout_2[(i1 + varargout_2.size(0)) + 1] =
+          dk1_dc1[i1] - dk0_dc0[i + i1];
+    }
+    for (i = 0; i <= loop_ub; i++) {
+      varargout_2[i + varargout_2.size(0) * 2] = -dk0_dc1[i];
+    }
+    varargout_2[(loop_ub + varargout_2.size(0) * 2) + 1] = 0.0;
+  } else {
+    binary_expand_op(varargout_2, dk1_dc0, b_loop_ub - 2, dk0_dc0, dk1_dc1,
+                     loop_ub_tmp, i, i1 - 1, dk0_dc1, loop_ub);
   }
-  for (i = 0; i < loop_ub; i++) {
-    varargout_2[i + varargout_2.size(0) * 2] = -dk0_dc1[i];
-  }
-  varargout_2[loop_ub + varargout_2.size(0) * 2] = 0.0;
 }
 
 //
 // Arguments    : const ::coder::array<double, 2U> &waypoints
+//                const ::coder::array<double, 1U> &course
 //                const ::coder::array<double, 1U> &x
 //                ::coder::array<double, 1U> &varargout_1
 //                ::coder::array<double, 2U> &varargout_2
 // Return Type  : void
 //
-static void fitLoopCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
-                                   const ::coder::array<double, 1U> &x,
-                                   ::coder::array<double, 1U> &varargout_1,
-                                   ::coder::array<double, 2U> &varargout_2)
+static void fitCourse_anonFcn4(const ::coder::array<double, 2U> &waypoints,
+                               const ::coder::array<double, 1U> &course,
+                               const ::coder::array<double, 1U> &x,
+                               ::coder::array<double, 1U> &varargout_1,
+                               ::coder::array<double, 2U> &varargout_2)
 {
   array<creal_T, 1U> b_hip;
   array<creal_T, 1U> hip;
-  array<double, 2U> y;
-  array<double, 1U> a__1;
-  array<double, 1U> b_x;
-  array<double, 1U> c_x;
+  array<double, 1U> a__4;
+  array<double, 1U> b_course;
+  array<double, 1U> c_course;
   array<double, 1U> dk0_dc0;
   array<double, 1U> dk0_dc1;
   array<double, 1U> dk1_dc0;
   array<double, 1U> dk1_dc1;
   array<double, 1U> k0;
   array<double, 1U> k1;
-  array<int, 1U> b_y;
   int b_loop_ub;
-  int c_loop_ub;
   int i;
   int i1;
   int i2;
+  int i3;
+  int i4;
   int loop_ub;
+  b_course.set_size(course.size(0));
+  loop_ub = course.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    b_course[i] = course[i];
+  }
   loop_ub = waypoints.size(0);
   hip.set_size(waypoints.size(0));
   for (i = 0; i < loop_ub; i++) {
     hip[i].re = waypoints[i];
     hip[i].im = waypoints[i + waypoints.size(0)];
   }
-  if (1 > waypoints.size(0) - 1) {
+  if (course.size(0) - 1 < 2) {
+    i = -1;
+    i1 = 1;
+  } else {
+    i = 0;
+    i1 = course.size(0);
+  }
+  loop_ub = (i1 - i) - 2;
+  for (i1 = 0; i1 < loop_ub; i1++) {
+    b_course[(i + i1) + 1] = x[i1];
+  }
+  if (waypoints.size(0) - 1 < 1) {
     loop_ub = 0;
     b_loop_ub = 0;
   } else {
     loop_ub = waypoints.size(0) - 1;
     b_loop_ub = waypoints.size(0) - 1;
   }
-  if (2 > waypoints.size(0)) {
+  if (waypoints.size(0) < 2) {
+    i = 0;
+    i1 = 0;
+    i2 = 0;
+    i3 = 0;
+  } else {
+    i = 1;
+    i1 = waypoints.size(0);
+    i2 = 1;
+    i3 = waypoints.size(0);
+  }
+  b_hip.set_size(loop_ub);
+  for (i4 = 0; i4 < loop_ub; i4++) {
+    b_hip[i4] = hip[i4];
+  }
+  c_course.set_size(b_loop_ub);
+  for (i4 = 0; i4 < b_loop_ub; i4++) {
+    c_course[i4] = b_course[i4];
+  }
+  b_loop_ub = i1 - i;
+  for (i1 = 0; i1 < b_loop_ub; i1++) {
+    hip[i1] = hip[i + i1];
+  }
+  hip.set_size(b_loop_ub);
+  b_loop_ub = i3 - i2;
+  for (i = 0; i < b_loop_ub; i++) {
+    b_course[i] = b_course[i2 + i];
+  }
+  b_course.set_size(b_loop_ub);
+  clothoidG1fit2wp(b_hip, c_course, hip, b_course, k0, k1, a__4, dk0_dc0,
+                   dk0_dc1, dk1_dc0, dk1_dc1);
+  if (k1.size(0) - 1 < 1) {
+    loop_ub = 0;
+  } else {
+    loop_ub = k1.size(0) - 1;
+  }
+  if (k0.size(0) < 2) {
     i = 0;
     i1 = 0;
   } else {
     i = 1;
-    i1 = waypoints.size(0);
+    i1 = k0.size(0);
   }
-  if (waypoints.size(0) - 1 < 2) {
-    y.set_size(1, 0);
-  } else {
-    y.set_size(1, static_cast<int>(
-                      (static_cast<double>(waypoints.size(0)) - 1.0) - 2.0) +
-                      1);
-    c_loop_ub =
-        static_cast<int>((static_cast<double>(waypoints.size(0)) - 1.0) - 2.0);
-    for (i2 = 0; i2 <= c_loop_ub; i2++) {
-      y[i2] = static_cast<double>(i2) + 2.0;
+  if (loop_ub == i1 - i) {
+    varargout_1.set_size(loop_ub);
+    for (i1 = 0; i1 < loop_ub; i1++) {
+      varargout_1[i1] = k1[i1] - k0[i + i1];
     }
-  }
-  b_y.set_size(y.size(1) + 1);
-  c_loop_ub = y.size(1);
-  for (i2 = 0; i2 < c_loop_ub; i2++) {
-    b_y[i2] = static_cast<int>(y[i2]) - 1;
-  }
-  b_y[y.size(1)] = 0;
-  b_hip.set_size(loop_ub);
-  for (i2 = 0; i2 < loop_ub; i2++) {
-    b_hip[i2] = hip[i2];
-  }
-  b_x.set_size(b_loop_ub);
-  for (i2 = 0; i2 < b_loop_ub; i2++) {
-    b_x[i2] = x[i2];
-  }
-  loop_ub = i1 - i;
-  for (i1 = 0; i1 < loop_ub; i1++) {
-    hip[i1] = hip[i + i1];
-  }
-  hip.set_size(loop_ub);
-  c_x.set_size(b_y.size(0));
-  loop_ub = b_y.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    c_x[i] = x[b_y[i]];
-  }
-  clothoidG1fit2wp(b_hip, b_x, hip, c_x, k0, k1, a__1, dk0_dc0, dk0_dc1,
-                   dk1_dc0, dk1_dc1);
-  if (1 > k1.size(0) - 1) {
-    loop_ub = 1;
   } else {
-    loop_ub = k1.size(0);
+    e_binary_expand_op(varargout_1, k1, loop_ub - 1, k0, i, i1 - 1);
   }
-  i = (2 <= k0.size(0));
-  varargout_1.set_size(loop_ub);
-  varargout_1[0] = k1[k1.size(0) - 1] - k0[0];
-  for (i1 = 0; i1 <= loop_ub - 2; i1++) {
-    varargout_1[i1 + 1] = k1[i1] - k0[i + i1];
+  if (dk0_dc1.size(0) - 1 < 2) {
+    i = 0;
+    i1 = -1;
+  } else {
+    i = 1;
+    i1 = dk0_dc1.size(0) - 2;
+  }
+  if (dk1_dc0.size(0) - 1 < 2) {
+    i2 = 0;
+    i3 = 1;
+  } else {
+    i2 = 1;
+    i3 = dk1_dc0.size(0);
   }
   if (waypoints.size(0) - 2 < 1) {
-    y.set_size(1, 0);
+    loop_ub = -1;
   } else {
-    y.set_size(1, static_cast<int>(
-                      (static_cast<double>(waypoints.size(0)) - 2.0) - 1.0) +
-                      1);
-    loop_ub =
-        static_cast<int>((static_cast<double>(waypoints.size(0)) - 2.0) - 1.0);
-    for (i = 0; i <= loop_ub; i++) {
-      y[i] = static_cast<double>(i) + 1.0;
+    loop_ub = waypoints.size(0) - 3;
+  }
+  if (waypoints.size(0) - 1 < 2) {
+    i4 = 0;
+    b_loop_ub = 0;
+  } else {
+    i4 = 1;
+    b_loop_ub = waypoints.size(0) - 1;
+  }
+  if (loop_ub + 1 == b_loop_ub - i4) {
+    b_loop_ub = i3 - i2;
+    varargout_2.set_size(b_loop_ub, 3);
+    for (i3 = 0; i3 <= b_loop_ub - 2; i3++) {
+      varargout_2[i3] = dk1_dc0[i2 + i3];
     }
-  }
-  b_y.set_size(y.size(1) + 1);
-  b_y[0] = waypoints.size(0) - 2;
-  loop_ub = y.size(1);
-  for (i = 0; i < loop_ub; i++) {
-    b_y[i + 1] = static_cast<int>(y[i]) - 1;
-  }
-  a__1.set_size(b_y.size(0));
-  loop_ub = b_y.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    a__1[i] = dk1_dc1[b_y[i]];
-  }
-  varargout_2.set_size(dk1_dc0.size(0), 3);
-  loop_ub = dk1_dc0.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    varargout_2[i] = dk1_dc0[i];
-  }
-  loop_ub = a__1.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    varargout_2[i + varargout_2.size(0)] = a__1[i] - dk0_dc0[i];
-  }
-  loop_ub = dk0_dc1.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    varargout_2[i + varargout_2.size(0) * 2] = -dk0_dc1[i];
+    varargout_2[b_loop_ub - 1] = 0.0;
+    for (i2 = 0; i2 <= loop_ub; i2++) {
+      varargout_2[i2 + varargout_2.size(0)] = dk1_dc1[i2] - dk0_dc0[i4 + i2];
+    }
+    b_loop_ub = i1 - i;
+    for (i1 = 0; i1 <= b_loop_ub; i1++) {
+      varargout_2[i1 + varargout_2.size(0) * 2] = -dk0_dc1[i + i1];
+    }
+    varargout_2[(b_loop_ub + varargout_2.size(0) * 2) + 1] = 0.0;
+  } else {
+    binary_expand_op(varargout_2, dk1_dc0, i2, i3 - 2, dk1_dc1, loop_ub,
+                     dk0_dc0, i4, b_loop_ub - 1, dk0_dc1, i, i1);
   }
 }
 
 //
-// Arguments    : const ::coder::array<double, 1U> &course
-//                ::coder::array<double, 1U> &ibegin
-//                ::coder::array<double, 1U> &iend
+// Arguments    : coder::array<double, 1U> &in1
+//                const coder::array<double, 1U> &in2
+//                int in3
+//                const coder::array<double, 1U> &in4
+//                int in5
+//                int in6
 // Return Type  : void
 //
-static void partitionCourse(const ::coder::array<double, 1U> &course,
-                            ::coder::array<double, 1U> &ibegin,
-                            ::coder::array<double, 1U> &iend)
+} // namespace scenario
+} // namespace internal
+} // namespace tracking
+} // namespace matlabshared
+} // namespace coder
+static void e_binary_expand_op(coder::array<double, 1U> &in1,
+                               const coder::array<double, 1U> &in2, int in3,
+                               const coder::array<double, 1U> &in4, int in5,
+                               int in6)
 {
-  array<int, 1U> ii;
-  array<bool, 1U> r;
-  array<bool, 1U> r1;
-  int i;
-  int i1;
-  int i2;
+  int b_in6;
   int loop_ub;
-  if (1 > course.size(0) - 1) {
-    loop_ub = 0;
+  int stride_1_0;
+  if ((in6 - in5) + 1 == 1) {
+    b_in6 = in3 + 1;
   } else {
-    loop_ub = course.size(0) - 1;
+    b_in6 = (in6 - in5) + 1;
   }
-  if (2 > course.size(0)) {
-    i = 0;
-    i1 = 0;
+  in1.set_size(b_in6);
+  b_in6 = (in3 + 1 != 1);
+  stride_1_0 = ((in6 - in5) + 1 != 1);
+  if ((in6 - in5) + 1 == 1) {
+    loop_ub = in3 + 1;
   } else {
-    i = 1;
-    i1 = course.size(0);
+    loop_ub = (in6 - in5) + 1;
   }
-  r.set_size(loop_ub);
-  for (i2 = 0; i2 < loop_ub; i2++) {
-    r[i2] = std::isnan(course[i2]);
+  for (int i{0}; i < loop_ub; i++) {
+    in1[i] = in2[i * b_in6] - in4[in5 + i * stride_1_0];
   }
-  loop_ub = i1 - i;
-  r1.set_size(loop_ub);
-  for (i1 = 0; i1 < loop_ub; i1++) {
-    r1[i1] = std::isnan(course[i + i1]);
-  }
-  loop_ub = r.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    r[i] = ((!r[i]) && r1[i]);
-  }
-  eml_find(r, ii);
-  ibegin.set_size(ii.size(0));
-  loop_ub = ii.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    ibegin[i] = ii[i];
-  }
-  if (ibegin.size(0) == 0) {
-    ibegin.set_size(0);
-  }
-  if (1 > course.size(0) - 1) {
-    loop_ub = 0;
+}
+
+//
+// Arguments    : coder::array<double, 1U> &in1
+//                const coder::array<double, 1U> &in2
+//                const coder::array<double, 1U> &in3
+//                int in4
+//                int in5
+//                int in6
+// Return Type  : void
+//
+static void e_binary_expand_op(coder::array<double, 1U> &in1,
+                               const coder::array<double, 1U> &in2,
+                               const coder::array<double, 1U> &in3, int in4,
+                               int in5, int in6)
+{
+  coder::array<double, 1U> b_in3;
+  int b_in6;
+  int loop_ub;
+  int stride_1_0;
+  if ((in6 - in5) + 1 == 1) {
+    b_in6 = in4 + 1;
   } else {
-    loop_ub = course.size(0) - 1;
+    b_in6 = (in6 - in5) + 1;
   }
-  if (2 > course.size(0)) {
-    i = 0;
-    i1 = 0;
+  b_in3.set_size(b_in6);
+  b_in6 = (in4 + 1 != 1);
+  stride_1_0 = ((in6 - in5) + 1 != 1);
+  if ((in6 - in5) + 1 == 1) {
+    loop_ub = in4 + 1;
   } else {
-    i = 1;
-    i1 = course.size(0);
+    loop_ub = (in6 - in5) + 1;
   }
-  r.set_size(loop_ub);
-  for (i2 = 0; i2 < loop_ub; i2++) {
-    r[i2] = std::isnan(course[i2]);
+  for (int i{0}; i < loop_ub; i++) {
+    b_in3[i] = in3[i * b_in6] - in2[in5 + i * stride_1_0];
   }
-  loop_ub = i1 - i;
-  r1.set_size(loop_ub);
-  for (i1 = 0; i1 < loop_ub; i1++) {
-    r1[i1] = std::isnan(course[i + i1]);
+  in1.set_size(b_in3.size(0) + 2);
+  in1[0] = 0.0 - in2[0];
+  loop_ub = b_in3.size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    in1[i + 1] = b_in3[i];
   }
-  loop_ub = r.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    r[i] = (r[i] && (!r1[i]));
+  in1[b_in3.size(0) + 1] = in3[in3.size(0) - 1];
+}
+
+//
+// Arguments    : coder::array<double, 1U> &in1
+//                const coder::array<double, 1U> &in2
+//                const coder::array<double, 1U> &in3
+//                int in4
+//                int in5
+//                int in6
+// Return Type  : void
+//
+static void f_binary_expand_op(coder::array<double, 1U> &in1,
+                               const coder::array<double, 1U> &in2,
+                               const coder::array<double, 1U> &in3, int in4,
+                               int in5, int in6)
+{
+  coder::array<double, 1U> b_in3;
+  int b_in6;
+  int loop_ub;
+  int stride_1_0;
+  if ((in6 - in5) + 1 == 1) {
+    b_in6 = in4 + 1;
+  } else {
+    b_in6 = (in6 - in5) + 1;
   }
-  eml_find(r, ii);
-  iend.set_size(ii.size(0));
-  loop_ub = ii.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    iend[i] = static_cast<double>(ii[i]) + 1.0;
+  b_in3.set_size(b_in6);
+  b_in6 = (in4 + 1 != 1);
+  stride_1_0 = ((in6 - in5) + 1 != 1);
+  if ((in6 - in5) + 1 == 1) {
+    loop_ub = in4 + 1;
+  } else {
+    loop_ub = (in6 - in5) + 1;
   }
-  if (iend.size(0) == 0) {
-    iend.set_size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    b_in3[i] = in3[i * b_in6] - in2[in5 + i * stride_1_0];
+  }
+  in1.set_size(b_in3.size(0) + 1);
+  in1[0] = 0.0 - in2[0];
+  loop_ub = b_in3.size(0);
+  for (int i{0}; i < loop_ub; i++) {
+    in1[i + 1] = b_in3[i];
+  }
+}
+
+//
+// Arguments    : const ::coder::array<double, 2U> &waypoints
+//                ::coder::array<double, 1U> &course
+//                const ::coder::array<double, 1U> &ibegin
+//                const ::coder::array<double, 1U> &iend
+// Return Type  : void
+//
+namespace coder {
+namespace matlabshared {
+namespace tracking {
+namespace internal {
+namespace scenario {
+void fillPartitions(const ::coder::array<double, 2U> &waypoints,
+                    ::coder::array<double, 1U> &course,
+                    const ::coder::array<double, 1U> &ibegin,
+                    const ::coder::array<double, 1U> &iend)
+{
+  array<double, 2U> b_waypoints;
+  array<double, 2U> range;
+  array<double, 1U> r1;
+  array<int, 2U> r;
+  int i;
+  i = ibegin.size(0);
+  for (int b_i{0}; b_i < i; b_i++) {
+    int loop_ub;
+    if (std::isnan(ibegin[b_i]) || std::isnan(iend[b_i])) {
+      range.set_size(1, 1);
+      range[0] = rtNaN;
+    } else if (iend[b_i] < ibegin[b_i]) {
+      range.set_size(1, 0);
+    } else if ((std::isinf(ibegin[b_i]) || std::isinf(iend[b_i])) &&
+               (ibegin[b_i] == iend[b_i])) {
+      range.set_size(1, 1);
+      range[0] = rtNaN;
+    } else if (std::floor(ibegin[b_i]) == ibegin[b_i]) {
+      loop_ub = static_cast<int>(iend[b_i] - ibegin[b_i]);
+      range.set_size(1, loop_ub + 1);
+      for (int i1{0}; i1 <= loop_ub; i1++) {
+        range[i1] = ibegin[b_i] + static_cast<double>(i1);
+      }
+    } else {
+      eml_float_colon(ibegin[b_i], iend[b_i], range);
+    }
+    r.set_size(1, range.size(1));
+    loop_ub = range.size(1);
+    for (int i1{0}; i1 < loop_ub; i1++) {
+      r[i1] = static_cast<int>(range[i1]);
+    }
+    r1.set_size(range.size(1));
+    loop_ub = range.size(1);
+    for (int i1{0}; i1 < loop_ub; i1++) {
+      r1[i1] = course[static_cast<int>(range[i1]) - 1];
+    }
+    b_waypoints.set_size(range.size(1), 3);
+    loop_ub = range.size(1);
+    for (int i1{0}; i1 < 3; i1++) {
+      for (int i2{0}; i2 < loop_ub; i2++) {
+        b_waypoints[i2 + b_waypoints.size(0) * i1] =
+            waypoints[(static_cast<int>(range[i2]) + waypoints.size(0) * i1) -
+                      1];
+      }
+    }
+    fitCourse(b_waypoints, r1);
+    loop_ub = r.size(1);
+    for (int i1{0}; i1 < loop_ub; i1++) {
+      course[r[i1] - 1] = r1[i1];
+    }
   }
 }
 
@@ -989,325 +811,518 @@ static void partitionCourse(const ::coder::array<double, 1U> &course,
 //                ::coder::array<double, 1U> &course
 // Return Type  : void
 //
-void clothoidG2fitMissingCourse(const ::coder::array<double, 2U> &waypoints,
-                                ::coder::array<double, 1U> &course)
+void fitCourse(const ::coder::array<double, 2U> &waypoints,
+               ::coder::array<double, 1U> &course)
 {
+  anonymous_function b_this;
   array<double, 2U> Jtri;
-  array<double, 2U> b_y;
-  array<double, 2U> range;
-  array<double, 2U> y;
+  array<double, 2U> varargout_2;
+  array<double, 1U> b_waypoints;
   array<double, 1U> courselsq;
   array<double, 1U> dx;
-  array<double, 1U> ibegin;
-  array<double, 1U> iend;
   array<double, 1U> r;
   array<double, 1U> v;
-  array<int, 2U> b_r;
-  array<bool, 1U> x;
+  array<double, 1U> xnew;
+  array<bool, 1U> b_x;
+  double th[2];
+  double x[2];
   double lambda;
   double lambdac;
-  int k;
-  bool exitg1;
-  bool p;
-  p = true;
-  k = 0;
-  exitg1 = false;
-  while ((!exitg1) && (k < 2)) {
-    if (!(waypoints[waypoints.size(0) * k] ==
-          waypoints[(waypoints.size(0) + waypoints.size(0) * k) - 1])) {
-      p = false;
-      exitg1 = true;
-    } else {
-      k++;
-    }
+  double maxiter;
+  int b_outsize[2];
+  int outsize[2];
+  int i;
+  int loop_ub;
+  int nx;
+  int x_re_tmp;
+  bool freelead;
+  bool freetail;
+  freelead = std::isnan(course[0]);
+  freetail = std::isnan(course[course.size(0) - 1]);
+  maxiter = course[0];
+  x[0] = std::cos(maxiter);
+  maxiter = std::sin(maxiter);
+  th[0] = maxiter;
+  maxiter = course[course.size(0) - 1];
+  x[1] = std::cos(maxiter);
+  maxiter = std::sin(maxiter);
+  th[1] = maxiter;
+  loop_ub = waypoints.size(0);
+  dx.set_size(waypoints.size(0));
+  for (i = 0; i < loop_ub; i++) {
+    dx[i] = waypoints[i];
   }
-  if (p) {
-    if (std::isnan(course[0])) {
-      course[0] = course[course.size(0) - 1];
-    } else {
-      course[course.size(0) - 1] = course[0];
+  loop_ub = waypoints.size(0);
+  b_waypoints.set_size(waypoints.size(0));
+  for (i = 0; i < loop_ub; i++) {
+    b_waypoints[i] = waypoints[i + waypoints.size(0)];
+  }
+  dclothoidwp(dx, b_waypoints, x, th, xnew, v);
+  i = waypoints.size(0);
+  for (loop_ub = 0; loop_ub <= i - 3; loop_ub++) {
+    nx = static_cast<int>((static_cast<double>(loop_ub) + 1.0) * 128.0 + 1.0) -
+         1;
+    x_re_tmp = (loop_ub + 1) * 128 - 1;
+    course[loop_ub + 1] =
+        rt_atan2d_snf(v[nx] - v[x_re_tmp], xnew[nx] - xnew[x_re_tmp]);
+  }
+  if (freelead) {
+    course[0] = rt_atan2d_snf(v[1] - v[0], xnew[1] - xnew[0]);
+  }
+  if (freetail) {
+    course[course.size(0) - 1] =
+        rt_atan2d_snf(v[v.size(0) - 1] - v[v.size(0) - 2],
+                      xnew[xnew.size(0) - 1] - xnew[xnew.size(0) - 2]);
+  }
+  if (freelead && freetail) {
+    double S;
+    double iter;
+    bool exitg1;
+    courselsq.set_size(course.size(0));
+    loop_ub = course.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      courselsq[i] = course[i];
     }
-    partitionCourse(course, r, dx);
-    if ((r.size(0) == 0) && std::isnan(course[0])) {
-      double S;
-      double iter;
-      double maxiter;
-      int i;
-      int n;
-      k = waypoints.size(0);
-      r.set_size(waypoints.size(0));
-      for (i = 0; i < k; i++) {
-        r[i] = waypoints[i];
+    maxiter = 100.0 * static_cast<double>(course.size(0));
+    fitCourse_anonFcn1(waypoints, course, r, Jtri);
+    mulJt(Jtri, r, v);
+    S = 0.0;
+    loop_ub = r.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      S += r[i] * r[i];
+    }
+    lambda = 0.0;
+    lambdac = 0.75;
+    iter = 0.0;
+    outsize[0] = course.size(0);
+    b_outsize[0] = course.size(0);
+    dx.set_size(outsize[0]);
+    loop_ub = outsize[0];
+    for (i = 0; i < loop_ub; i++) {
+      dx[i] = 1.0E-7;
+    }
+    exitg1 = false;
+    while ((!exitg1) && (iter < maxiter)) {
+      bool exitg2;
+      nx = dx.size(0);
+      xnew.set_size(dx.size(0));
+      for (x_re_tmp = 0; x_re_tmp < nx; x_re_tmp++) {
+        xnew[x_re_tmp] = std::abs(dx[x_re_tmp]);
       }
-      k = waypoints.size(0);
-      dx.set_size(waypoints.size(0));
-      for (i = 0; i < k; i++) {
-        dx[i] = waypoints[i + waypoints.size(0)];
-      }
-      dclothoidwp(r, dx, ibegin, v);
-      course.set_size(waypoints.size(0));
-      k = waypoints.size(0);
-      for (i = 0; i < k; i++) {
-        course[i] = 0.0;
-      }
-      course[0] = rt_atan2d_snf(v[1] - v[0], ibegin[1] - ibegin[0]);
-      course[waypoints.size(0) - 1] = rt_atan2d_snf(
-          v[v.size(0) - 1] - v[v.size(0) - 2],
-          ibegin[ibegin.size(0) - 1] - ibegin[ibegin.size(0) - 2]);
-      i = waypoints.size(0);
-      for (int b_i{0}; b_i <= i - 3; b_i++) {
-        k = static_cast<int>((static_cast<double>(b_i) + 1.0) * 128.0 + 1.0) -
-            1;
-        n = (b_i + 1) * 128 - 1;
-        course[b_i + 1] = rt_atan2d_snf(v[k] - v[n], ibegin[k] - ibegin[n]);
-      }
-      if (1 > waypoints.size(0) - 1) {
-        k = 0;
+      if (xnew.size(0) == outsize[0]) {
+        b_x.set_size(xnew.size(0));
+        loop_ub = xnew.size(0);
+        for (i = 0; i < loop_ub; i++) {
+          b_x[i] = (xnew[i] >= 1.0E-7);
+        }
       } else {
-        k = waypoints.size(0) - 1;
+        j_binary_expand_op(b_x, xnew, outsize);
       }
-      courselsq.set_size(k);
-      for (i = 0; i < k; i++) {
-        courselsq[i] = course[i];
-      }
-      maxiter = 100.0 * static_cast<double>(k);
-      fitLoopCourse_anonFcn1(waypoints, courselsq, r, Jtri);
-      mulJt(Jtri, r, v);
-      S = 0.0;
-      n = r.size(0);
-      for (i = 0; i < n; i++) {
-        S += r[i] * r[i];
-      }
-      lambda = 0.0;
-      lambdac = 0.75;
-      iter = 0.0;
-      dx.set_size(k);
-      for (i = 0; i < k; i++) {
-        dx[i] = 1.0E-7;
-      }
-      exitg1 = false;
-      while ((!exitg1) && (iter < maxiter)) {
-        bool exitg2;
-        n = dx.size(0);
-        ibegin.set_size(dx.size(0));
-        for (k = 0; k < n; k++) {
-          ibegin[k] = std::abs(dx[k]);
+      freelead = false;
+      nx = 1;
+      exitg2 = false;
+      while ((!exitg2) && (nx <= b_x.size(0))) {
+        if (b_x[nx - 1]) {
+          freelead = true;
+          exitg2 = true;
+        } else {
+          nx++;
         }
-        x.set_size(ibegin.size(0));
-        k = ibegin.size(0);
-        for (i = 0; i < k; i++) {
-          x[i] = (ibegin[i] >= 1.0E-7);
+      }
+      if (freelead) {
+        nx = r.size(0);
+        xnew.set_size(r.size(0));
+        for (x_re_tmp = 0; x_re_tmp < nx; x_re_tmp++) {
+          xnew[x_re_tmp] = std::abs(r[x_re_tmp]);
         }
-        p = false;
-        n = 1;
+        if (xnew.size(0) == b_outsize[0]) {
+          b_x.set_size(xnew.size(0));
+          loop_ub = xnew.size(0);
+          for (i = 0; i < loop_ub; i++) {
+            b_x[i] = (xnew[i] >= 1.0E-7);
+          }
+        } else {
+          j_binary_expand_op(b_x, xnew, b_outsize);
+        }
+        freelead = false;
+        nx = 1;
         exitg2 = false;
-        while ((!exitg2) && (n <= x.size(0))) {
-          if (x[n - 1]) {
-            p = true;
+        while ((!exitg2) && (nx <= b_x.size(0))) {
+          if (b_x[nx - 1]) {
+            freelead = true;
             exitg2 = true;
           } else {
-            n++;
+            nx++;
           }
         }
-        if (p) {
-          n = r.size(0);
-          ibegin.set_size(r.size(0));
-          for (k = 0; k < n; k++) {
-            ibegin[k] = std::abs(r[k]);
-          }
-          x.set_size(ibegin.size(0));
-          k = ibegin.size(0);
-          for (i = 0; i < k; i++) {
-            x[i] = (ibegin[i] >= 1.0E-7);
-          }
-          p = false;
-          n = 1;
-          exitg2 = false;
-          while ((!exitg2) && (n <= x.size(0))) {
-            if (x[n - 1]) {
-              p = true;
-              exitg2 = true;
-            } else {
-              n++;
-            }
-          }
-          if (p) {
-            double b_iend;
-            iter++;
-            solveDampenedHessian(Jtri, lambda, v, dx);
-            ibegin.set_size(courselsq.size(0));
-            k = courselsq.size(0);
-            for (i = 0; i < k; i++) {
-              ibegin[i] = courselsq[i] - dx[i];
-            }
-            fitLoopCourse_anonFcn1(waypoints, ibegin, iend, y);
-            b_iend = 0.0;
-            k = iend.size(0);
-            for (i = 0; i < k; i++) {
-              b_iend += iend[i] * iend[i];
-            }
-            fletcher(S, b_iend, dx, v, Jtri, &lambda, &lambdac);
-            if (b_iend < S) {
-              S = b_iend;
-              courselsq.set_size(ibegin.size(0));
-              k = ibegin.size(0);
-              for (i = 0; i < k; i++) {
-                courselsq[i] = ibegin[i];
-              }
-              r.set_size(iend.size(0));
-              k = iend.size(0);
-              for (i = 0; i < k; i++) {
-                r[i] = iend[i];
-              }
-              Jtri.set_size(y.size(0), 3);
-              k = y.size(0) * 3;
-              for (i = 0; i < k; i++) {
-                Jtri[i] = y[i];
-              }
-              mulJt(y, iend, v);
+        if (freelead) {
+          double c_waypoints;
+          iter++;
+          solveDampenedHessian(Jtri, lambda, v, dx);
+          if (courselsq.size(0) == dx.size(0)) {
+            xnew.set_size(courselsq.size(0));
+            loop_ub = courselsq.size(0);
+            for (i = 0; i < loop_ub; i++) {
+              xnew[i] = courselsq[i] - dx[i];
             }
           } else {
-            exitg1 = true;
+            minus(xnew, courselsq, dx);
+          }
+          fitCourse_anonFcn1(waypoints, xnew, b_waypoints, varargout_2);
+          c_waypoints = 0.0;
+          loop_ub = b_waypoints.size(0);
+          for (i = 0; i < loop_ub; i++) {
+            c_waypoints += b_waypoints[i] * b_waypoints[i];
+          }
+          fletcher(S, c_waypoints, dx, v, Jtri, &lambda, &lambdac);
+          if (c_waypoints < S) {
+            S = c_waypoints;
+            courselsq.set_size(xnew.size(0));
+            loop_ub = xnew.size(0);
+            for (i = 0; i < loop_ub; i++) {
+              courselsq[i] = xnew[i];
+            }
+            r.set_size(b_waypoints.size(0));
+            loop_ub = b_waypoints.size(0);
+            for (i = 0; i < loop_ub; i++) {
+              r[i] = b_waypoints[i];
+            }
+            Jtri.set_size(varargout_2.size(0), 3);
+            loop_ub = varargout_2.size(0) * 3;
+            for (i = 0; i < loop_ub; i++) {
+              Jtri[i] = varargout_2[i];
+            }
+            mulJt(varargout_2, b_waypoints, v);
           }
         } else {
           exitg1 = true;
         }
-      }
-      course.set_size(courselsq.size(0) + 1);
-      k = courselsq.size(0);
-      for (i = 0; i < k; i++) {
-        course[i] = courselsq[i];
-      }
-      course[courselsq.size(0)] = courselsq[0];
-    } else if (std::isnan(course[0])) {
-      int b_i;
-      int i;
-      int n;
-      n = course.size(0);
-      if (std::isnan(r[r.size(0) - 1])) {
-        y.set_size(1, 1);
-        y[0] = rtNaN;
-      } else if (static_cast<double>(course.size(0)) - 1.0 < r[r.size(0) - 1]) {
-        y.set_size(1, 0);
-      } else if (std::isinf(r[r.size(0) - 1]) &&
-                 (r[r.size(0) - 1] ==
-                  static_cast<double>(course.size(0)) - 1.0)) {
-        y.set_size(1, 1);
-        y[0] = rtNaN;
-      } else if (std::floor(r[r.size(0) - 1]) == r[r.size(0) - 1]) {
-        double maxiter;
-        maxiter = static_cast<double>(course.size(0)) - 1.0;
-        y.set_size(1, static_cast<int>(std::floor(maxiter - r[r.size(0) - 1])) +
-                          1);
-        k = static_cast<int>(std::floor(maxiter - r[r.size(0) - 1]));
-        for (i = 0; i <= k; i++) {
-          y[i] = r[r.size(0) - 1] + static_cast<double>(i);
-        }
       } else {
-        eml_float_colon(r[r.size(0) - 1],
-                        static_cast<double>(course.size(0)) - 1.0, y);
+        exitg1 = true;
       }
-      if (std::isnan(dx[0])) {
-        b_y.set_size(1, 1);
-        b_y[0] = rtNaN;
-      } else if (dx[0] < 1.0) {
-        b_y.set_size(1, 0);
-      } else if (std::isinf(dx[0]) && (1.0 == dx[0])) {
-        b_y.set_size(1, 1);
-        b_y[0] = rtNaN;
-      } else {
-        k = static_cast<int>(std::floor(dx[0] - 1.0));
-        b_y.set_size(1, k + 1);
-        for (i = 0; i <= k; i++) {
-          b_y[i] = static_cast<double>(i) + 1.0;
-        }
-      }
-      range.set_size(1, y.size(1) + b_y.size(1));
-      k = y.size(1);
-      for (i = 0; i < k; i++) {
-        range[i] = y[i];
-      }
-      k = b_y.size(1);
-      for (i = 0; i < k; i++) {
-        range[i + y.size(1)] = b_y[i];
-      }
-      b_r.set_size(1, range.size(1));
-      k = range.size(1);
-      for (i = 0; i < k; i++) {
-        b_r[i] = static_cast<int>(range[i]);
-      }
-      ibegin.set_size(range.size(1));
-      k = range.size(1);
-      for (i = 0; i < k; i++) {
-        ibegin[i] = course[static_cast<int>(range[i]) - 1];
-      }
-      Jtri.set_size(range.size(1), 3);
-      k = range.size(1);
-      for (i = 0; i < 3; i++) {
-        for (b_i = 0; b_i < k; b_i++) {
-          Jtri[b_i + Jtri.size(0) * i] =
-              waypoints[(static_cast<int>(range[b_i]) + waypoints.size(0) * i) -
-                        1];
-        }
-      }
-      fitCourse(Jtri, ibegin);
-      k = b_r.size(1);
-      for (i = 0; i < k; i++) {
-        course[b_r[i] - 1] = ibegin[i];
-      }
-      course[n - 1] = course[0];
-      if (2 > dx.size(0)) {
-        i = 0;
-        b_i = 0;
-      } else {
-        i = 1;
-        b_i = dx.size(0);
-      }
-      if (1 > r.size(0) - 1) {
-        n = 0;
-      } else {
-        n = r.size(0) - 1;
-      }
-      r.set_size(n);
-      n = b_i - i;
-      for (b_i = 0; b_i < n; b_i++) {
-        dx[b_i] = dx[i + b_i];
-      }
-      dx.set_size(n);
-      fillPartitions(waypoints, course, r, dx);
+    }
+  } else if (freelead) {
+    double S;
+    double iter;
+    bool exitg1;
+    if (course.size(0) - 1 < 1) {
+      loop_ub = 0;
     } else {
-      fillPartitions(waypoints, course, r, dx);
+      loop_ub = course.size(0) - 1;
+    }
+    courselsq.set_size(loop_ub);
+    maxiter = 100.0 * static_cast<double>(loop_ub);
+    dx.set_size(loop_ub);
+    for (i = 0; i < loop_ub; i++) {
+      courselsq[i] = course[i];
+      dx[i] = course[i];
+    }
+    fitCourse_anonFcn2(waypoints, course, dx, r, Jtri);
+    mulJt(Jtri, r, v);
+    S = 0.0;
+    nx = r.size(0);
+    for (i = 0; i < nx; i++) {
+      S += r[i] * r[i];
+    }
+    lambda = 0.0;
+    lambdac = 0.75;
+    iter = 0.0;
+    outsize[0] = loop_ub;
+    b_outsize[0] = loop_ub;
+    dx.set_size(loop_ub);
+    for (i = 0; i < loop_ub; i++) {
+      dx[i] = 1.0E-7;
+    }
+    exitg1 = false;
+    while ((!exitg1) && (iter < maxiter)) {
+      bool exitg2;
+      nx = dx.size(0);
+      xnew.set_size(dx.size(0));
+      for (x_re_tmp = 0; x_re_tmp < nx; x_re_tmp++) {
+        xnew[x_re_tmp] = std::abs(dx[x_re_tmp]);
+      }
+      if (xnew.size(0) == loop_ub) {
+        b_x.set_size(xnew.size(0));
+        nx = xnew.size(0);
+        for (i = 0; i < nx; i++) {
+          b_x[i] = (xnew[i] >= 1.0E-7);
+        }
+      } else {
+        j_binary_expand_op(b_x, xnew, outsize);
+      }
+      freelead = false;
+      nx = 1;
+      exitg2 = false;
+      while ((!exitg2) && (nx <= b_x.size(0))) {
+        if (b_x[nx - 1]) {
+          freelead = true;
+          exitg2 = true;
+        } else {
+          nx++;
+        }
+      }
+      if (freelead) {
+        nx = r.size(0);
+        xnew.set_size(r.size(0));
+        for (x_re_tmp = 0; x_re_tmp < nx; x_re_tmp++) {
+          xnew[x_re_tmp] = std::abs(r[x_re_tmp]);
+        }
+        if (xnew.size(0) == loop_ub) {
+          b_x.set_size(xnew.size(0));
+          nx = xnew.size(0);
+          for (i = 0; i < nx; i++) {
+            b_x[i] = (xnew[i] >= 1.0E-7);
+          }
+        } else {
+          j_binary_expand_op(b_x, xnew, b_outsize);
+        }
+        freelead = false;
+        nx = 1;
+        exitg2 = false;
+        while ((!exitg2) && (nx <= b_x.size(0))) {
+          if (b_x[nx - 1]) {
+            freelead = true;
+            exitg2 = true;
+          } else {
+            nx++;
+          }
+        }
+        if (freelead) {
+          double c_waypoints;
+          iter++;
+          solveDampenedHessian(Jtri, lambda, v, dx);
+          if (courselsq.size(0) == dx.size(0)) {
+            xnew.set_size(courselsq.size(0));
+            nx = courselsq.size(0);
+            for (i = 0; i < nx; i++) {
+              xnew[i] = courselsq[i] - dx[i];
+            }
+          } else {
+            minus(xnew, courselsq, dx);
+          }
+          fitCourse_anonFcn2(waypoints, course, xnew, b_waypoints, varargout_2);
+          c_waypoints = 0.0;
+          nx = b_waypoints.size(0);
+          for (i = 0; i < nx; i++) {
+            c_waypoints += b_waypoints[i] * b_waypoints[i];
+          }
+          fletcher(S, c_waypoints, dx, v, Jtri, &lambda, &lambdac);
+          if (c_waypoints < S) {
+            S = c_waypoints;
+            courselsq.set_size(xnew.size(0));
+            nx = xnew.size(0);
+            for (i = 0; i < nx; i++) {
+              courselsq[i] = xnew[i];
+            }
+            r.set_size(b_waypoints.size(0));
+            nx = b_waypoints.size(0);
+            for (i = 0; i < nx; i++) {
+              r[i] = b_waypoints[i];
+            }
+            Jtri.set_size(varargout_2.size(0), 3);
+            nx = varargout_2.size(0) * 3;
+            for (i = 0; i < nx; i++) {
+              Jtri[i] = varargout_2[i];
+            }
+            mulJt(varargout_2, b_waypoints, v);
+          }
+        } else {
+          exitg1 = true;
+        }
+      } else {
+        exitg1 = true;
+      }
+    }
+    i = courselsq.size(0);
+    courselsq.set_size(courselsq.size(0) + 1);
+    courselsq[i] = course[waypoints.size(0) - 1];
+  } else if (freetail) {
+    if (course.size(0) < 2) {
+      i = 0;
+      nx = 0;
+    } else {
+      i = 1;
+      nx = course.size(0);
+    }
+    b_this.workspace.waypoints.set_size(waypoints.size(0), 3);
+    loop_ub = waypoints.size(0) * 3;
+    for (x_re_tmp = 0; x_re_tmp < loop_ub; x_re_tmp++) {
+      b_this.workspace.waypoints[x_re_tmp] = waypoints[x_re_tmp];
+    }
+    b_this.workspace.course.set_size(course.size(0));
+    loop_ub = course.size(0);
+    for (x_re_tmp = 0; x_re_tmp < loop_ub; x_re_tmp++) {
+      b_this.workspace.course[x_re_tmp] = course[x_re_tmp];
+    }
+    loop_ub = nx - i;
+    courselsq.set_size(loop_ub);
+    for (nx = 0; nx < loop_ub; nx++) {
+      courselsq[nx] = course[i + nx];
+    }
+    LMFsolve(&b_this, courselsq);
+    dx.set_size(courselsq.size(0) + 1);
+    dx[0] = course[0];
+    loop_ub = courselsq.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      dx[i + 1] = courselsq[i];
+    }
+    courselsq.set_size(dx.size(0));
+    loop_ub = dx.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      courselsq[i] = dx[i];
     }
   } else {
-    int i;
-    partitionCourse(course, r, dx);
-    ibegin.set_size(r.size(0));
-    k = r.size(0);
-    for (i = 0; i < k; i++) {
-      ibegin[i] = r[i];
+    double S;
+    double iter;
+    bool exitg1;
+    if (course.size(0) - 1 < 2) {
+      i = -1;
+      nx = -1;
+    } else {
+      i = 0;
+      nx = course.size(0) - 2;
     }
-    iend.set_size(dx.size(0));
-    k = dx.size(0);
-    for (i = 0; i < k; i++) {
-      iend[i] = dx[i];
+    loop_ub = nx - i;
+    courselsq.set_size(loop_ub);
+    maxiter = 100.0 * static_cast<double>(loop_ub);
+    dx.set_size(loop_ub);
+    for (nx = 0; nx < loop_ub; nx++) {
+      courselsq[nx] = course[(i + nx) + 1];
+      dx[nx] = course[(i + nx) + 1];
     }
-    if (std::isnan(course[0])) {
-      ibegin.set_size(r.size(0) + 1);
-      ibegin[0] = 1.0;
-      k = r.size(0);
-      for (i = 0; i < k; i++) {
-        ibegin[i + 1] = r[i];
+    fitCourse_anonFcn4(waypoints, course, dx, r, Jtri);
+    mulJt(Jtri, r, v);
+    S = 0.0;
+    nx = r.size(0);
+    for (i = 0; i < nx; i++) {
+      S += r[i] * r[i];
+    }
+    lambda = 0.0;
+    lambdac = 0.75;
+    iter = 0.0;
+    outsize[0] = loop_ub;
+    b_outsize[0] = loop_ub;
+    dx.set_size(loop_ub);
+    for (i = 0; i < loop_ub; i++) {
+      dx[i] = 1.0E-7;
+    }
+    exitg1 = false;
+    while ((!exitg1) && (iter < maxiter)) {
+      bool exitg2;
+      nx = dx.size(0);
+      xnew.set_size(dx.size(0));
+      for (x_re_tmp = 0; x_re_tmp < nx; x_re_tmp++) {
+        xnew[x_re_tmp] = std::abs(dx[x_re_tmp]);
+      }
+      if (xnew.size(0) == loop_ub) {
+        b_x.set_size(xnew.size(0));
+        nx = xnew.size(0);
+        for (i = 0; i < nx; i++) {
+          b_x[i] = (xnew[i] >= 1.0E-7);
+        }
+      } else {
+        j_binary_expand_op(b_x, xnew, outsize);
+      }
+      freelead = false;
+      nx = 1;
+      exitg2 = false;
+      while ((!exitg2) && (nx <= b_x.size(0))) {
+        if (b_x[nx - 1]) {
+          freelead = true;
+          exitg2 = true;
+        } else {
+          nx++;
+        }
+      }
+      if (freelead) {
+        nx = r.size(0);
+        xnew.set_size(r.size(0));
+        for (x_re_tmp = 0; x_re_tmp < nx; x_re_tmp++) {
+          xnew[x_re_tmp] = std::abs(r[x_re_tmp]);
+        }
+        if (xnew.size(0) == loop_ub) {
+          b_x.set_size(xnew.size(0));
+          nx = xnew.size(0);
+          for (i = 0; i < nx; i++) {
+            b_x[i] = (xnew[i] >= 1.0E-7);
+          }
+        } else {
+          j_binary_expand_op(b_x, xnew, b_outsize);
+        }
+        freelead = false;
+        nx = 1;
+        exitg2 = false;
+        while ((!exitg2) && (nx <= b_x.size(0))) {
+          if (b_x[nx - 1]) {
+            freelead = true;
+            exitg2 = true;
+          } else {
+            nx++;
+          }
+        }
+        if (freelead) {
+          double c_waypoints;
+          iter++;
+          solveDampenedHessian(Jtri, lambda, v, dx);
+          if (courselsq.size(0) == dx.size(0)) {
+            xnew.set_size(courselsq.size(0));
+            nx = courselsq.size(0);
+            for (i = 0; i < nx; i++) {
+              xnew[i] = courselsq[i] - dx[i];
+            }
+          } else {
+            minus(xnew, courselsq, dx);
+          }
+          fitCourse_anonFcn4(waypoints, course, xnew, b_waypoints, varargout_2);
+          c_waypoints = 0.0;
+          nx = b_waypoints.size(0);
+          for (i = 0; i < nx; i++) {
+            c_waypoints += b_waypoints[i] * b_waypoints[i];
+          }
+          fletcher(S, c_waypoints, dx, v, Jtri, &lambda, &lambdac);
+          if (c_waypoints < S) {
+            S = c_waypoints;
+            courselsq.set_size(xnew.size(0));
+            nx = xnew.size(0);
+            for (i = 0; i < nx; i++) {
+              courselsq[i] = xnew[i];
+            }
+            r.set_size(b_waypoints.size(0));
+            nx = b_waypoints.size(0);
+            for (i = 0; i < nx; i++) {
+              r[i] = b_waypoints[i];
+            }
+            Jtri.set_size(varargout_2.size(0), 3);
+            nx = varargout_2.size(0) * 3;
+            for (i = 0; i < nx; i++) {
+              Jtri[i] = varargout_2[i];
+            }
+            mulJt(varargout_2, b_waypoints, v);
+          }
+        } else {
+          exitg1 = true;
+        }
+      } else {
+        exitg1 = true;
       }
     }
-    if (std::isnan(course[course.size(0) - 1])) {
-      iend.set_size(dx.size(0) + 1);
-      k = dx.size(0);
-      for (i = 0; i < k; i++) {
-        iend[i] = dx[i];
-      }
-      iend[dx.size(0)] = course.size(0);
+    dx.set_size(courselsq.size(0) + 2);
+    dx[0] = course[0];
+    loop_ub = courselsq.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      dx[i + 1] = courselsq[i];
     }
-    fillPartitions(waypoints, course, ibegin, iend);
+    dx[courselsq.size(0) + 1] = course[waypoints.size(0) - 1];
+    courselsq.set_size(dx.size(0));
+    loop_ub = dx.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      courselsq[i] = dx[i];
+    }
+  }
+  course.set_size(courselsq.size(0));
+  loop_ub = courselsq.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    course[i] = courselsq[i];
   }
 }
 
@@ -1336,7 +1351,6 @@ void fitCourse_anonFcn3(const ::coder::array<double, 2U> &waypoints,
   array<double, 1U> dk1_dc1;
   array<double, 1U> k0;
   array<double, 1U> k1;
-  array<int, 2U> r;
   int b_loop_ub;
   int i;
   int i1;
@@ -1355,30 +1369,25 @@ void fitCourse_anonFcn3(const ::coder::array<double, 2U> &waypoints,
     hip[i].re = waypoints[i];
     hip[i].im = waypoints[i + waypoints.size(0)];
   }
-  if (2 > course.size(0)) {
-    i = 0;
+  if (course.size(0) < 2) {
+    i = -1;
     i1 = 0;
   } else {
-    i = 1;
+    i = 0;
     i1 = course.size(0);
   }
-  loop_ub = i1 - i;
-  r.set_size(1, loop_ub);
+  loop_ub = (i1 - i) - 1;
   for (i1 = 0; i1 < loop_ub; i1++) {
-    r[i1] = i + i1;
+    b_course[(i + i1) + 1] = x[i1];
   }
-  loop_ub = r.size(1);
-  for (i = 0; i < loop_ub; i++) {
-    b_course[r[i]] = x[i];
-  }
-  if (1 > waypoints.size(0) - 1) {
+  if (waypoints.size(0) - 1 < 1) {
     loop_ub = 0;
     b_loop_ub = 0;
   } else {
     loop_ub = waypoints.size(0) - 1;
     b_loop_ub = waypoints.size(0) - 1;
   }
-  if (2 > waypoints.size(0)) {
+  if (waypoints.size(0) < 2) {
     i = 0;
     i1 = 0;
     i2 = 0;
@@ -1397,208 +1406,324 @@ void fitCourse_anonFcn3(const ::coder::array<double, 2U> &waypoints,
   for (i4 = 0; i4 < b_loop_ub; i4++) {
     c_course[i4] = b_course[i4];
   }
-  loop_ub = i1 - i;
-  for (i1 = 0; i1 < loop_ub; i1++) {
+  b_loop_ub = i1 - i;
+  for (i1 = 0; i1 < b_loop_ub; i1++) {
     hip[i1] = hip[i + i1];
   }
-  hip.set_size(loop_ub);
-  loop_ub = i3 - i2;
-  for (i = 0; i < loop_ub; i++) {
+  hip.set_size(b_loop_ub);
+  b_loop_ub = i3 - i2;
+  for (i = 0; i < b_loop_ub; i++) {
     b_course[i] = b_course[i2 + i];
   }
-  b_course.set_size(loop_ub);
+  b_course.set_size(b_loop_ub);
   clothoidG1fit2wp(b_hip, c_course, hip, b_course, k0, k1, a__2, dk0_dc0,
                    dk0_dc1, dk1_dc0, dk1_dc1);
-  if (1 > k1.size(0) - 1) {
-    loop_ub = 1;
+  if (k1.size(0) - 1 < 1) {
+    loop_ub = 0;
   } else {
-    loop_ub = k1.size(0);
+    loop_ub = k1.size(0) - 1;
   }
-  i = (2 <= k0.size(0));
-  varargout_1.set_size(loop_ub);
-  for (i1 = 0; i1 <= loop_ub - 2; i1++) {
-    varargout_1[i1] = k1[i1] - k0[i + i1];
+  if (k0.size(0) < 2) {
+    i = 0;
+    i1 = 0;
+  } else {
+    i = 1;
+    i1 = k0.size(0);
   }
-  varargout_1[loop_ub - 1] = k1[k1.size(0) - 1];
-  if (2 > dk0_dc1.size(0)) {
+  if (loop_ub == i1 - i) {
+    varargout_1.set_size(loop_ub + 1);
+    for (i1 = 0; i1 < loop_ub; i1++) {
+      varargout_1[i1] = k1[i1] - k0[i + i1];
+    }
+    varargout_1[loop_ub] = k1[k1.size(0) - 1];
+  } else {
+    binary_expand_op(varargout_1, k1, loop_ub - 1, k0, i, i1 - 1);
+  }
+  if (dk0_dc1.size(0) < 2) {
     i = 0;
     i1 = 0;
   } else {
     i = 1;
     i1 = dk0_dc1.size(0);
   }
-  if (2 > dk1_dc0.size(0)) {
+  if (dk1_dc0.size(0) < 2) {
     i2 = 0;
     i3 = 0;
   } else {
     i2 = 1;
     i3 = dk1_dc0.size(0);
   }
-  if (1 > waypoints.size(0) - 2) {
+  if (waypoints.size(0) - 2 < 1) {
     loop_ub = 0;
   } else {
     loop_ub = waypoints.size(0) - 2;
   }
-  i4 = (2 <= waypoints.size(0) - 1);
-  b_loop_ub = i3 - i2;
-  varargout_2.set_size(b_loop_ub + 1, 3);
-  for (i3 = 0; i3 < b_loop_ub; i3++) {
-    varargout_2[i3] = dk1_dc0[i2 + i3];
+  if (waypoints.size(0) - 1 < 2) {
+    i4 = 0;
+    b_loop_ub = 0;
+  } else {
+    i4 = 1;
+    b_loop_ub = waypoints.size(0) - 1;
   }
-  varargout_2[b_loop_ub] = 0.0;
-  for (i2 = 0; i2 < loop_ub; i2++) {
-    varargout_2[i2 + varargout_2.size(0)] = dk1_dc1[i2] - dk0_dc0[i4 + i2];
+  if (loop_ub == b_loop_ub - i4) {
+    b_loop_ub = i3 - i2;
+    varargout_2.set_size(b_loop_ub + 1, 3);
+    for (i3 = 0; i3 < b_loop_ub; i3++) {
+      varargout_2[i3] = dk1_dc0[i2 + i3];
+    }
+    varargout_2[b_loop_ub] = 0.0;
+    for (i2 = 0; i2 < loop_ub; i2++) {
+      varargout_2[i2 + varargout_2.size(0)] = dk1_dc1[i2] - dk0_dc0[i4 + i2];
+    }
+    varargout_2[loop_ub + varargout_2.size(0)] = dk1_dc1[waypoints.size(0) - 2];
+    b_loop_ub = i1 - i;
+    for (i1 = 0; i1 < b_loop_ub; i1++) {
+      varargout_2[i1 + varargout_2.size(0) * 2] = -dk0_dc1[i + i1];
+    }
+    varargout_2[b_loop_ub + varargout_2.size(0) * 2] = 0.0;
+  } else {
+    binary_expand_op(varargout_2, dk1_dc0, i2, i3 - 1, dk1_dc1, loop_ub - 1,
+                     dk0_dc0, i4, b_loop_ub - 1, waypoints, dk0_dc1, i, i1 - 1);
   }
-  varargout_2[loop_ub + varargout_2.size(0)] = dk1_dc1[waypoints.size(0) - 2];
-  loop_ub = i1 - i;
-  for (i1 = 0; i1 < loop_ub; i1++) {
-    varargout_2[i1 + varargout_2.size(0) * 2] = -dk0_dc1[i + i1];
-  }
-  varargout_2[loop_ub + varargout_2.size(0) * 2] = 0.0;
 }
 
 //
 // Arguments    : const ::coder::array<double, 2U> &waypoints
-//                const ::coder::array<double, 1U> &course
 //                const ::coder::array<double, 1U> &x
 //                ::coder::array<double, 1U> &varargout_1
 //                ::coder::array<double, 2U> &varargout_2
 // Return Type  : void
 //
-void fitCourse_anonFcn4(const ::coder::array<double, 2U> &waypoints,
-                        const ::coder::array<double, 1U> &course,
-                        const ::coder::array<double, 1U> &x,
-                        ::coder::array<double, 1U> &varargout_1,
-                        ::coder::array<double, 2U> &varargout_2)
+void fitLoopCourse_anonFcn1(const ::coder::array<double, 2U> &waypoints,
+                            const ::coder::array<double, 1U> &x,
+                            ::coder::array<double, 1U> &varargout_1,
+                            ::coder::array<double, 2U> &varargout_2)
 {
   array<creal_T, 1U> b_hip;
   array<creal_T, 1U> hip;
-  array<double, 1U> a__4;
-  array<double, 1U> b_course;
-  array<double, 1U> c_course;
+  array<double, 1U> a__1;
+  array<double, 1U> b_x;
+  array<double, 1U> c_x;
   array<double, 1U> dk0_dc0;
   array<double, 1U> dk0_dc1;
   array<double, 1U> dk1_dc0;
   array<double, 1U> dk1_dc1;
   array<double, 1U> k0;
   array<double, 1U> k1;
-  array<int, 2U> r;
+  array<int, 2U> y;
+  array<int, 1U> b_y;
   int b_loop_ub;
+  int c_loop_ub;
   int i;
   int i1;
-  int i2;
-  int i3;
-  int i4;
   int loop_ub;
-  b_course.set_size(course.size(0));
-  loop_ub = course.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    b_course[i] = course[i];
-  }
   loop_ub = waypoints.size(0);
   hip.set_size(waypoints.size(0));
   for (i = 0; i < loop_ub; i++) {
     hip[i].re = waypoints[i];
     hip[i].im = waypoints[i + waypoints.size(0)];
   }
-  if (2 > course.size(0) - 1) {
-    i = 0;
-    i1 = 0;
-  } else {
-    i = 1;
-    i1 = course.size(0) - 1;
-  }
-  loop_ub = i1 - i;
-  r.set_size(1, loop_ub);
-  for (i1 = 0; i1 < loop_ub; i1++) {
-    r[i1] = i + i1;
-  }
-  loop_ub = r.size(1);
-  for (i = 0; i < loop_ub; i++) {
-    b_course[r[i]] = x[i];
-  }
-  if (1 > waypoints.size(0) - 1) {
+  if (waypoints.size(0) - 1 < 1) {
     loop_ub = 0;
     b_loop_ub = 0;
   } else {
     loop_ub = waypoints.size(0) - 1;
     b_loop_ub = waypoints.size(0) - 1;
   }
-  if (2 > waypoints.size(0)) {
+  if (waypoints.size(0) < 2) {
     i = 0;
     i1 = 0;
-    i2 = 0;
-    i3 = 0;
   } else {
     i = 1;
     i1 = waypoints.size(0);
-    i2 = 1;
-    i3 = waypoints.size(0);
   }
+  if (waypoints.size(0) - 1 < 2) {
+    y.set_size(1, 0);
+  } else {
+    c_loop_ub = waypoints.size(0) - 3;
+    y.set_size(1, waypoints.size(0) - 2);
+    for (int i2{0}; i2 <= c_loop_ub; i2++) {
+      y[i2] = i2 + 2;
+    }
+  }
+  b_y.set_size(y.size(1) + 1);
+  c_loop_ub = y.size(1);
+  for (int i2{0}; i2 < c_loop_ub; i2++) {
+    b_y[i2] = y[i2] - 1;
+  }
+  b_y[y.size(1)] = 0;
   b_hip.set_size(loop_ub);
-  for (i4 = 0; i4 < loop_ub; i4++) {
-    b_hip[i4] = hip[i4];
+  for (int i2{0}; i2 < loop_ub; i2++) {
+    b_hip[i2] = hip[i2];
   }
-  c_course.set_size(b_loop_ub);
-  for (i4 = 0; i4 < b_loop_ub; i4++) {
-    c_course[i4] = b_course[i4];
+  b_x.set_size(b_loop_ub);
+  for (int i2{0}; i2 < b_loop_ub; i2++) {
+    b_x[i2] = x[i2];
   }
   loop_ub = i1 - i;
   for (i1 = 0; i1 < loop_ub; i1++) {
     hip[i1] = hip[i + i1];
   }
   hip.set_size(loop_ub);
-  loop_ub = i3 - i2;
+  c_x.set_size(b_y.size(0));
+  loop_ub = b_y.size(0);
   for (i = 0; i < loop_ub; i++) {
-    b_course[i] = b_course[i2 + i];
+    c_x[i] = x[b_y[i]];
   }
-  b_course.set_size(loop_ub);
-  clothoidG1fit2wp(b_hip, c_course, hip, b_course, k0, k1, a__4, dk0_dc0,
-                   dk0_dc1, dk1_dc0, dk1_dc1);
-  if (1 > k1.size(0) - 1) {
-    loop_ub = 0;
+  clothoidG1fit2wp(b_hip, b_x, hip, c_x, k0, k1, a__1, dk0_dc0, dk0_dc1,
+                   dk1_dc0, dk1_dc1);
+  if (k1.size(0) - 1 < 1) {
+    loop_ub = 1;
   } else {
-    loop_ub = k1.size(0) - 1;
+    loop_ub = k1.size(0);
   }
-  i = (2 <= k0.size(0));
-  varargout_1.set_size(loop_ub);
-  for (i1 = 0; i1 < loop_ub; i1++) {
-    varargout_1[i1] = k1[i1] - k0[i + i1];
-  }
-  if (2 > dk0_dc1.size(0) - 1) {
+  if (k0.size(0) < 2) {
     i = 0;
     i1 = 0;
   } else {
     i = 1;
-    i1 = dk0_dc1.size(0) - 1;
+    i1 = k0.size(0);
   }
-  if (2 > dk1_dc0.size(0) - 1) {
-    i2 = 0;
-    i3 = 1;
+  if (loop_ub - 1 == i1 - i) {
+    varargout_1.set_size(loop_ub);
+    varargout_1[0] = k1[k1.size(0) - 1] - k0[0];
+    for (i1 = 0; i1 <= loop_ub - 2; i1++) {
+      varargout_1[i1 + 1] = k1[i1] - k0[i + i1];
+    }
   } else {
-    i2 = 1;
-    i3 = dk1_dc0.size(0);
+    binary_expand_op(varargout_1, k1, k0, loop_ub - 2, i, i1 - 1);
   }
-  if (1 > waypoints.size(0) - 2) {
-    loop_ub = 2;
+  if (waypoints.size(0) - 2 < 1) {
+    y.set_size(1, 0);
   } else {
-    loop_ub = waypoints.size(0);
+    loop_ub = waypoints.size(0) - 3;
+    y.set_size(1, waypoints.size(0) - 2);
+    for (i = 0; i <= loop_ub; i++) {
+      y[i] = i + 1;
+    }
   }
-  i4 = (2 <= waypoints.size(0) - 1);
-  b_loop_ub = i3 - i2;
-  varargout_2.set_size(b_loop_ub, 3);
-  for (i3 = 0; i3 <= b_loop_ub - 2; i3++) {
-    varargout_2[i3] = dk1_dc0[i2 + i3];
+  b_y.set_size(y.size(1) + 1);
+  b_y[0] = waypoints.size(0) - 2;
+  loop_ub = y.size(1);
+  for (i = 0; i < loop_ub; i++) {
+    b_y[i + 1] = y[i] - 1;
   }
-  varargout_2[b_loop_ub - 1] = 0.0;
-  for (i2 = 0; i2 <= loop_ub - 3; i2++) {
-    varargout_2[i2 + varargout_2.size(0)] = dk1_dc1[i2] - dk0_dc0[i4 + i2];
+  a__1.set_size(b_y.size(0));
+  loop_ub = b_y.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    a__1[i] = dk1_dc1[b_y[i]];
+  }
+  if (a__1.size(0) == dk0_dc0.size(0)) {
+    varargout_2.set_size(dk1_dc0.size(0), 3);
+    loop_ub = dk1_dc0.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      varargout_2[i] = dk1_dc0[i];
+    }
+    loop_ub = a__1.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      varargout_2[i + varargout_2.size(0)] = a__1[i] - dk0_dc0[i];
+    }
+    loop_ub = dk0_dc1.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      varargout_2[i + varargout_2.size(0) * 2] = -dk0_dc1[i];
+    }
+  } else {
+    binary_expand_op(varargout_2, dk1_dc0, a__1, dk0_dc0, dk0_dc1);
+  }
+}
+
+//
+// Arguments    : const ::coder::array<double, 1U> &course
+//                ::coder::array<double, 1U> &ibegin
+//                ::coder::array<double, 1U> &iend
+// Return Type  : void
+//
+void partitionCourse(const ::coder::array<double, 1U> &course,
+                     ::coder::array<double, 1U> &ibegin,
+                     ::coder::array<double, 1U> &iend)
+{
+  array<int, 1U> r2;
+  array<bool, 1U> r;
+  array<bool, 1U> r1;
+  int i;
+  int i1;
+  int loop_ub;
+  if (course.size(0) - 1 < 1) {
+    loop_ub = 0;
+  } else {
+    loop_ub = course.size(0) - 1;
+  }
+  if (course.size(0) < 2) {
+    i = 0;
+    i1 = 0;
+  } else {
+    i = 1;
+    i1 = course.size(0);
+  }
+  r.set_size(loop_ub);
+  for (int i2{0}; i2 < loop_ub; i2++) {
+    r[i2] = std::isnan(course[i2]);
   }
   loop_ub = i1 - i;
+  r1.set_size(loop_ub);
   for (i1 = 0; i1 < loop_ub; i1++) {
-    varargout_2[i1 + varargout_2.size(0) * 2] = -dk0_dc1[i + i1];
+    r1[i1] = std::isnan(course[i + i1]);
   }
-  varargout_2[loop_ub + varargout_2.size(0) * 2] = 0.0;
+  if (r.size(0) == r1.size(0)) {
+    loop_ub = r.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      r[i] = ((!r[i]) && r1[i]);
+    }
+    eml_find(r, r2);
+  } else {
+    d_binary_expand_op(r2, r, r1);
+  }
+  ibegin.set_size(r2.size(0));
+  loop_ub = r2.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    ibegin[i] = r2[i];
+  }
+  if (ibegin.size(0) == 0) {
+    ibegin.set_size(0);
+  }
+  if (course.size(0) - 1 < 1) {
+    loop_ub = 0;
+  } else {
+    loop_ub = course.size(0) - 1;
+  }
+  if (course.size(0) < 2) {
+    i = 0;
+    i1 = 0;
+  } else {
+    i = 1;
+    i1 = course.size(0);
+  }
+  r.set_size(loop_ub);
+  for (int i2{0}; i2 < loop_ub; i2++) {
+    r[i2] = std::isnan(course[i2]);
+  }
+  loop_ub = i1 - i;
+  r1.set_size(loop_ub);
+  for (i1 = 0; i1 < loop_ub; i1++) {
+    r1[i1] = std::isnan(course[i + i1]);
+  }
+  if (r.size(0) == r1.size(0)) {
+    loop_ub = r.size(0);
+    for (i = 0; i < loop_ub; i++) {
+      r[i] = (r[i] && (!r1[i]));
+    }
+    eml_find(r, r2);
+  } else {
+    c_binary_expand_op(r2, r, r1);
+  }
+  iend.set_size(r2.size(0));
+  loop_ub = r2.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    iend[i] = static_cast<double>(r2[i]) + 1.0;
+  }
+  if (iend.size(0) == 0) {
+    iend.set_size(0);
+  }
 }
 
 } // namespace scenario

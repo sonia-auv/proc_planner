@@ -4,15 +4,14 @@
 // government, commercial, or other organizational use.
 // File: TrajectoryGenerator.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 #ifndef TRAJECTORYGENERATOR_H
 #define TRAJECTORYGENERATOR_H
 
 // Include Files
-#include "proc_planner_internal_types.h"
 #include "proc_planner_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
@@ -20,29 +19,33 @@
 #include <cstdlib>
 
 // Type Definitions
+struct struct_T {
+  double amax;
+  double vlmax;
+  double vamax;
+};
+
+struct b_struct_T {
+  double ts;
+  struct_T lowSpeed;
+  struct_T normalSpeed;
+  struct_T highSpeed;
+};
+
 class TrajectoryGenerator {
 public:
-  TrajectoryGenerator *init(const char multiAddposeMsg_MessageType[25],
-                            const coder::array<sonia_common_AddPoseStruct_T, 1U>
-                                &multiAddposeMsg_Pose,
-                            double param_amax, double param_vlmax,
-                            double param_vamax, double icMsg_Position_X,
-                            double icMsg_Position_Y, double icMsg_Position_Z,
-                            double icMsg_Orientation_X,
-                            double icMsg_Orientation_Y,
-                            double icMsg_Orientation_Z,
-                            double icMsg_Orientation_W);
   bool status;
+  double n;
   coder::array<double, 2U> pointList;
   coder::array<double, 2U> quatList;
   coder::array<double, 1U> timeList;
   coder::array<double, 2U> courseList;
+  coder::array<double, 2U> speedList;
   double nbPoint;
-  struct_T param;
 
 private:
-  double n;
   sonia_common_MultiAddPoseStruct_T MAPM;
+  b_struct_T param;
 };
 
 #endif

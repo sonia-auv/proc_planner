@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: quat2eul.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -16,7 +16,40 @@
 #include <cmath>
 #include <string.h>
 
+// Function Declarations
+static void binary_expand_op(double in1[3],
+                             const coder::array<signed char, 2U> &in2,
+                             const coder::array<double, 1U> &in3,
+                             const coder::array<double, 1U> &in4);
+
 // Function Definitions
+//
+// Arguments    : double in1[3]
+//                const coder::array<signed char, 2U> &in2
+//                const coder::array<double, 1U> &in3
+//                const coder::array<double, 1U> &in4
+// Return Type  : void
+//
+static void binary_expand_op(double in1[3],
+                             const coder::array<signed char, 2U> &in2,
+                             const coder::array<double, 1U> &in3,
+                             const coder::array<double, 1U> &in4)
+{
+  int loop_ub;
+  int stride_0_0;
+  int stride_1_0;
+  stride_0_0 = (in3.size(0) != 1);
+  stride_1_0 = (in4.size(0) != 1);
+  if (in4.size(0) == 1) {
+    loop_ub = in3.size(0);
+  } else {
+    loop_ub = in4.size(0);
+  }
+  for (int i{0}; i < loop_ub; i++) {
+    in1[in2[i] - 1] = -in3[i * stride_0_0] * 2.0 * in4[i * stride_1_0];
+  }
+}
+
 //
 // Arguments    : double q[4]
 //                double eul[3]
@@ -27,6 +60,7 @@ void quat2eul(double q[4], double eul[3])
 {
   array<double, 1U> r;
   array<double, 1U> x;
+  array<signed char, 2U> r1;
   double aSinInput;
   int b_trueCount;
   int k;
@@ -75,12 +109,12 @@ void quat2eul(double q[4], double eul[3])
   }
   for (k = 0; k < trueCount; k++) {
     aSinInput = x[0];
-    if (x[0] < 0.0) {
-      aSinInput = -1.0;
-    } else if (x[0] > 0.0) {
-      aSinInput = 1.0;
-    } else if (x[0] == 0.0) {
-      aSinInput = 0.0;
+    if (!std::isnan(x[0])) {
+      if (x[0] < 0.0) {
+        aSinInput = -1.0;
+      } else {
+        aSinInput = (x[0] > 0.0);
+      }
     }
     x[0] = aSinInput;
   }
@@ -92,14 +126,26 @@ void quat2eul(double q[4], double eul[3])
   for (k = 0; k < b_trueCount; k++) {
     r[0] = rt_atan2d_snf(q[1], q[0]);
   }
-  if (0 <= trueCount - 1) {
-    eul[0] = -x[0] * 2.0 * r[0];
+  k = 0;
+  if (mask1 || mask2) {
+    k = 1;
+  }
+  r1.set_size(1, k);
+  if (mask1 || mask2) {
+    r1[0] = 1;
+  }
+  if (trueCount == b_trueCount) {
+    if (trueCount - 1 >= 0) {
+      eul[0] = -x[0] * 2.0 * r[0];
+    }
+  } else {
+    binary_expand_op(eul, r1, x, r);
   }
   trueCount = 0;
   if (mask1 || mask2) {
     trueCount = 1;
   }
-  if (0 <= trueCount - 1) {
+  if (trueCount - 1 >= 0) {
     eul[2] = 0.0;
   }
 }

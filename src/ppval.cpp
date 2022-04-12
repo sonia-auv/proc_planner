@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: ppval.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -67,16 +67,15 @@ void ppval(const ::coder::array<double, 2U> &pp_breaks,
         double xloc;
         int icp;
         int ip;
-        int j;
         ip = internal::b_bsearch(pp_breaks, x[ix]) - 1;
         icp = ip * elementsPerPage;
         xloc = x[ix] - pp_breaks[ip];
-        for (j = 0; j < elementsPerPage; j++) {
+        for (int j{0}; j < elementsPerPage; j++) {
           v[iv0 + j] = pp_coefs[icp + j];
         }
         for (int ic{2}; ic <= numTerms; ic++) {
           ip = icp + (ic - 1) * coefStride;
-          for (j = 0; j < elementsPerPage; j++) {
+          for (int j{0}; j < elementsPerPage; j++) {
             int i;
             i = iv0 + j;
             v[i] = xloc * v[i] + pp_coefs[ip + j];
@@ -102,7 +101,7 @@ void ppval(const ::coder::array<double, 2U> &pp_breaks,
   int elementsPerPage;
   int numTerms;
   numTerms = pp_coefs.size(2);
-  elementsPerPage = pp_coefs.size(0);
+  elementsPerPage = pp_coefs.size(0) - 1;
   coefStride = pp_coefs.size(0) * (pp_breaks.size(1) - 1);
   v.set_size(pp_coefs.size(0));
   if (pp_coefs.size(0) == 1) {
@@ -121,23 +120,22 @@ void ppval(const ::coder::array<double, 2U> &pp_breaks,
     }
     v[0] = b_v;
   } else if ((pp_coefs.size(2) > 1) && std::isnan(x)) {
-    for (int j{0}; j < elementsPerPage; j++) {
+    for (int j{0}; j <= elementsPerPage; j++) {
       v[j] = x;
     }
   } else {
     double xloc;
     int icp;
     int ip;
-    int j;
     ip = internal::b_bsearch(pp_breaks, x) - 1;
     icp = ip * pp_coefs.size(0);
     xloc = x - pp_breaks[ip];
-    for (j = 0; j < elementsPerPage; j++) {
+    for (int j{0}; j <= elementsPerPage; j++) {
       v[j] = pp_coefs[icp + j];
     }
     for (int ic{2}; ic <= numTerms; ic++) {
       ip = icp + (ic - 1) * coefStride;
-      for (j = 0; j < elementsPerPage; j++) {
+      for (int j{0}; j <= elementsPerPage; j++) {
         v[j] = xloc * v[j] + pp_coefs[ip + j];
       }
     }
