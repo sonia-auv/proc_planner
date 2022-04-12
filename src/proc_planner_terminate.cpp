@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: proc_planner_terminate.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -21,7 +21,6 @@
 //
 void proc_planner_terminate()
 {
-  // (no terminate code required)
   isInitialized_proc_planner = false;
 }
 

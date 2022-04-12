@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: svd.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
@@ -36,7 +36,6 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
   double sm;
   double sqds;
   int i;
-  int k;
   int minnp;
   int n;
   int ns;
@@ -74,7 +73,6 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
     int mm;
     int nct;
     int nmq;
-    int q;
     int qjj;
     int qp1;
     nct = A.size(0) - 1;
@@ -86,7 +84,7 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
     } else {
       i = 1;
     }
-    for (q = 0; q < i; q++) {
+    for (int q{0}; q < i; q++) {
       bool apply_transform;
       qp1 = q + 2;
       ns = (q + n * q) + 1;
@@ -103,12 +101,12 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
           if (std::abs(nrm) >= 1.0020841800044864E-292) {
             nrm = 1.0 / nrm;
             mm = ns + nmq;
-            for (k = ns; k <= mm; k++) {
+            for (int k{ns}; k <= mm; k++) {
               b_A[k - 1] = nrm * b_A[k - 1];
             }
           } else {
             mm = ns + nmq;
-            for (k = ns; k <= mm; k++) {
+            for (int k{ns}; k <= mm; k++) {
               b_A[k - 1] = b_A[k - 1] / s[q];
             }
           }
@@ -123,13 +121,13 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
         if (apply_transform) {
           nrm = 0.0;
           if (nmq + 1 >= 1) {
-            for (k = 0; k <= nmq; k++) {
+            for (int k{0}; k <= nmq; k++) {
               nrm += b_A[(ns + k) - 1] * b_A[qjj + k];
             }
           }
           nrm = -(nrm / b_A[q + b_A.size(0) * q]);
           if ((nmq + 1 >= 1) && (!(nrm == 0.0))) {
-            for (k = 0; k <= nmq; k++) {
+            for (int k{0}; k <= nmq; k++) {
               mm = qjj + k;
               b_A[mm] = b_A[mm] + nrm * b_A[(ns + k) - 1];
             }
@@ -150,17 +148,17 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
           nrm = e[0];
           if (std::abs(e[0]) >= 1.0020841800044864E-292) {
             nrm = 1.0 / e[0];
-            for (k = qp1; k < 4; k++) {
+            for (int k{qp1}; k < 4; k++) {
               e[k - 1] *= nrm;
             }
           } else {
-            for (k = qp1; k < 4; k++) {
+            for (int k{qp1}; k < 4; k++) {
               e[k - 1] /= nrm;
             }
           }
           e[1]++;
           e[0] = -e[0];
-          if (2 <= n) {
+          if (n >= 2) {
             for (jj = qp1; jj <= n; jj++) {
               work[jj - 1] = 0.0;
             }
@@ -169,7 +167,7 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
               ns = n * (jj - 1) + 2;
               if ((nmq >= 1) && (!(nrm == 0.0))) {
                 mm = nmq - 1;
-                for (k = 0; k <= mm; k++) {
+                for (int k{0}; k <= mm; k++) {
                   iter = k + 1;
                   work[iter] = work[iter] + nrm * b_A[(ns + k) - 1];
                 }
@@ -180,7 +178,7 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
               ns = n * (jj - 1) + 2;
               if ((nmq >= 1) && (!(nrm == 0.0))) {
                 mm = nmq - 1;
-                for (k = 0; k <= mm; k++) {
+                for (int k{0}; k <= mm; k++) {
                   iter = (ns + k) - 1;
                   b_A[iter] = b_A[iter] + nrm * work[k + 1];
                 }
@@ -190,7 +188,7 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
         }
       }
     }
-    if (3 <= A.size(0) + 1) {
+    if (A.size(0) + 1 >= 3) {
       nmq = 2;
     } else {
       nmq = A.size(0);
@@ -201,14 +199,14 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
     if (A.size(0) < nmq + 1) {
       s[nmq] = 0.0;
     }
-    if (2 < nmq + 1) {
+    if (nmq + 1 > 2) {
       e[1] = b_A[b_A.size(0) * nmq + 1];
     }
     e[nmq] = 0.0;
     mm = nmq;
     iter = 0;
     snorm = 0.0;
-    for (q = 0; q <= nmq; q++) {
+    for (int q{0}; q <= nmq; q++) {
       nrm = s[q];
       if (s[q] != 0.0) {
         rt = std::abs(s[q]);
@@ -284,19 +282,18 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
       case 1:
         rt = e[nmq - 1];
         e[nmq - 1] = 0.0;
-        for (k = nmq; k >= jj + 1; k--) {
+        for (int k{nmq}; k >= jj + 1; k--) {
           blas::xrotg(&s[k - 1], &rt, &sqds, &sm);
           if (k > jj + 1) {
-            r = e[k - 2];
-            rt = -sm * r;
-            e[k - 2] = r * sqds;
+            rt = -sm * e[0];
+            e[0] *= sqds;
           }
         }
         break;
       case 2:
         rt = e[jj - 1];
         e[jj - 1] = 0.0;
-        for (k = jj + 1; k <= nmq + 1; k++) {
+        for (int k{jj + 1}; k <= nmq + 1; k++) {
           blas::xrotg(&s[k - 1], &rt, &sqds, &sm);
           r = e[k - 1];
           rt = -sm * r;
@@ -330,7 +327,7 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
         }
         rt += (sqds + sm) * (sqds - sm);
         nrm = sqds * (e[jj] / scale);
-        for (k = jj + 1; k <= nmq; k++) {
+        for (int k{jj + 1}; k <= nmq; k++) {
           blas::xrotg(&rt, &nrm, &sqds, &sm);
           if (k > jj + 1) {
             e[k - 2] = rt;
@@ -369,7 +366,7 @@ void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U)
     }
   }
   U.set_size(minnp);
-  for (k = 0; k < minnp; k++) {
+  for (int k{0}; k < minnp; k++) {
     U[k] = s[k];
   }
 }

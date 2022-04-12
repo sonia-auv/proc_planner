@@ -1,15 +1,22 @@
-// Copyright 2020 The MathWorks, Inc.
+// Copyright 2020-2021 The MathWorks, Inc.
 #ifndef _MLROSCPP_SUB_H_
 #define _MLROSCPP_SUB_H_
 
 #include <iostream>
+#include <mutex>
+#include <functional> // For std::function
 #include <ros/ros.h>
 #include "ros_structmsg_conversion.h" // For msg2struct()
 
-template <class MLCoderSubscriber, class MsgType, class StructType>
+#define MATLABSUBSCRIBER_lock(obj)   obj->lock()
+#define MATLABSUBSCRIBER_unlock(obj) obj->unlock()
+#define MATLABSUBSCRIBER_createSubscriber(obj,mlTopic,mlTopicSize,queueSize) obj->createSubscriber(mlTopic,mlTopicSize,queueSize) 
+
+template <class MsgType, class StructType>
 class MATLABSubscriber {
 public:
-    MATLABSubscriber(MLCoderSubscriber* mlSubPtr, MsgType* msgPtr, StructType* structPtr): mlSubPtr_(mlSubPtr), structPtr_(structPtr) {}
+    MATLABSubscriber(StructType* structPtr, std::function<void(void)> callback): 
+        structPtr_{structPtr}, MATLABCallback_{callback} {}
             
     void createSubscriber(const char* mlTopic, size_t mlTopicSize, uint32_t queueSize) {
         std::string topic(mlTopic, mlTopicSize);
@@ -20,44 +27,35 @@ public:
     }
             
     void subscriberCallback(const boost::shared_ptr<MsgType const>& msgPtr) {
-        mlSubPtr_->lock();
-        lastMsgPtr_ = msgPtr; // copy the shared_ptr 
-        msg2struct(structPtr_, lastMsgPtr_.get());
-        mlSubPtr_->unlock();
-        mlSubPtr_->callback(); // Call rossubscriber callback function
+        mutex_.lock();
+        lastMsgPtr_ = msgPtr; // copy shared_ptr 
+        msg2struct(structPtr_, lastMsgPtr_.get()); 
+        // Call MATLAB callback function. NOTE: this call accesses structPtr_ 
+        // hence must be protected by a mutex 
+        MATLABCallback_();      
+        mutex_.unlock();
+    }
+
+    void lock() {
+        mutex_.lock();
+    }
+
+    void unlock() {
+        mutex_.unlock();
     }
             
 private:
-    MLCoderSubscriber* mlSubPtr_;
+    std::function<void(void)> MATLABCallback_;
     StructType *structPtr_;
     ros::Subscriber sub_;
     boost::shared_ptr<MsgType const> lastMsgPtr_;
+    std::mutex mutex_;
 };
 
-
-// Maker function to create a MATLABSubscriber object using CTAD 
-template <class MLCoderSubscriber, class MsgType, class StructType>
-MATLABSubscriber<MLCoderSubscriber, MsgType, StructType>* make_subscriber(MLCoderSubscriber* mlSubPtr, MsgType* msgPtr, StructType* structPtr)
-{
-    return(new MATLABSubscriber<MLCoderSubscriber, MsgType, StructType>(mlSubPtr, msgPtr, structPtr));
-};
 
 /**
 * Function to get status text.
 */
-void getStatusText(bool status, char* mlStatusText) {
-    if(status) {
-        const char* cStatusText_ = "success";
-        size_t mlStatusTextLen = strlen(cStatusText_);
-        std::strncpy(mlStatusText, cStatusText_, mlStatusTextLen);
-        mlStatusText[mlStatusTextLen] = 0;
-
-    } else {
-        const char* cStatusText_ = "timeout";
-        size_t mlStatusTextLen = strlen(cStatusText_);
-        std::strncpy(mlStatusText, cStatusText_, mlStatusTextLen);
-        mlStatusText[mlStatusTextLen] = 0;
-    }
-}
+extern void getStatusText(bool status, char* mlStatusText);
 
 #endif

@@ -4,31 +4,41 @@
 // government, commercial, or other organizational use.
 // File: waypointTrajectory.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
 #include "waypointTrajectory.h"
 #include "bsearch.h"
 #include "clothoidG1fit2wp.h"
-#include "clothoidG2fitMissingCourse.h"
 #include "derivpp.h"
 #include "discretize.h"
+#include "find.h"
 #include "fresnelg2.h"
 #include "getOrientationState.h"
+#include "getPositionalState.h"
 #include "pchip.h"
 #include "ppval.h"
-#include "proc_planner_rtwutil.h"
 #include "quaternion.h"
 #include "quaternionC2fit.h"
 #include "rt_nonfinite.h"
+#include "solveMissingCourse.h"
 #include "coder_array.h"
 #include <cfloat>
 #include <cmath>
 #include <string.h>
 
 // Function Declarations
+static void binary_expand_op(coder::array<double, 2U> &in1,
+                             const coder::array<double, 1U> &in2,
+                             const coder::array<double, 2U> &in3);
+
+static void binary_expand_op(coder::array<double, 2U> &in1,
+                             const coder::array<double, 1U> &in2);
+
+static int div_nzp_s32_floor(int numerator, int denominator);
+
 static double rt_remd_snf(double u0, double u1);
 
 // Function Definitions
@@ -40,8 +50,8 @@ namespace coder {
 void waypointTrajectory::setPose()
 {
   if (((!(TimeOfArrival[0] <= 0.0)) ||
-       (!(0.0 <= TimeOfArrival[TimeOfArrival.size(0) - 1]))) &&
-      (0.0 > TimeOfArrival[TimeOfArrival.size(0) - 1])) {
+       (!(TimeOfArrival[TimeOfArrival.size(0) - 1] >= 0.0))) &&
+      (TimeOfArrival[TimeOfArrival.size(0) - 1] < 0.0)) {
     IsDoneStatus = true;
   }
 }
@@ -52,40 +62,40 @@ void waypointTrajectory::setPose()
 //
 void waypointTrajectory::setupWaypointParams()
 {
+  array<double, 2U> b_course;
   array<double, 2U> gndspeed;
   array<double, 2U> rate;
+  array<double, 2U> varargin_1;
   array<double, 1U> course;
-  array<double, 1U> varargin_1;
+  array<double, 1U> r;
   double absx;
   double x;
-  int i;
-  int i1;
-  int k;
+  int b_input_sizes_idx_1;
+  int input_sizes_idx_1;
   int nx;
   int sizes_idx_1;
-  signed char b_input_sizes_idx_1;
-  signed char input_sizes_idx_1;
+  signed char n;
   bool empty_non_axis_sizes;
   course.set_size(Course.size(0));
   nx = Course.size(0);
-  for (i = 0; i < nx; i++) {
+  for (int i{0}; i < nx; i++) {
     course[i] = Course[i];
   }
   ppval(HorizontalSpeedPiecewisePolynomial.breaks,
         HorizontalSpeedPiecewisePolynomial.coefs, TimeOfArrival, gndspeed);
   ppval(VerticalSpeedPiecewisePolynomial.breaks,
         VerticalSpeedPiecewisePolynomial.coefs, TimeOfArrival, rate);
-  varargin_1.set_size(course.size(0));
-  nx = course.size(0);
-  for (i = 0; i < nx; i++) {
-    varargin_1[i] = course[i];
+  r.set_size(Course.size(0));
+  nx = Course.size(0);
+  for (int i{0}; i < nx; i++) {
+    r[i] = Course[i];
   }
-  nx = course.size(0);
-  for (k = 0; k < nx; k++) {
-    if (std::isinf(varargin_1[k]) || std::isnan(varargin_1[k])) {
-      varargin_1[k] = rtNaN;
+  nx = Course.size(0);
+  for (input_sizes_idx_1 = 0; input_sizes_idx_1 < nx; input_sizes_idx_1++) {
+    if (std::isinf(r[input_sizes_idx_1]) || std::isnan(r[input_sizes_idx_1])) {
+      r[input_sizes_idx_1] = rtNaN;
     } else {
-      x = rt_remd_snf(varargin_1[k], 360.0);
+      x = rt_remd_snf(r[input_sizes_idx_1], 360.0);
       absx = std::abs(x);
       if (absx > 180.0) {
         if (x > 0.0) {
@@ -97,39 +107,40 @@ void waypointTrajectory::setupWaypointParams()
       }
       if (absx <= 45.0) {
         x *= 0.017453292519943295;
-        input_sizes_idx_1 = 0;
+        n = 0;
       } else if (absx <= 135.0) {
         if (x > 0.0) {
           x = 0.017453292519943295 * (x - 90.0);
-          input_sizes_idx_1 = 1;
+          n = 1;
         } else {
           x = 0.017453292519943295 * (x + 90.0);
-          input_sizes_idx_1 = -1;
+          n = -1;
         }
       } else if (x > 0.0) {
         x = 0.017453292519943295 * (x - 180.0);
-        input_sizes_idx_1 = 2;
+        n = 2;
       } else {
         x = 0.017453292519943295 * (x + 180.0);
-        input_sizes_idx_1 = -2;
+        n = -2;
       }
-      if (input_sizes_idx_1 == 0) {
-        varargin_1[k] = std::cos(x);
-      } else if (input_sizes_idx_1 == 1) {
-        varargin_1[k] = -std::sin(x);
-      } else if (input_sizes_idx_1 == -1) {
-        varargin_1[k] = std::sin(x);
+      if (n == 0) {
+        r[input_sizes_idx_1] = std::cos(x);
+      } else if (n == 1) {
+        r[input_sizes_idx_1] = -std::sin(x);
+      } else if (n == -1) {
+        r[input_sizes_idx_1] = std::sin(x);
       } else {
-        varargin_1[k] = -std::cos(x);
+        r[input_sizes_idx_1] = -std::cos(x);
       }
     }
   }
-  nx = course.size(0);
-  for (k = 0; k < nx; k++) {
-    if (std::isinf(course[k]) || std::isnan(course[k])) {
-      course[k] = rtNaN;
+  nx = Course.size(0);
+  for (input_sizes_idx_1 = 0; input_sizes_idx_1 < nx; input_sizes_idx_1++) {
+    if (std::isinf(course[input_sizes_idx_1]) ||
+        std::isnan(course[input_sizes_idx_1])) {
+      course[input_sizes_idx_1] = rtNaN;
     } else {
-      x = rt_remd_snf(course[k], 360.0);
+      x = rt_remd_snf(course[input_sizes_idx_1], 360.0);
       absx = std::abs(x);
       if (absx > 180.0) {
         if (x > 0.0) {
@@ -141,61 +152,89 @@ void waypointTrajectory::setupWaypointParams()
       }
       if (absx <= 45.0) {
         x *= 0.017453292519943295;
-        input_sizes_idx_1 = 0;
+        n = 0;
       } else if (absx <= 135.0) {
         if (x > 0.0) {
           x = 0.017453292519943295 * (x - 90.0);
-          input_sizes_idx_1 = 1;
+          n = 1;
         } else {
           x = 0.017453292519943295 * (x + 90.0);
-          input_sizes_idx_1 = -1;
+          n = -1;
         }
       } else if (x > 0.0) {
         x = 0.017453292519943295 * (x - 180.0);
-        input_sizes_idx_1 = 2;
+        n = 2;
       } else {
         x = 0.017453292519943295 * (x + 180.0);
-        input_sizes_idx_1 = -2;
+        n = -2;
       }
-      if (input_sizes_idx_1 == 0) {
-        course[k] = std::sin(x);
-      } else if (input_sizes_idx_1 == 1) {
-        course[k] = std::cos(x);
-      } else if (input_sizes_idx_1 == -1) {
-        course[k] = -std::cos(x);
+      if (n == 0) {
+        course[input_sizes_idx_1] = std::sin(x);
+      } else if (n == 1) {
+        course[input_sizes_idx_1] = std::cos(x);
+      } else if (n == -1) {
+        course[input_sizes_idx_1] = -std::cos(x);
       } else {
-        course[k] = -std::sin(x);
+        course[input_sizes_idx_1] = -std::sin(x);
       }
     }
   }
-  nx = varargin_1.size(0);
-  for (i = 0; i < nx; i++) {
-    varargin_1[i] = varargin_1[i] * gndspeed[i];
-  }
-  nx = course.size(0);
-  for (i = 0; i < nx; i++) {
-    course[i] = course[i] * gndspeed[i];
-  }
-  if (varargin_1.size(0) != 0) {
-    k = varargin_1.size(0);
-  } else if (course.size(0) != 0) {
-    k = course.size(0);
-  } else if ((rate.size(0) != 0) && (rate.size(1) != 0)) {
-    k = rate.size(0);
+  if (r.size(0) == gndspeed.size(0)) {
+    varargin_1.set_size(r.size(0), gndspeed.size(1));
+    nx = gndspeed.size(1);
+    for (int i{0}; i < nx; i++) {
+      input_sizes_idx_1 = r.size(0);
+      for (int i1{0}; i1 < input_sizes_idx_1; i1++) {
+        varargin_1[i1 + varargin_1.size(0) * i] =
+            r[i1] * gndspeed[i1 + gndspeed.size(0) * i];
+      }
+    }
   } else {
-    k = 0;
-    if (rate.size(0) > 0) {
-      k = rate.size(0);
+    binary_expand_op(varargin_1, r, gndspeed);
+  }
+  if (course.size(0) == gndspeed.size(0)) {
+    b_course.set_size(course.size(0), gndspeed.size(1));
+    nx = gndspeed.size(1);
+    for (int i{0}; i < nx; i++) {
+      input_sizes_idx_1 = course.size(0);
+      for (int i1{0}; i1 < input_sizes_idx_1; i1++) {
+        b_course[i1 + b_course.size(0) * i] =
+            course[i1] * gndspeed[i1 + gndspeed.size(0) * i];
+      }
+    }
+    gndspeed.set_size(b_course.size(0), b_course.size(1));
+    nx = b_course.size(0) * b_course.size(1);
+    for (int i{0}; i < nx; i++) {
+      gndspeed[i] = b_course[i];
+    }
+  } else {
+    binary_expand_op(gndspeed, course);
+  }
+  if ((varargin_1.size(0) != 0) && (varargin_1.size(1) != 0)) {
+    nx = varargin_1.size(0);
+  } else if ((gndspeed.size(0) != 0) && (gndspeed.size(1) != 0)) {
+    nx = gndspeed.size(0);
+  } else if ((rate.size(0) != 0) && (rate.size(1) != 0)) {
+    nx = rate.size(0);
+  } else {
+    nx = varargin_1.size(0);
+    if (gndspeed.size(0) > varargin_1.size(0)) {
+      nx = gndspeed.size(0);
+    }
+    if (rate.size(0) > nx) {
+      nx = rate.size(0);
     }
   }
-  empty_non_axis_sizes = (k == 0);
-  if (empty_non_axis_sizes || (varargin_1.size(0) != 0)) {
-    input_sizes_idx_1 = 1;
+  empty_non_axis_sizes = (nx == 0);
+  if (empty_non_axis_sizes ||
+      ((varargin_1.size(0) != 0) && (varargin_1.size(1) != 0))) {
+    input_sizes_idx_1 = varargin_1.size(1);
   } else {
     input_sizes_idx_1 = 0;
   }
-  if (empty_non_axis_sizes || (course.size(0) != 0)) {
-    b_input_sizes_idx_1 = 1;
+  if (empty_non_axis_sizes ||
+      ((gndspeed.size(0) != 0) && (gndspeed.size(1) != 0))) {
+    b_input_sizes_idx_1 = gndspeed.size(1);
   } else {
     b_input_sizes_idx_1 = 0;
   }
@@ -204,27 +243,148 @@ void waypointTrajectory::setupWaypointParams()
   } else {
     sizes_idx_1 = 0;
   }
-  Velocities.set_size(k,
+  Velocities.set_size(nx,
                       (input_sizes_idx_1 + b_input_sizes_idx_1) + sizes_idx_1);
-  nx = input_sizes_idx_1;
-  for (i = 0; i < nx; i++) {
-    for (i1 = 0; i1 < k; i1++) {
-      Velocities[i1] = varargin_1[i1];
+  for (int i{0}; i < input_sizes_idx_1; i++) {
+    for (int i1{0}; i1 < nx; i1++) {
+      Velocities[i1 + Velocities.size(0) * i] = varargin_1[i1 + nx * i];
     }
   }
-  nx = b_input_sizes_idx_1;
-  for (i = 0; i < nx; i++) {
-    for (i1 = 0; i1 < k; i1++) {
-      Velocities[i1 + Velocities.size(0) * input_sizes_idx_1] = course[i1];
+  for (int i{0}; i < b_input_sizes_idx_1; i++) {
+    for (int i1{0}; i1 < nx; i1++) {
+      Velocities[i1 + Velocities.size(0) * (i + input_sizes_idx_1)] =
+          gndspeed[i1 + nx * i];
     }
   }
-  for (i = 0; i < sizes_idx_1; i++) {
-    for (i1 = 0; i1 < k; i1++) {
+  for (int i{0}; i < sizes_idx_1; i++) {
+    for (int i1{0}; i1 < nx; i1++) {
       Velocities[i1 + Velocities.size(0) *
                           ((i + input_sizes_idx_1) + b_input_sizes_idx_1)] =
-          rate[i1 + k * i];
+          rate[i1 + nx * i];
     }
   }
+}
+
+//
+// Arguments    : coder::array<double, 2U> &in1
+//                const coder::array<double, 1U> &in2
+//                const coder::array<double, 2U> &in3
+// Return Type  : void
+//
+} // namespace coder
+static void binary_expand_op(coder::array<double, 2U> &in1,
+                             const coder::array<double, 1U> &in2,
+                             const coder::array<double, 2U> &in3)
+{
+  int i;
+  int in2_idx_0;
+  int loop_ub;
+  int stride_0_0;
+  int stride_1_0;
+  in2_idx_0 = in2.size(0);
+  if (in3.size(0) == 1) {
+    i = in2_idx_0;
+  } else {
+    i = in3.size(0);
+  }
+  in1.set_size(i, in3.size(1));
+  stride_0_0 = (in2_idx_0 != 1);
+  stride_1_0 = (in3.size(0) != 1);
+  loop_ub = in3.size(1);
+  for (i = 0; i < loop_ub; i++) {
+    int b_loop_ub;
+    if (in3.size(0) == 1) {
+      b_loop_ub = in2_idx_0;
+    } else {
+      b_loop_ub = in3.size(0);
+    }
+    for (int i1{0}; i1 < b_loop_ub; i1++) {
+      in1[i1 + in1.size(0) * i] =
+          in2[i1 * stride_0_0] * in3[i1 * stride_1_0 + in3.size(0) * i];
+    }
+  }
+}
+
+//
+// Arguments    : coder::array<double, 2U> &in1
+//                const coder::array<double, 1U> &in2
+// Return Type  : void
+//
+static void binary_expand_op(coder::array<double, 2U> &in1,
+                             const coder::array<double, 1U> &in2)
+{
+  coder::array<double, 2U> b_in2;
+  int b_loop_ub;
+  int i;
+  int in2_idx_0;
+  int loop_ub;
+  int stride_0_0;
+  int stride_1_0;
+  in2_idx_0 = in2.size(0);
+  if (in1.size(0) == 1) {
+    i = in2_idx_0;
+  } else {
+    i = in1.size(0);
+  }
+  b_in2.set_size(i, in1.size(1));
+  stride_0_0 = (in2_idx_0 != 1);
+  stride_1_0 = (in1.size(0) != 1);
+  loop_ub = in1.size(1);
+  for (i = 0; i < loop_ub; i++) {
+    if (in1.size(0) == 1) {
+      b_loop_ub = in2_idx_0;
+    } else {
+      b_loop_ub = in1.size(0);
+    }
+    for (int i1{0}; i1 < b_loop_ub; i1++) {
+      b_in2[i1 + b_in2.size(0) * i] =
+          in2[i1 * stride_0_0] * in1[i1 * stride_1_0 + in1.size(0) * i];
+    }
+  }
+  in1.set_size(b_in2.size(0), b_in2.size(1));
+  loop_ub = b_in2.size(1);
+  for (i = 0; i < loop_ub; i++) {
+    b_loop_ub = b_in2.size(0);
+    for (int i1{0}; i1 < b_loop_ub; i1++) {
+      in1[i1 + in1.size(0) * i] = b_in2[i1 + b_in2.size(0) * i];
+    }
+  }
+}
+
+//
+// Arguments    : int numerator
+//                int denominator
+// Return Type  : int
+//
+static int div_nzp_s32_floor(int numerator, int denominator)
+{
+  unsigned int absDenominator;
+  unsigned int absNumerator;
+  int quotient;
+  unsigned int tempAbsQuotient;
+  bool quotientNeedsNegation;
+  if (numerator < 0) {
+    absNumerator = ~static_cast<unsigned int>(numerator) + 1U;
+  } else {
+    absNumerator = static_cast<unsigned int>(numerator);
+  }
+  if (denominator < 0) {
+    absDenominator = ~static_cast<unsigned int>(denominator) + 1U;
+  } else {
+    absDenominator = static_cast<unsigned int>(denominator);
+  }
+  quotientNeedsNegation = ((numerator < 0) != (denominator < 0));
+  tempAbsQuotient = absNumerator / absDenominator;
+  if (quotientNeedsNegation) {
+    absNumerator %= absDenominator;
+    if (absNumerator > 0U) {
+      tempAbsQuotient++;
+    }
+    quotient = -static_cast<int>(tempAbsQuotient);
+  } else {
+    quotient = static_cast<int>(tempAbsQuotient);
+  }
+  return quotient;
 }
 
 //
@@ -232,7 +392,6 @@ void waypointTrajectory::setupWaypointParams()
 //                double u1
 // Return Type  : double
 //
-} // namespace coder
 static double rt_remd_snf(double u0, double u1)
 {
   double y;
@@ -269,8 +428,8 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
                          double varargin_4, const quaternion *varargin_8,
                          const ::coder::array<double, 2U> &varargin_10)
 {
-  quaternion b_obj;
   quaternion c_obj;
+  quaternion d_obj;
   quaternion q;
   waypointTrajectory *obj;
   array<creal_T, 1U> b_hip;
@@ -282,6 +441,7 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   array<double, 3U> vapp_coefs;
   array<double, 3U> vjpp_coefs;
   array<double, 3U> vspp_coefs;
+  array<double, 2U> b_obj;
   array<double, 2U> happ_breaks;
   array<double, 2U> hjpp_breaks;
   array<double, 2U> hpp_breaks;
@@ -293,23 +453,31 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   array<double, 2U> vpp_coefs;
   array<double, 2U> vspp_breaks;
   array<double, 2U> w;
-  array<double, 2U> waypoints;
   array<double, 1U> aasq;
   array<double, 1U> ab2;
   array<double, 1U> ac2;
   array<double, 1U> ad2;
-  array<double, 1U> b_ac2;
+  array<double, 1U> b_cd2;
   array<double, 1U> bc2;
   array<double, 1U> bd2;
   array<double, 1U> cd2;
-  int b_loop_ub;
+  array<unsigned int, 2U> b_y;
+  array<int, 2U> y;
+  array<int, 1U> r;
+  array<bool, 1U> tf;
+  array<bool, 1U> x_tmp;
+  int b_k;
   int dimSize;
   int i;
   int i1;
   int i2;
+  int k;
   int loop_ub;
   int m;
+  int n;
   obj = this;
+  obj->AutoPitch = false;
+  obj->AutoBank = false;
   obj->ReferenceFrame[0] = 'N';
   obj->ReferenceFrame[1] = 'E';
   obj->ReferenceFrame[2] = 'D';
@@ -336,109 +504,203 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   for (i = 0; i < loop_ub; i++) {
     aasq[i] = obj->TimeOfArrival[i];
   }
-  waypoints.set_size(obj->Waypoints.size(0), 3);
-  loop_ub = obj->Waypoints.size(0) * 3;
-  for (i = 0; i < loop_ub; i++) {
-    waypoints[i] = obj->Waypoints[i];
-  }
-  ac2.set_size(obj->Course.size(0));
+  n = obj->TimeOfArrival.size(0);
+  cd2.set_size(obj->Course.size(0));
   loop_ub = obj->Course.size(0);
   for (i = 0; i < loop_ub; i++) {
-    ac2[i] = obj->Course[i];
+    cd2[i] = 0.017453292519943295 * obj->Course[i];
+  }
+  if (obj->Waypoints.size(0) - 1 < 1) {
+    loop_ub = 0;
+  } else {
+    loop_ub = obj->Waypoints.size(0) - 1;
+  }
+  if (obj->Waypoints.size(0) < 2) {
+    i = -1;
+    i1 = -1;
+  } else {
+    i = 0;
+    i1 = obj->Waypoints.size(0) - 1;
+  }
+  if (obj->Waypoints.size(0) - 1 < 1) {
+    k = 0;
+  } else {
+    k = obj->Waypoints.size(0) - 1;
+  }
+  if (obj->Waypoints.size(0) < 2) {
+    dimSize = -1;
+    i2 = -1;
+  } else {
+    dimSize = 0;
+    i2 = obj->Waypoints.size(0) - 1;
+  }
+  if (loop_ub == 1) {
+    m = i1 - i;
+  } else {
+    m = loop_ub;
+  }
+  if (k == 1) {
+    b_k = i2 - dimSize;
+  } else {
+    b_k = k;
+  }
+  if ((loop_ub == i1 - i) && (k == i2 - dimSize) && (m == b_k)) {
+    tf.set_size(loop_ub);
+    for (i1 = 0; i1 < loop_ub; i1++) {
+      tf[i1] =
+          ((obj->Waypoints[i1] == obj->Waypoints[(i + i1) + 1]) &&
+           (obj->Waypoints[i1 + obj->Waypoints.size(0)] ==
+            obj->Waypoints[((dimSize + i1) + obj->Waypoints.size(0)) + 1]));
+    }
+  } else {
+    b_binary_expand_op(tf, obj, loop_ub - 1, i + 1, i1, k - 1, dimSize + 1, i2);
+  }
+  x_tmp.set_size(tf.size(0));
+  loop_ub = tf.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    x_tmp[i] = !tf[i];
+  }
+  eml_find(x_tmp, r);
+  ab2.set_size(r.size(0) + 1);
+  ab2[0] = 1.0;
+  loop_ub = r.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    ab2[i + 1] = static_cast<double>(r[i]) + 1.0;
+  }
+  ad2.set_size(ab2.size(0));
+  loop_ub = ab2.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    ad2[i] = cd2[static_cast<int>(ab2[i]) - 1];
+  }
+  b_obj.set_size(ab2.size(0), 3);
+  loop_ub = ab2.size(0);
+  for (i = 0; i < 3; i++) {
+    for (i1 = 0; i1 < loop_ub; i1++) {
+      b_obj[i1 + b_obj.size(0) * i] =
+          obj->Waypoints[(static_cast<int>(ab2[i1]) +
+                          obj->Waypoints.size(0) * i) -
+                         1];
+    }
+  }
+  matlabshared::tracking::internal::scenario::clothoidG2FitMissingCourse(b_obj,
+                                                                         ad2);
+  loop_ub = ad2.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    cd2[static_cast<int>(ab2[i]) - 1] = ad2[i];
+  }
+  eml_find(tf, r);
+  ab2.set_size(r.size(0));
+  loop_ub = r.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    ab2[i] = r[i];
+  }
+  ac2.set_size(x_tmp.size(0));
+  loop_ub = x_tmp.size(0);
+  for (i = 0; i < loop_ub; i++) {
+    ac2[i] = x_tmp[i];
+  }
+  if ((ac2.size(0) != 1) && (ac2.size(0) != 0) && (ac2.size(0) != 1)) {
+    i = ac2.size(0);
+    for (k = 0; k <= i - 2; k++) {
+      ac2[k + 1] = ac2[k] + ac2[k + 1];
+    }
   }
   loop_ub = ac2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    ac2[i] = 0.017453292519943295 * ac2[i];
+    ac2[i] = ac2[i] + 1.0;
   }
-  matlabshared::tracking::internal::scenario::clothoidG2fitMissingCourse(
-      waypoints, ac2);
-  loop_ub = waypoints.size(0);
-  hip.set_size(waypoints.size(0));
+  loop_ub = ab2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    hip[i].re = waypoints[i];
-    hip[i].im = waypoints[i + waypoints.size(0)];
+    k = static_cast<int>(ab2[i]);
+    cd2[k] = ad2[static_cast<int>(ac2[k - 1]) - 1];
   }
-  if (1.0 > static_cast<double>(aasq.size(0)) - 1.0) {
+  loop_ub = obj->Waypoints.size(0);
+  hip.set_size(loop_ub);
+  for (i = 0; i < loop_ub; i++) {
+    hip[i].re = obj->Waypoints[i];
+    hip[i].im = obj->Waypoints[i + obj->Waypoints.size(0)];
+  }
+  if (obj->TimeOfArrival.size(0) - 1 < 1) {
     loop_ub = 0;
   } else {
-    loop_ub = aasq.size(0) - 1;
+    loop_ub = n - 1;
   }
-  if (1.0 > static_cast<double>(aasq.size(0)) - 1.0) {
-    b_loop_ub = 0;
-  } else {
-    b_loop_ub = aasq.size(0) - 1;
-  }
-  if (2 > aasq.size(0)) {
-    i = 0;
-    i1 = 0;
-    dimSize = 0;
+  if (obj->TimeOfArrival.size(0) - 1 < 1) {
     m = 0;
   } else {
+    m = n - 1;
+  }
+  if (n < 2) {
+    i = 0;
+    i1 = 0;
+    k = 0;
+    dimSize = 0;
+  } else {
     i = 1;
-    i1 = aasq.size(0);
-    dimSize = 1;
-    m = aasq.size(0);
+    i1 = obj->TimeOfArrival.size(0);
+    k = 1;
+    dimSize = obj->TimeOfArrival.size(0);
   }
   b_hip.set_size(loop_ub);
   for (i2 = 0; i2 < loop_ub; i2++) {
     b_hip[i2] = hip[i2];
   }
-  bd2.set_size(b_loop_ub);
-  for (i2 = 0; i2 < b_loop_ub; i2++) {
-    bd2[i2] = ac2[i2];
+  bc2.set_size(m);
+  for (i2 = 0; i2 < m; i2++) {
+    bc2[i2] = cd2[i2];
   }
   loop_ub = i1 - i;
   c_hip.set_size(loop_ub);
   for (i1 = 0; i1 < loop_ub; i1++) {
     c_hip[i1] = hip[i + i1];
   }
-  loop_ub = m - dimSize;
-  b_ac2.set_size(loop_ub);
+  loop_ub = dimSize - k;
+  b_cd2.set_size(loop_ub);
   for (i = 0; i < loop_ub; i++) {
-    b_ac2[i] = ac2[dimSize + i];
+    b_cd2[i] = cd2[k + i];
   }
   matlabshared::tracking::internal::scenario::clothoidG1fit2wp(
-      b_hip, bd2, c_hip, b_ac2, ab2, ad2, bc2);
-  bd2.set_size(bc2.size(0));
-  loop_ub = bc2.size(0);
+      b_hip, bc2, c_hip, b_cd2, ab2, ac2, ad2);
+  bc2.set_size(ad2.size(0));
+  loop_ub = ad2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    bd2[i] = bc2[i];
+    bc2[i] = ad2[i];
   }
-  if ((bc2.size(0) != 1) && (bc2.size(0) != 0) && (bc2.size(0) != 1)) {
-    i = bc2.size(0);
-    for (dimSize = 0; dimSize <= i - 2; dimSize++) {
-      bd2[dimSize + 1] = bd2[dimSize] + bd2[dimSize + 1];
+  if ((ad2.size(0) != 1) && (ad2.size(0) != 0) && (ad2.size(0) != 1)) {
+    i = ad2.size(0);
+    for (k = 0; k <= i - 2; k++) {
+      bc2[k + 1] = bc2[k] + bc2[k + 1];
     }
   }
-  cd2.set_size(bd2.size(0) + 1);
-  cd2[0] = 0.0;
-  loop_ub = bd2.size(0);
+  bd2.set_size(bc2.size(0) + 1);
+  bd2[0] = 0.0;
+  loop_ub = bc2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    cd2[i + 1] = bd2[i];
+    bd2[i + 1] = bc2[i];
   }
-  pchip(aasq, cd2, hpp_breaks, hpp_coefs);
+  pchip(obj->TimeOfArrival, bd2, hpp_breaks, hpp_coefs);
   matlabshared::tracking::internal::scenario::derivpp(hpp_breaks, hpp_coefs,
                                                       hspp_breaks, hspp_coefs);
   matlabshared::tracking::internal::scenario::derivpp(hspp_breaks, hspp_coefs,
                                                       happ_breaks, happ_coefs);
   matlabshared::tracking::internal::scenario::derivpp(happ_breaks, happ_coefs,
                                                       hjpp_breaks, hjpp_coefs);
-  loop_ub = waypoints.size(0);
-  b_ac2.set_size(waypoints.size(0));
+  loop_ub = obj->Waypoints.size(0);
+  b_cd2.set_size(loop_ub);
   for (i = 0; i < loop_ub; i++) {
-    b_ac2[i] = waypoints[i + waypoints.size(0) * 2];
+    b_cd2[i] = obj->Waypoints[i + obj->Waypoints.size(0) * 2];
   }
-  pchip(aasq, b_ac2, vpp_breaks, vpp_coefs);
+  pchip(obj->TimeOfArrival, b_cd2, vpp_breaks, vpp_coefs);
   matlabshared::tracking::internal::scenario::derivpp(vpp_breaks, vpp_coefs,
                                                       vspp_breaks, vspp_coefs);
   matlabshared::tracking::internal::scenario::derivpp(vspp_breaks, vspp_coefs,
                                                       vapp_breaks, vapp_coefs);
   matlabshared::tracking::internal::scenario::derivpp(vapp_breaks, vapp_coefs,
                                                       vjpp_breaks, vjpp_coefs);
-  obj->HorizontalCumulativeDistance.set_size(cd2.size(0));
-  loop_ub = cd2.size(0);
+  obj->HorizontalCumulativeDistance.set_size(bd2.size(0));
+  loop_ub = bd2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    obj->HorizontalCumulativeDistance[i] = cd2[i];
+    obj->HorizontalCumulativeDistance[i] = bd2[i];
   }
   obj->HorizontalDistancePiecewisePolynomial.breaks.set_size(
       1, hpp_breaks.size(1));
@@ -493,20 +755,20 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   for (i = 0; i < loop_ub; i++) {
     obj->HorizontalCurvatureInitial[i] = ab2[i];
   }
-  obj->HorizontalCurvatureFinal.set_size(ad2.size(0));
-  loop_ub = ad2.size(0);
+  obj->HorizontalCurvatureFinal.set_size(ac2.size(0));
+  loop_ub = ac2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    obj->HorizontalCurvatureFinal[i] = ad2[i];
+    obj->HorizontalCurvatureFinal[i] = ac2[i];
   }
   obj->HorizontalInitialPosition.set_size(hip.size(0));
   loop_ub = hip.size(0);
   for (i = 0; i < loop_ub; i++) {
     obj->HorizontalInitialPosition[i] = hip[i];
   }
-  obj->HorizontalPiecewiseLength.set_size(bc2.size(0));
-  loop_ub = bc2.size(0);
+  obj->HorizontalPiecewiseLength.set_size(ad2.size(0));
+  loop_ub = ad2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    obj->HorizontalPiecewiseLength[i] = bc2[i];
+    obj->HorizontalPiecewiseLength[i] = ad2[i];
   }
   obj->VerticalDistancePiecewisePolynomial.breaks.set_size(1,
                                                            vpp_breaks.size(1));
@@ -553,10 +815,10 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   for (i = 0; i < loop_ub; i++) {
     obj->VerticalJerkPiecewisePolynomial.coefs[i] = vjpp_coefs[i];
   }
-  obj->Course.set_size(ac2.size(0));
-  loop_ub = ac2.size(0);
+  obj->Course.set_size(cd2.size(0));
+  loop_ub = cd2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    obj->Course[i] = 57.295779513082323 * ac2[i];
+    obj->Course[i] = 57.295779513082323 * cd2[i];
   }
   obj->PathDuration = aasq[aasq.size(0) - 1];
   q = obj->Quaternions;
@@ -568,107 +830,104 @@ waypointTrajectory::init(const ::coder::array<double, 2U> &varargin_1,
   m = q.a.size(0) * q.a.size(1);
   dimSize = aasq.size(0);
   if (aasq.size(0) == 0) {
-    ab2.set_size(0);
+    ac2.set_size(0);
   } else {
-    b_loop_ub = aasq.size(0) - 1;
-    if (b_loop_ub > 1) {
-      b_loop_ub = 1;
+    k = aasq.size(0) - 1;
+    if (k > 1) {
+      k = 1;
     }
-    if (b_loop_ub < 1) {
-      ab2.set_size(0);
+    if (k < 1) {
+      ac2.set_size(0);
     } else {
-      ac2.set_size(1);
-      ab2.set_size(aasq.size(0) - 1);
+      ab2.set_size(1);
+      ac2.set_size(aasq.size(0) - 1);
       if (aasq.size(0) - 1 != 0) {
-        ac2[0] = aasq[0];
-        for (b_loop_ub = 2; b_loop_ub <= dimSize; b_loop_ub++) {
-          double tmp1;
+        ab2[0] = aasq[0];
+        for (k = 2; k <= dimSize; k++) {
+          double ab2_tmp;
           double tmp2;
-          tmp1 = aasq[b_loop_ub - 1];
-          tmp2 = ac2[0];
-          ac2[0] = tmp1;
-          tmp1 -= tmp2;
-          ab2[b_loop_ub - 2] = tmp1;
+          tmp2 = ab2[0];
+          ab2_tmp = aasq[k - 1];
+          ab2[0] = ab2_tmp;
+          ac2[k - 2] = ab2_tmp - tmp2;
         }
       }
     }
   }
   if (m - 1 < 1) {
-    hpp_breaks.set_size(1, 0);
+    y.set_size(1, 0);
   } else {
-    hpp_breaks.set_size(
-        1, static_cast<int>((static_cast<double>(m) - 1.0) - 1.0) + 1);
-    loop_ub = static_cast<int>((static_cast<double>(m) - 1.0) - 1.0);
+    loop_ub = m - 2;
+    y.set_size(1, m - 1);
     for (i = 0; i <= loop_ub; i++) {
-      hpp_breaks[i] = static_cast<double>(i) + 1.0;
+      y[i] = i + 1;
     }
   }
   if (m < 2) {
-    hspp_breaks.set_size(1, 0);
+    b_y.set_size(1, 0);
   } else {
-    hspp_breaks.set_size(1, m - 1);
+    b_y.set_size(1, m - 1);
     loop_ub = m - 2;
     for (i = 0; i <= loop_ub; i++) {
-      hspp_breaks[i] = static_cast<double>(i) + 2.0;
+      b_y[i] = i + 2U;
     }
   }
-  b_obj.a.set_size(1, hpp_breaks.size(1));
-  loop_ub = hpp_breaks.size(1);
+  c_obj.a.set_size(1, y.size(1));
+  loop_ub = y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    b_obj.a[i] = q.a[static_cast<int>(hpp_breaks[i]) - 1];
+    c_obj.a[i] = q.a[y[i] - 1];
   }
-  b_obj.b.set_size(1, hpp_breaks.size(1));
-  loop_ub = hpp_breaks.size(1);
+  c_obj.b.set_size(1, y.size(1));
+  loop_ub = y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    b_obj.b[i] = q.b[static_cast<int>(hpp_breaks[i]) - 1];
+    c_obj.b[i] = q.b[y[i] - 1];
   }
-  b_obj.c.set_size(1, hpp_breaks.size(1));
-  loop_ub = hpp_breaks.size(1);
+  c_obj.c.set_size(1, y.size(1));
+  loop_ub = y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    b_obj.c[i] = q.c[static_cast<int>(hpp_breaks[i]) - 1];
+    c_obj.c[i] = q.c[y[i] - 1];
   }
-  b_obj.d.set_size(1, hpp_breaks.size(1));
-  loop_ub = hpp_breaks.size(1);
+  c_obj.d.set_size(1, y.size(1));
+  loop_ub = y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    b_obj.d[i] = q.d[static_cast<int>(hpp_breaks[i]) - 1];
+    c_obj.d[i] = q.d[y[i] - 1];
   }
-  c_obj.a.set_size(1, hspp_breaks.size(1));
-  loop_ub = hspp_breaks.size(1);
+  d_obj.a.set_size(1, b_y.size(1));
+  loop_ub = b_y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    c_obj.a[i] = q.a[static_cast<int>(hspp_breaks[i]) - 1];
+    d_obj.a[i] = q.a[static_cast<int>(b_y[i]) - 1];
   }
-  c_obj.b.set_size(1, hspp_breaks.size(1));
-  loop_ub = hspp_breaks.size(1);
+  d_obj.b.set_size(1, b_y.size(1));
+  loop_ub = b_y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    c_obj.b[i] = q.b[static_cast<int>(hspp_breaks[i]) - 1];
+    d_obj.b[i] = q.b[static_cast<int>(b_y[i]) - 1];
   }
-  c_obj.c.set_size(1, hspp_breaks.size(1));
-  loop_ub = hspp_breaks.size(1);
+  d_obj.c.set_size(1, b_y.size(1));
+  loop_ub = b_y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    c_obj.c[i] = q.c[static_cast<int>(hspp_breaks[i]) - 1];
+    d_obj.c[i] = q.c[static_cast<int>(b_y[i]) - 1];
   }
-  c_obj.d.set_size(1, hspp_breaks.size(1));
-  loop_ub = hspp_breaks.size(1);
+  d_obj.d.set_size(1, b_y.size(1));
+  loop_ub = b_y.size(1);
   for (i = 0; i < loop_ub; i++) {
-    c_obj.d[i] = q.d[static_cast<int>(hspp_breaks[i]) - 1];
+    d_obj.d[i] = q.d[static_cast<int>(b_y[i]) - 1];
   }
-  fusion::scenario::internal::getang(&b_obj, &c_obj, ac2, waypoints);
-  fusion::scenario::internal::rates(static_cast<double>(m), ab2, ac2, waypoints,
-                                    w);
-  obj->SegmentTimes.set_size(ab2.size(0));
-  loop_ub = ab2.size(0);
-  for (i = 0; i < loop_ub; i++) {
-    obj->SegmentTimes[i] = ab2[i];
-  }
-  obj->RadianSlewAngles.set_size(ac2.size(0));
+  fusion::scenario::internal::getang(&c_obj, &d_obj, ab2, b_obj);
+  fusion::scenario::internal::rates(static_cast<double>(m), ac2, ab2, b_obj, w);
+  obj->SegmentTimes.set_size(ac2.size(0));
   loop_ub = ac2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    obj->RadianSlewAngles[i] = ac2[i];
+    obj->SegmentTimes[i] = ac2[i];
   }
-  obj->AxesOfRotation.set_size(waypoints.size(0), 3);
-  loop_ub = waypoints.size(0) * 3;
+  obj->RadianSlewAngles.set_size(ab2.size(0));
+  loop_ub = ab2.size(0);
   for (i = 0; i < loop_ub; i++) {
-    obj->AxesOfRotation[i] = waypoints[i];
+    obj->RadianSlewAngles[i] = ab2[i];
+  }
+  obj->AxesOfRotation.set_size(b_obj.size(0), 3);
+  loop_ub = b_obj.size(0) * 3;
+  for (i = 0; i < loop_ub; i++) {
+    obj->AxesOfRotation[i] = b_obj[i];
   }
   obj->RadianAngularVelocities.set_size(w.size(0), 3);
   loop_ub = w.size(0) * 3;
@@ -694,27 +953,17 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
                               double varargout_3[3], double varargout_4[3],
                               double varargout_5[3])
 {
-  quaternion b_q;
-  quaternion q;
+  quaternion b_orientation;
+  quaternion orientation;
   array<creal_T, 1U> ah;
-  array<creal_T, 1U> hip;
+  array<creal_T, 1U> vh;
   array<double, 3U> m;
   array<double, 2U> acceleration;
-  array<double, 2U> r;
+  array<double, 2U> b_C;
   array<double, 2U> velocity;
   array<double, 1U> course;
-  array<double, 1U> hcd;
-  array<double, 1U> k0;
-  array<double, 1U> k1;
   array<double, 1U> l_1;
   array<double, 1U> l_2;
-  double A[9];
-  double B[9];
-  double C[6];
-  double D[3];
-  double b_obj[3];
-  double c_obj[3];
-  double obj[3];
   double dt;
   double t;
   if (isInitialized != 1) {
@@ -742,41 +991,27 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
     if ((TimeOfArrival[0] <= t) &&
         (t <= TimeOfArrival[TimeOfArrival.size(0) - 1])) {
       creal_T dc;
+      creal_T f_1;
+      creal_T f_2;
+      double A[9];
+      double B[9];
+      double C[6];
+      double D[3];
+      double b_obj[3];
+      double c_obj[3];
+      double obj[3];
+      double b_f_1_tmp_tmp;
       double dkappa;
       double dkappa_tmp;
-      double f_1_im;
-      double f_1_re;
-      double f_1_re_tmp;
-      double f_1_re_tmp_tmp;
-      double f_2_re;
+      double f_1_tmp_tmp;
       double idx;
       double l;
+      double r;
       double xloc;
-      double y_im;
       double y_re;
       int boffset;
       int i;
       int ip;
-      hcd.set_size(HorizontalCumulativeDistance.size(0));
-      ip = HorizontalCumulativeDistance.size(0);
-      for (i = 0; i < ip; i++) {
-        hcd[i] = HorizontalCumulativeDistance[i];
-      }
-      k0.set_size(HorizontalCurvatureInitial.size(0));
-      ip = HorizontalCurvatureInitial.size(0);
-      for (i = 0; i < ip; i++) {
-        k0[i] = HorizontalCurvatureInitial[i];
-      }
-      k1.set_size(HorizontalCurvatureFinal.size(0));
-      ip = HorizontalCurvatureFinal.size(0);
-      for (i = 0; i < ip; i++) {
-        k1[i] = HorizontalCurvatureFinal[i];
-      }
-      hip.set_size(HorizontalInitialPosition.size(0));
-      ip = HorizontalInitialPosition.size(0);
-      for (i = 0; i < ip; i++) {
-        hip[i] = HorizontalInitialPosition[i];
-      }
       course.set_size(Course.size(0));
       ip = Course.size(0);
       for (i = 0; i < ip; i++) {
@@ -793,10 +1028,10 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
                            .coefs[(ip + HorizontalDistancePiecewisePolynomial
                                             .breaks.size(1)) -
                                   1]) +
-               HorizontalDistancePiecewisePolynomial
-                   .coefs[ip + 2 * (HorizontalDistancePiecewisePolynomial.breaks
-                                        .size(1) -
-                                    1)]) +
+               HorizontalDistancePiecewisePolynomial.coefs
+                   [ip +
+                    ((HorizontalDistancePiecewisePolynomial.breaks.size(1) - 1)
+                     << 1)]) +
           HorizontalDistancePiecewisePolynomial
               .coefs[ip +
                      3 * (HorizontalDistancePiecewisePolynomial.breaks.size(1) -
@@ -806,23 +1041,31 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
       ppval(HorizontalAccelerationPiecewisePolynomial.breaks,
             HorizontalAccelerationPiecewisePolynomial.coefs, t, l_2);
       ip = 0;
-      if (xloc > hcd[hcd.size(0) - 1]) {
+      if (xloc >
+          HorizontalCumulativeDistance[HorizontalCumulativeDistance.size(0) -
+                                       1]) {
         ip = 1;
       }
       for (i = 0; i < ip; i++) {
-        xloc = hcd[hcd.size(0) - 1];
+        xloc =
+            HorizontalCumulativeDistance[HorizontalCumulativeDistance.size(0) -
+                                         1];
       }
       ip = 0;
-      if (xloc < hcd[0]) {
+      if (xloc < HorizontalCumulativeDistance[0]) {
         ip = 1;
       }
       for (i = 0; i < ip; i++) {
-        xloc = hcd[0];
+        xloc = HorizontalCumulativeDistance[0];
       }
-      idx = mapElementsToBins(xloc, hcd);
-      dkappa_tmp = k0[static_cast<int>(idx) - 1];
-      dkappa = (k1[static_cast<int>(idx) - 1] - dkappa_tmp) /
-               HorizontalPiecewiseLength[static_cast<int>(idx) - 1];
+      idx = mapElementsToBins(xloc, HorizontalCumulativeDistance);
+      boffset = static_cast<int>(
+                    mapElementsToBins(xloc, HorizontalCumulativeDistance)) -
+                1;
+      dkappa_tmp = HorizontalCurvatureInitial[static_cast<int>(idx) - 1];
+      dkappa =
+          (HorizontalCurvatureFinal[static_cast<int>(idx) - 1] - dkappa_tmp) /
+          HorizontalPiecewiseLength[static_cast<int>(idx) - 1];
       ip = 0;
       if (std::isnan(dkappa)) {
         ip = 1;
@@ -830,85 +1073,94 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
       for (i = 0; i < ip; i++) {
         dkappa = 0.0;
       }
-      l = xloc - hcd[static_cast<int>(idx) - 1];
-      f_1_re_tmp_tmp = course[static_cast<int>(idx) - 1];
-      xloc = (dkappa / 2.0 * l + dkappa_tmp) * l + f_1_re_tmp_tmp;
-      f_1_re_tmp = xloc * 0.0;
+      l = xloc - HorizontalCumulativeDistance[static_cast<int>(idx) - 1];
+      f_1_tmp_tmp = course[static_cast<int>(idx) - 1];
+      b_f_1_tmp_tmp = (dkappa / 2.0 * l + dkappa_tmp) * l;
+      xloc = b_f_1_tmp_tmp + f_1_tmp_tmp;
+      f_1.re = xloc * 0.0;
       if (xloc == 0.0) {
-        f_1_re = std::exp(f_1_re_tmp);
-        f_1_im = 0.0;
-        y_re = f_1_re;
-        y_im = 0.0;
+        xloc = f_1.re;
+        f_1.re = std::exp(xloc);
+        f_1.im = 0.0;
       } else {
-        f_2_re = std::exp(f_1_re_tmp / 2.0);
-        f_1_re_tmp = std::cos(xloc);
-        f_1_re = f_2_re * (f_2_re * f_1_re_tmp);
-        xloc = std::sin(xloc);
-        f_1_im = f_2_re * (f_2_re * xloc);
-        y_re = f_2_re * (f_2_re * f_1_re_tmp);
-        y_im = f_2_re * (f_2_re * xloc);
+        r = std::exp(f_1.re / 2.0);
+        f_1.re = r * (r * std::cos(xloc));
+        f_1.im = r * (r * std::sin(xloc));
+      }
+      y_re = (b_f_1_tmp_tmp + course[static_cast<int>(idx) - 1]) * 0.0;
+      idx = b_f_1_tmp_tmp + course[static_cast<int>(idx) - 1];
+      if (idx == 0.0) {
+        y_re = std::exp(y_re);
+        idx = 0.0;
+      } else {
+        r = std::exp(y_re / 2.0);
+        y_re = r * (r * std::cos(idx));
+        idx = r * (r * std::sin(idx));
       }
       xloc = dkappa * 0.0 * l + 0.0 * dkappa_tmp;
-      f_1_re_tmp = dkappa * l + dkappa_tmp;
-      f_2_re = y_re * xloc - y_im * f_1_re_tmp;
-      xloc = y_re * f_1_re_tmp + y_im * xloc;
+      b_f_1_tmp_tmp = dkappa * l + dkappa_tmp;
+      f_2.re = y_re * xloc - idx * b_f_1_tmp_tmp;
+      f_2.im = y_re * b_f_1_tmp_tmp + idx * xloc;
       dc = matlabshared::tracking::internal::scenario::fresnelg2(
-          l, dkappa, dkappa_tmp, f_1_re_tmp_tmp);
-      y_re = hip[static_cast<int>(idx) - 1].re + dc.re;
-      y_im = hip[static_cast<int>(idx) - 1].im + dc.im;
-      hip.set_size(l_1.size(0));
+          l, dkappa, dkappa_tmp, f_1_tmp_tmp);
+      vh.set_size(l_1.size(0));
       ip = l_1.size(0);
       for (i = 0; i < ip; i++) {
-        hip[i].re = l_1[i] * f_1_re;
-        hip[i].im = l_1[i] * f_1_im;
+        vh[i].re = l_1[i] * f_1.re;
+        vh[i].im = l_1[i] * f_1.im;
       }
-      hcd.set_size(l_1.size(0));
+      course.set_size(l_1.size(0));
       ip = l_1.size(0);
-      for (boffset = 0; boffset < ip; boffset++) {
-        hcd[boffset] = l_1[boffset] * l_1[boffset];
-      }
-      ah.set_size(l_2.size(0));
-      ip = l_2.size(0);
       for (i = 0; i < ip; i++) {
-        ah[i].re = f_1_re * l_2[i] + f_2_re * hcd[i];
-        ah[i].im = f_1_im * l_2[i] + xloc * hcd[i];
+        xloc = l_1[i];
+        course[i] = xloc * xloc;
+      }
+      if (l_2.size(0) == course.size(0)) {
+        ah.set_size(l_2.size(0));
+        ip = l_2.size(0);
+        for (i = 0; i < ip; i++) {
+          ah[i].re = f_1.re * l_2[i] + f_2.re * course[i];
+          ah[i].im = f_1.im * l_2[i] + f_2.im * course[i];
+        }
+      } else {
+        binary_expand_op(ah, f_1, l_2, f_2, course);
       }
       ip = internal::b_bsearch(VerticalDistancePiecewisePolynomial.breaks, t) -
            1;
       xloc = t - VerticalDistancePiecewisePolynomial.breaks[ip];
-      ppval(VerticalSpeedPiecewisePolynomial.breaks,
-            VerticalSpeedPiecewisePolynomial.coefs, t, hcd);
-      ppval(VerticalAccelerationPiecewisePolynomial.breaks,
-            VerticalAccelerationPiecewisePolynomial.coefs, t, k0);
-      varargout_1[0] = y_re;
-      varargout_1[1] = y_im;
+      varargout_1[0] = HorizontalInitialPosition[boffset].re + dc.re;
+      varargout_1[1] = HorizontalInitialPosition[boffset].im + dc.im;
       varargout_1[2] =
           xloc * (xloc * (xloc * VerticalDistancePiecewisePolynomial.coefs[ip] +
                           VerticalDistancePiecewisePolynomial
                               .coefs[(ip + VerticalDistancePiecewisePolynomial
                                                .breaks.size(1)) -
                                      1]) +
-                  VerticalDistancePiecewisePolynomial
-                      .coefs[ip + 2 * (VerticalDistancePiecewisePolynomial
-                                           .breaks.size(1) -
-                                       1)]) +
+                  VerticalDistancePiecewisePolynomial.coefs
+                      [ip +
+                       ((VerticalDistancePiecewisePolynomial.breaks.size(1) - 1)
+                        << 1)]) +
           VerticalDistancePiecewisePolynomial
               .coefs[ip +
                      3 * (VerticalDistancePiecewisePolynomial.breaks.size(1) -
                           1)];
-      velocity.set_size(hip.size(0), 3);
-      ip = hip.size(0);
+      ppval(VerticalSpeedPiecewisePolynomial.breaks,
+            VerticalSpeedPiecewisePolynomial.coefs, t, course);
+      velocity.set_size(vh.size(0), 3);
+      ip = vh.size(0);
       for (i = 0; i < ip; i++) {
-        velocity[i] = hip[i].re;
+        velocity[i] = vh[i].re;
       }
-      ip = hip.size(0);
+      ip = vh.size(0);
       for (i = 0; i < ip; i++) {
-        velocity[i + velocity.size(0)] = hip[i].im;
+        velocity[i + velocity.size(0)] = vh[i].im;
       }
-      ip = hcd.size(0);
+      ip = course.size(0);
       for (i = 0; i < ip; i++) {
-        velocity[i + velocity.size(0) * 2] = hcd[i];
+        velocity[i + velocity.size(0) * 2] = course[i];
       }
+      ppval(VerticalAccelerationPiecewisePolynomial.breaks,
+            VerticalAccelerationPiecewisePolynomial.coefs, t, course);
       acceleration.set_size(ah.size(0), 3);
       ip = ah.size(0);
       for (i = 0; i < ip; i++) {
@@ -918,26 +1170,26 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
       for (i = 0; i < ip; i++) {
         acceleration[i + acceleration.size(0)] = ah[i].im;
       }
-      ip = k0.size(0);
+      ip = course.size(0);
       for (i = 0; i < ip; i++) {
-        acceleration[i + acceleration.size(0) * 2] = k0[i];
+        acceleration[i + acceleration.size(0) * 2] = course[i];
       }
-      hcd.set_size(SegmentTimes.size(0));
+      course.set_size(SegmentTimes.size(0));
       ip = SegmentTimes.size(0);
       for (i = 0; i < ip; i++) {
-        hcd[i] = SegmentTimes[i];
+        course[i] = SegmentTimes[i];
       }
-      k0.set_size(RadianSlewAngles.size(0));
+      l_1.set_size(RadianSlewAngles.size(0));
       ip = RadianSlewAngles.size(0);
       for (i = 0; i < ip; i++) {
-        k0[i] = RadianSlewAngles[i];
+        l_1[i] = RadianSlewAngles[i];
       }
-      k1.set_size(TimeOfArrival.size(0));
+      l_2.set_size(TimeOfArrival.size(0));
       ip = TimeOfArrival.size(0);
       for (i = 0; i < ip; i++) {
-        k1[i] = TimeOfArrival[i];
+        l_2[i] = TimeOfArrival[i];
       }
-      xloc = mapElementsToBins(t, k1);
+      xloc = mapElementsToBins(t, l_2);
       obj[0] = AxesOfRotation[static_cast<int>(xloc) - 1];
       b_obj[0] = RadianAngularVelocities[static_cast<int>(xloc) - 1];
       c_obj[0] = RadianAngularVelocities[static_cast<int>(
@@ -959,79 +1211,76 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
       c_obj[2] = RadianAngularVelocities[static_cast<int>(
                                              static_cast<unsigned int>(xloc)) +
                                          RadianAngularVelocities.size(0) * 2];
-      fusion::scenario::internal::slew3_init(hcd[static_cast<int>(xloc) - 1],
-                                             k0[static_cast<int>(xloc) - 1],
+      fusion::scenario::internal::slew3_init(course[static_cast<int>(xloc) - 1],
+                                             l_1[static_cast<int>(xloc) - 1],
                                              obj, b_obj, c_obj, A, B, C, D);
       ip = Quaternions.a.size(1);
-      q.a.set_size(1, ip);
+      orientation.a.set_size(1, ip);
       for (i = 0; i < ip; i++) {
-        q.a[i] =
+        orientation.a[i] =
             Quaternions
                 .a[(static_cast<int>(xloc) + Quaternions.a.size(0) * i) - 1];
       }
       ip = Quaternions.b.size(1);
-      q.b.set_size(1, ip);
+      orientation.b.set_size(1, ip);
       for (i = 0; i < ip; i++) {
-        q.b[i] =
+        orientation.b[i] =
             Quaternions
                 .b[(static_cast<int>(xloc) + Quaternions.b.size(0) * i) - 1];
       }
       ip = Quaternions.c.size(1);
-      q.c.set_size(1, ip);
+      orientation.c.set_size(1, ip);
       for (i = 0; i < ip; i++) {
-        q.c[i] =
+        orientation.c[i] =
             Quaternions
                 .c[(static_cast<int>(xloc) + Quaternions.c.size(0) * i) - 1];
       }
       ip = Quaternions.d.size(1);
-      q.d.set_size(1, ip);
+      orientation.d.set_size(1, ip);
       for (i = 0; i < ip; i++) {
-        q.d[i] =
+        orientation.d[i] =
             Quaternions
                 .d[(static_cast<int>(xloc) + Quaternions.d.size(0) * i) - 1];
       }
-      b_q = q;
-      fusion::scenario::internal::slew3(t - k1[static_cast<int>(xloc) - 1],
-                                        hcd[static_cast<int>(xloc) - 1], &b_q,
-                                        A, B, C, D, &q, c_obj, obj, b_obj);
-      b_q = q;
-      b_q.rotmat(m);
+      b_orientation = orientation;
+      fusion::scenario::internal::slew3(t - l_2[static_cast<int>(xloc) - 1],
+                                        course[static_cast<int>(xloc) - 1],
+                                        &b_orientation, A, B, C, D,
+                                        &orientation, c_obj, obj, b_obj);
+      b_orientation = orientation;
+      b_orientation.rotmat(m);
       varargout_5[0] = c_obj[0];
       varargout_5[1] = c_obj[1];
       varargout_5[2] = c_obj[2];
-      i = q.a.size(1);
+      i = orientation.a.size(1);
       for (int b_i{0}; b_i < i; b_i++) {
         ip = m.size(1) - 1;
-        r.set_size(1, m.size(1));
+        b_C.set_size(1, m.size(1));
         for (int j{0}; j <= ip; j++) {
           boffset = j * m.size(0);
-          r[j] =
-              (c_obj[0] *
-                   m[(boffset % m.size(0) +
-                      m.size(0) * div_nzp_s32_floor(boffset, m.size(0))) +
-                     m.size(0) * m.size(1) * b_i] +
+          b_C[j] =
+              (c_obj[0] * m[boffset % m.size(0) +
+                            m.size(0) * div_nzp_s32_floor(boffset, m.size(0))] +
                c_obj[1] *
-                   m[((boffset + 1) % m.size(0) +
-                      m.size(0) * div_nzp_s32_floor(boffset + 1, m.size(0))) +
-                     m.size(0) * m.size(1) * b_i]) +
+                   m[(boffset + 1) % m.size(0) +
+                     m.size(0) * div_nzp_s32_floor(boffset + 1, m.size(0))]) +
               c_obj[2] *
-                  m[((boffset + 2) % m.size(0) +
-                     m.size(0) * div_nzp_s32_floor(boffset + 2, m.size(0))) +
-                    m.size(0) * m.size(1) * b_i];
+                  m[(boffset + 2) % m.size(0) +
+                    m.size(0) * div_nzp_s32_floor(boffset + 2, m.size(0))];
         }
-        varargout_5[0] = r[0];
-        varargout_5[1] = r[1];
-        varargout_5[2] = r[2];
+        varargout_5[0] = b_C[0];
+        varargout_5[1] = b_C[1];
+        varargout_5[2] = b_C[2];
       }
     } else {
-      q.a.set_size(1, 1);
-      q.a[0] = rtNaN;
-      q.b.set_size(1, 1);
-      q.b[0] = rtNaN;
-      q.c.set_size(1, 1);
-      q.c[0] = rtNaN;
-      q.d.set_size(1, 1);
-      q.d[0] = rtNaN;
+      orientation.a.set_size(1, 1);
+      orientation.a[0] = rtNaN;
+      orientation.b.set_size(1, 1);
+      orientation.b[0] = rtNaN;
+      orientation.c.set_size(1, 1);
+      orientation.c[0] = rtNaN;
+      orientation.d.set_size(1, 1);
+      orientation.d[0] = rtNaN;
       velocity.set_size(1, 3);
       acceleration.set_size(1, 3);
       varargout_1[0] = rtNaN;
@@ -1050,10 +1299,10 @@ void waypointTrajectory::step(double varargout_1[3], b_quaternion *varargout_2,
         IsDoneStatus = true;
       }
     }
-    varargout_2->a = q.a[0];
-    varargout_2->b = q.b[0];
-    varargout_2->c = q.c[0];
-    varargout_2->d = q.d[0];
+    varargout_2->a = orientation.a[0];
+    varargout_2->b = orientation.b[0];
+    varargout_2->c = orientation.c[0];
+    varargout_2->d = orientation.d[0];
     varargout_3[0] = velocity[0];
     varargout_4[0] = acceleration[0];
     varargout_3[1] = velocity[1];

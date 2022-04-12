@@ -4,12 +4,13 @@
 // government, commercial, or other organizational use.
 // File: derivpp.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 19-Feb-2022 14:46:56
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-Apr-2022 11:44:16
 //
 
 // Include Files
 #include "derivpp.h"
+#include "mkpp.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <string.h>
@@ -34,46 +35,56 @@ void derivpp(const ::coder::array<double, 2U> &pp_breaks,
 {
   static const signed char iv[4]{0, 3, 2, 1};
   array<double, 2U> a;
+  array<double, 2U> r1;
   array<signed char, 2U> r;
   int ibmat;
   int itilerow;
-  int jcol;
-  int varargin_1;
-  varargin_1 = pp_breaks.size(1) - 1;
+  int ntilerows;
   r.set_size(pp_breaks.size(1) - 1, 4);
-  for (jcol = 0; jcol < 4; jcol++) {
-    ibmat = jcol * varargin_1;
-    for (itilerow = 0; itilerow < varargin_1; itilerow++) {
+  ntilerows = pp_breaks.size(1) - 2;
+  for (int jcol{0}; jcol < 4; jcol++) {
+    ibmat = jcol * (ntilerows + 1);
+    for (itilerow = 0; itilerow <= ntilerows; itilerow++) {
       r[ibmat + itilerow] = iv[jcol];
     }
   }
   a.set_size(pp_breaks.size(1) - 1, 4);
-  varargin_1 = (pp_breaks.size(1) - 1) << 2;
-  for (jcol = 0; jcol < varargin_1; jcol++) {
-    a[jcol] = pp_coefs[jcol];
+  ntilerows = (pp_breaks.size(1) - 1) << 2;
+  for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+    a[itilerow] = pp_coefs[itilerow];
   }
   if (pp_breaks.size(1) - 1 != 0) {
     ibmat = pp_breaks.size(1) - 1;
-    for (itilerow = 0; itilerow < ibmat; itilerow++) {
+    for (int jcol{0}; jcol < ibmat; jcol++) {
       double a__1;
-      varargin_1 = itilerow + 3 * ibmat;
-      a__1 = a[varargin_1];
-      a[varargin_1] = a[itilerow + (ibmat << 1)];
-      jcol = itilerow + ibmat;
-      a[itilerow + 2 * ibmat] = a[jcol];
-      a[jcol] = a[itilerow];
-      a[itilerow] = a__1;
+      ntilerows = jcol + 3 * ibmat;
+      a__1 = a[ntilerows];
+      itilerow = jcol + (ibmat << 1);
+      a[ntilerows] = a[itilerow];
+      ntilerows = jcol + ibmat;
+      a[itilerow] = a[ntilerows];
+      a[ntilerows] = a[jcol];
+      a[jcol] = a__1;
     }
   }
-  dpp_coefs.set_size(1, pp_breaks.size(1) - 1, 4);
-  varargin_1 = (pp_breaks.size(1) - 1) << 2;
-  for (jcol = 0; jcol < varargin_1; jcol++) {
-    dpp_coefs[jcol] = static_cast<double>(r[jcol]) * a[jcol];
+  if (r.size(0) == a.size(0)) {
+    r1.set_size(r.size(0), 4);
+    ntilerows = r.size(0) * 4;
+    for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+      r1[itilerow] = static_cast<double>(r[itilerow]) * a[itilerow];
+    }
+    dpp_coefs.set_size(1, pp_breaks.size(1) - 1, 4);
+    ntilerows = (pp_breaks.size(1) - 1) << 2;
+    for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+      dpp_coefs[itilerow] = r1[itilerow];
+    }
+  } else {
+    binary_expand_op(dpp_coefs, r, a, pp_breaks);
   }
   dpp_breaks.set_size(1, pp_breaks.size(1));
-  varargin_1 = pp_breaks.size(1);
-  for (jcol = 0; jcol < varargin_1; jcol++) {
-    dpp_breaks[jcol] = pp_breaks[jcol];
+  ntilerows = pp_breaks.size(1);
+  for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+    dpp_breaks[itilerow] = pp_breaks[itilerow];
   }
 }
 
@@ -91,46 +102,56 @@ void derivpp(const ::coder::array<double, 2U> &pp_breaks,
 {
   static const signed char iv[4]{0, 3, 2, 1};
   array<double, 2U> a;
+  array<double, 2U> r1;
   array<signed char, 2U> r;
   int ibmat;
   int itilerow;
-  int jcol;
-  int varargin_1;
-  varargin_1 = pp_breaks.size(1) - 1;
+  int ntilerows;
   r.set_size(pp_breaks.size(1) - 1, 4);
-  for (jcol = 0; jcol < 4; jcol++) {
-    ibmat = jcol * varargin_1;
-    for (itilerow = 0; itilerow < varargin_1; itilerow++) {
+  ntilerows = pp_breaks.size(1) - 2;
+  for (int jcol{0}; jcol < 4; jcol++) {
+    ibmat = jcol * (ntilerows + 1);
+    for (itilerow = 0; itilerow <= ntilerows; itilerow++) {
       r[ibmat + itilerow] = iv[jcol];
     }
   }
   a.set_size(pp_breaks.size(1) - 1, 4);
-  varargin_1 = (pp_breaks.size(1) - 1) << 2;
-  for (jcol = 0; jcol < varargin_1; jcol++) {
-    a[jcol] = pp_coefs[jcol];
+  ntilerows = (pp_breaks.size(1) - 1) << 2;
+  for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+    a[itilerow] = pp_coefs[itilerow];
   }
   if (pp_breaks.size(1) - 1 != 0) {
     ibmat = pp_breaks.size(1) - 1;
-    for (itilerow = 0; itilerow < ibmat; itilerow++) {
+    for (int jcol{0}; jcol < ibmat; jcol++) {
       double a__1;
-      varargin_1 = itilerow + 3 * ibmat;
-      a__1 = a[varargin_1];
-      a[varargin_1] = a[itilerow + (ibmat << 1)];
-      jcol = itilerow + ibmat;
-      a[itilerow + 2 * ibmat] = a[jcol];
-      a[jcol] = a[itilerow];
-      a[itilerow] = a__1;
+      ntilerows = jcol + 3 * ibmat;
+      a__1 = a[ntilerows];
+      itilerow = jcol + (ibmat << 1);
+      a[ntilerows] = a[itilerow];
+      ntilerows = jcol + ibmat;
+      a[itilerow] = a[ntilerows];
+      a[ntilerows] = a[jcol];
+      a[jcol] = a__1;
     }
   }
-  dpp_coefs.set_size(1, pp_breaks.size(1) - 1, 4);
-  varargin_1 = (pp_breaks.size(1) - 1) << 2;
-  for (jcol = 0; jcol < varargin_1; jcol++) {
-    dpp_coefs[jcol] = static_cast<double>(r[jcol]) * a[jcol];
+  if (r.size(0) == a.size(0)) {
+    r1.set_size(r.size(0), 4);
+    ntilerows = r.size(0) * 4;
+    for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+      r1[itilerow] = static_cast<double>(r[itilerow]) * a[itilerow];
+    }
+    dpp_coefs.set_size(1, pp_breaks.size(1) - 1, 4);
+    ntilerows = (pp_breaks.size(1) - 1) << 2;
+    for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+      dpp_coefs[itilerow] = r1[itilerow];
+    }
+  } else {
+    binary_expand_op(dpp_coefs, r, a, pp_breaks);
   }
   dpp_breaks.set_size(1, pp_breaks.size(1));
-  varargin_1 = pp_breaks.size(1);
-  for (jcol = 0; jcol < varargin_1; jcol++) {
-    dpp_breaks[jcol] = pp_breaks[jcol];
+  ntilerows = pp_breaks.size(1);
+  for (itilerow = 0; itilerow < ntilerows; itilerow++) {
+    dpp_breaks[itilerow] = pp_breaks[itilerow];
   }
 }
 
