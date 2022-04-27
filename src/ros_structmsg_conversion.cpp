@@ -175,6 +175,7 @@ void struct2msg(sonia_common::MultiAddPose* msgPtr, sonia_common_MultiAddPoseStr
 {
   const std::string rosMessageType("sonia_common/MultiAddPose");
 
+  msgPtr->interpolation_method =  structPtr->InterpolationMethod;
   convertFromStructNestedArray(msgPtr->pose, structPtr->Pose);
 }
 
@@ -182,22 +183,23 @@ void msg2struct(sonia_common_MultiAddPoseStruct_T* structPtr, sonia_common::Mult
 {
   const std::string rosMessageType("sonia_common/MultiAddPose");
 
+  structPtr->InterpolationMethod =  msgPtr->interpolation_method;
   convertToStructNestedArray(structPtr->Pose, msgPtr->pose);
 }
 
 
-// Conversions between std_msgs_BoolStruct_T and std_msgs::Bool
+// Conversions between std_msgs_Int8Struct_T and std_msgs::Int8
 
-void struct2msg(std_msgs::Bool* msgPtr, std_msgs_BoolStruct_T const* structPtr)
+void struct2msg(std_msgs::Int8* msgPtr, std_msgs_Int8Struct_T const* structPtr)
 {
-  const std::string rosMessageType("std_msgs/Bool");
+  const std::string rosMessageType("std_msgs/Int8");
 
   msgPtr->data =  structPtr->Data;
 }
 
-void msg2struct(std_msgs_BoolStruct_T* structPtr, std_msgs::Bool const* msgPtr)
+void msg2struct(std_msgs_Int8Struct_T* structPtr, std_msgs::Int8 const* msgPtr)
 {
-  const std::string rosMessageType("std_msgs/Bool");
+  const std::string rosMessageType("std_msgs/Int8");
 
   structPtr->Data =  msgPtr->data;
 }

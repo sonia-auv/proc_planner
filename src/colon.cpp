@@ -5,7 +5,7 @@
 // File: colon.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
@@ -13,31 +13,36 @@
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <cmath>
-#include <string.h>
 
 // Function Definitions
 //
 // Arguments    : double a
+//                double d
 //                double b
 //                ::coder::array<double, 2U> &y
 // Return Type  : void
 //
 namespace coder {
-void eml_float_colon(double a, double b, ::coder::array<double, 2U> &y)
+void eml_float_colon(double a, double d, double b,
+                     ::coder::array<double, 2U> &y)
 {
   double apnd;
   double cdiff;
   double ndbl;
   int n;
-  ndbl = std::floor((b - a) + 0.5);
-  apnd = a + ndbl;
-  cdiff = apnd - b;
+  ndbl = std::floor((b - a) / d + 0.5);
+  apnd = a + ndbl * d;
+  if (d > 0.0) {
+    cdiff = apnd - b;
+  } else {
+    cdiff = b - apnd;
+  }
   if (std::abs(cdiff) <
       4.4408920985006262E-16 * std::fmax(std::abs(a), std::abs(b))) {
     ndbl++;
     apnd = b;
   } else if (cdiff > 0.0) {
-    apnd = a + (ndbl - 1.0);
+    apnd = a + (ndbl - 1.0) * d;
   } else {
     ndbl++;
   }
@@ -54,14 +59,16 @@ void eml_float_colon(double a, double b, ::coder::array<double, 2U> &y)
       y[n - 1] = apnd;
       nm1d2 = (n - 1) >> 1;
       for (int k{0}; k <= nm1d2 - 2; k++) {
-        y[k + 1] = a + (static_cast<double>(k) + 1.0);
-        y[(n - k) - 2] = apnd - (static_cast<double>(k) + 1.0);
+        ndbl = (static_cast<double>(k) + 1.0) * d;
+        y[k + 1] = a + ndbl;
+        y[(n - k) - 2] = apnd - ndbl;
       }
       if (nm1d2 << 1 == n - 1) {
         y[nm1d2] = (a + apnd) / 2.0;
       } else {
-        y[nm1d2] = a + static_cast<double>(nm1d2);
-        y[nm1d2 + 1] = apnd - static_cast<double>(nm1d2);
+        ndbl = static_cast<double>(nm1d2) * d;
+        y[nm1d2] = a + ndbl;
+        y[nm1d2 + 1] = apnd - ndbl;
       }
     }
   }

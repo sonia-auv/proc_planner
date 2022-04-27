@@ -5,7 +5,7 @@
 // File: proc_planner_rtwutil.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
@@ -13,7 +13,6 @@
 #include "rt_nonfinite.h"
 #include "rt_defines.h"
 #include <cmath>
-#include <string.h>
 
 // Function Definitions
 //
@@ -50,29 +49,6 @@ double rt_atan2d_snf(double u0, double u1)
     }
   } else {
     y = std::atan2(u0, u1);
-  }
-  return y;
-}
-
-//
-// Arguments    : double u0
-//                double u1
-// Return Type  : double
-//
-double rt_hypotd_snf(double u0, double u1)
-{
-  double a;
-  double y;
-  a = std::abs(u0);
-  y = std::abs(u1);
-  if (a < y) {
-    a /= y;
-    y *= std::sqrt(a * a + 1.0);
-  } else if (a > y) {
-    y /= a;
-    y = a * std::sqrt(y * y + 1.0);
-  } else if (!std::isnan(y)) {
-    y = a * 1.4142135623730951;
   }
   return y;
 }

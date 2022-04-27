@@ -5,17 +5,16 @@
 // File: Publisher.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
 #include "Publisher.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
-#include "std_msgs_BoolStruct.h"
+#include "std_msgs_Int8Struct.h"
 #include "trajectory_msgs_MultiDOFJointTrajectoryPointStruct.h"
 #include "mlroscpp_pub.h"
-#include <string.h>
 
 // Function Definitions
 //
@@ -67,10 +66,10 @@ b_Publisher *b_Publisher::init()
   }
   obj->BufferSize = 1.0;
   obj->IsLatching = true;
-  std_msgs_BoolStruct();
+  std_msgs_Int8Struct();
   obj->PublisherHelper =
-      std::unique_ptr<MATLABPublisher<std_msgs::Bool, std_msgs_BoolStruct_T>>(
-          new MATLABPublisher<std_msgs::Bool, std_msgs_BoolStruct_T>()); //();
+      std::unique_ptr<MATLABPublisher<std_msgs::Int8, std_msgs_Int8Struct_T>>(
+          new MATLABPublisher<std_msgs::Int8, std_msgs_Int8Struct_T>()); //();
   MATLABPUBLISHER_createPublisher(obj->PublisherHelper, &obj->TopicName[0],
                                   32.0, obj->BufferSize, obj->IsLatching);
   return obj;

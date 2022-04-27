@@ -5,7 +5,7 @@
 // File: Subscriber.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 #ifndef SUBSCRIBER_H
@@ -28,6 +28,8 @@ public:
   void callback();
   double get_MessageCount() const;
   void get_LatestMessage(
+      char lastSubMsg_MessageType[25],
+      unsigned char *lastSubMsg_InterpolationMethod,
       ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose) const;
   char TopicName[32];
   double BufferSize;
@@ -46,13 +48,9 @@ public:
   b_Subscriber *init();
   void callback();
   double get_MessageCount() const;
-  void get_LatestMessage(double *lastSubMsg_Position_X,
-                         double *lastSubMsg_Position_Y,
-                         double *lastSubMsg_Position_Z,
-                         double *lastSubMsg_Orientation_X,
-                         double *lastSubMsg_Orientation_Y,
-                         double *lastSubMsg_Orientation_Z,
-                         double *lastSubMsg_Orientation_W) const;
+  void get_LatestMessage(
+      geometry_msgs_PointStruct_T *lastSubMsg_Position,
+      geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation) const;
   char TopicName[25];
   double BufferSize;
   double MessageCount;
