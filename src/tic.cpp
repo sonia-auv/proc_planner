@@ -5,7 +5,7 @@
 // File: tic.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
@@ -13,7 +13,6 @@
 #include "proc_planner_data.h"
 #include "rt_nonfinite.h"
 #include "coder_posix_time.h"
-#include <string.h>
 
 // Function Definitions
 //

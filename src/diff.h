@@ -5,7 +5,7 @@
 // File: diff.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 #ifndef DIFF_H
@@ -19,7 +19,7 @@
 
 // Function Declarations
 namespace coder {
-void diff(const ::coder::array<creal_T, 2U> &x, ::coder::array<creal_T, 2U> &y);
+void diff(const ::coder::array<double, 1U> &x, ::coder::array<double, 1U> &y);
 
 }
 

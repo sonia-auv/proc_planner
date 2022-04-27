@@ -5,7 +5,7 @@
 // File: proc_planner_rtwutil.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 #ifndef PROC_PLANNER_RTWUTIL_H
@@ -18,8 +18,6 @@
 
 // Function Declarations
 extern double rt_atan2d_snf(double u0, double u1);
-
-extern double rt_hypotd_snf(double u0, double u1);
 
 #endif
 //
