@@ -11,7 +11,7 @@
 #include <ros/duration.h>
 #include <sonia_common/AddPose.h>
 #include <sonia_common/MultiAddPose.h>
-#include <std_msgs/Bool.h>
+#include <std_msgs/Int8.h>
 #include <trajectory_msgs/MultiDOFJointTrajectoryPoint.h>
 #include "proc_planner_types.h"
 #include "mlroscpp_msgconvert_utils.h"
@@ -44,8 +44,8 @@ void msg2struct(sonia_common_AddPoseStruct_T* structPtr, sonia_common::AddPose c
 void struct2msg(sonia_common::MultiAddPose* msgPtr, sonia_common_MultiAddPoseStruct_T const* structPtr);
 void msg2struct(sonia_common_MultiAddPoseStruct_T* structPtr, sonia_common::MultiAddPose const* msgPtr);
 
-void struct2msg(std_msgs::Bool* msgPtr, std_msgs_BoolStruct_T const* structPtr);
-void msg2struct(std_msgs_BoolStruct_T* structPtr, std_msgs::Bool const* msgPtr);
+void struct2msg(std_msgs::Int8* msgPtr, std_msgs_Int8Struct_T const* structPtr);
+void msg2struct(std_msgs_Int8Struct_T* structPtr, std_msgs::Int8 const* msgPtr);
 
 void struct2msg(trajectory_msgs::MultiDOFJointTrajectoryPoint* msgPtr, trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T const* structPtr);
 void msg2struct(trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T* structPtr, trajectory_msgs::MultiDOFJointTrajectoryPoint const* msgPtr);

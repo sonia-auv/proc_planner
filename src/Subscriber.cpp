@@ -5,7 +5,7 @@
 // File: Subscriber.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
@@ -18,7 +18,6 @@
 #include "coder_array.h"
 #include "mlroscpp_sub.h"
 #include <stdio.h>
-#include <string.h>
 
 // Function Definitions
 //
@@ -49,7 +48,7 @@ void b_Subscriber::callback()
   MessageCount = get_MessageCount() + 1.0;
   if (IsInitialized && newMadpPose) {
     //  Initial condition (IC) callback
-    newInitalPose = true;
+    newInitialPose = true;
     printf("INFO : proc planner : Initial poses received \n");
     fflush(stdout);
   }
@@ -74,48 +73,43 @@ double b_Subscriber::get_MessageCount() const
 }
 
 //
-// Arguments    : ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose
+// Arguments    : char lastSubMsg_MessageType[25]
+//                unsigned char *lastSubMsg_InterpolationMethod
+//                ::coder::array<sonia_common_AddPoseStruct_T, 1U>
+//                &lastSubMsg_Pose
 // Return Type  : void
 //
 void Subscriber::get_LatestMessage(
+    char lastSubMsg_MessageType[25],
+    unsigned char *lastSubMsg_InterpolationMethod,
     ::coder::array<sonia_common_AddPoseStruct_T, 1U> &lastSubMsg_Pose) const
 {
   int loop_ub;
   MATLABSUBSCRIBER_lock(SubscriberHelper);
+  for (int i{0}; i < 25; i++) {
+    lastSubMsg_MessageType[i] = MsgStruct.MessageType[i];
+  }
   lastSubMsg_Pose.set_size(MsgStruct.Pose.size(0));
   loop_ub = MsgStruct.Pose.size(0);
   for (int i{0}; i < loop_ub; i++) {
     lastSubMsg_Pose[i] = MsgStruct.Pose[i];
   }
   MATLABSUBSCRIBER_unlock(SubscriberHelper);
+  *lastSubMsg_InterpolationMethod = MsgStruct.InterpolationMethod;
 }
 
 //
-// Arguments    : double *lastSubMsg_Position_X
-//                double *lastSubMsg_Position_Y
-//                double *lastSubMsg_Position_Z
-//                double *lastSubMsg_Orientation_X
-//                double *lastSubMsg_Orientation_Y
-//                double *lastSubMsg_Orientation_Z
-//                double *lastSubMsg_Orientation_W
+// Arguments    : geometry_msgs_PointStruct_T *lastSubMsg_Position
+//                geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation
 // Return Type  : void
 //
-void b_Subscriber::get_LatestMessage(double *lastSubMsg_Position_X,
-                                     double *lastSubMsg_Position_Y,
-                                     double *lastSubMsg_Position_Z,
-                                     double *lastSubMsg_Orientation_X,
-                                     double *lastSubMsg_Orientation_Y,
-                                     double *lastSubMsg_Orientation_Z,
-                                     double *lastSubMsg_Orientation_W) const
+void b_Subscriber::get_LatestMessage(
+    geometry_msgs_PointStruct_T *lastSubMsg_Position,
+    geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation) const
 {
   MATLABSUBSCRIBER_lock(SubscriberHelper);
-  *lastSubMsg_Position_X = MsgStruct.Position.X;
-  *lastSubMsg_Position_Y = MsgStruct.Position.Y;
-  *lastSubMsg_Position_Z = MsgStruct.Position.Z;
-  *lastSubMsg_Orientation_X = MsgStruct.Orientation.X;
-  *lastSubMsg_Orientation_Y = MsgStruct.Orientation.Y;
-  *lastSubMsg_Orientation_Z = MsgStruct.Orientation.Z;
-  *lastSubMsg_Orientation_W = MsgStruct.Orientation.W;
+  *lastSubMsg_Position = MsgStruct.Position;
+  *lastSubMsg_Orientation = MsgStruct.Orientation;
   MATLABSUBSCRIBER_unlock(SubscriberHelper);
 }
 

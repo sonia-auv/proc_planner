@@ -5,64 +5,25 @@
 // File: xnrm2.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
 #include "xnrm2.h"
 #include "rt_nonfinite.h"
-#include "coder_array.h"
 #include <cmath>
-#include <string.h>
 
 // Function Definitions
 //
 // Arguments    : int n
-//                const double x[3]
+//                const double x[12]
+//                int ix0
 // Return Type  : double
 //
 namespace coder {
 namespace internal {
 namespace blas {
-double xnrm2(int n, const double x[3])
-{
-  double y;
-  y = 0.0;
-  if (n >= 1) {
-    if (n == 1) {
-      y = std::abs(x[1]);
-    } else {
-      double scale;
-      int kend;
-      scale = 3.3121686421112381E-170;
-      kend = n + 1;
-      for (int k{2}; k <= kend; k++) {
-        double absxk;
-        absxk = std::abs(x[k - 1]);
-        if (absxk > scale) {
-          double t;
-          t = scale / absxk;
-          y = y * t * t + 1.0;
-          scale = absxk;
-        } else {
-          double t;
-          t = absxk / scale;
-          y += t * t;
-        }
-      }
-      y = scale * std::sqrt(y);
-    }
-  }
-  return y;
-}
-
-//
-// Arguments    : int n
-//                const ::coder::array<double, 2U> &x
-//                int ix0
-// Return Type  : double
-//
-double xnrm2(int n, const ::coder::array<double, 2U> &x, int ix0)
+double xnrm2(int n, const double x[12], int ix0)
 {
   double y;
   y = 0.0;
