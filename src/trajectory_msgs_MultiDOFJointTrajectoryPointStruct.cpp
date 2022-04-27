@@ -5,7 +5,7 @@
 // File: trajectory_msgs_MultiDOFJointTrajectoryPointStruct.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
@@ -16,7 +16,6 @@
 #include "ros_DurationStruct.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
-#include <string.h>
 
 // Function Definitions
 //
@@ -32,22 +31,22 @@ void trajectory_msgs_MultiDOFJointTrajectoryPointStruct(
       't', 'r', 'a', 'j', 'e', 'c', 't', 'o', 'r', 'y', '_', 'm', 's', 'g', 's',
       '/', 'M', 'u', 'l', 't', 'i', 'D', 'O', 'F', 'J', 'o', 'i', 'n', 't', 'T',
       'r', 'a', 'j', 'e', 'c', 't', 'o', 'r', 'y', 'P', 'o', 'i', 'n', 't'};
-  geometry_msgs_TransformStruct_T t2_Transforms;
-  geometry_msgs_TwistStruct_T t2_Accelerations;
-  geometry_msgs_TwistStruct_T t2_Velocities;
-  geometry_msgs_TransformStruct(&t2_Transforms);
-  geometry_msgs_TwistStruct(&t2_Velocities);
-  geometry_msgs_TwistStruct(&t2_Accelerations);
+  geometry_msgs_TransformStruct_T t0_Transforms;
+  geometry_msgs_TwistStruct_T t0_Accelerations;
+  geometry_msgs_TwistStruct_T t0_Velocities;
+  geometry_msgs_TransformStruct(&t0_Transforms);
+  geometry_msgs_TwistStruct(&t0_Velocities);
+  geometry_msgs_TwistStruct(&t0_Accelerations);
   msg->TimeFromStart = ros_DurationStruct();
   for (int i{0}; i < 44; i++) {
     msg->MessageType[i] = cv[i];
   }
   msg->Transforms.set_size(1);
-  msg->Transforms[0] = t2_Transforms;
+  msg->Transforms[0] = t0_Transforms;
   msg->Velocities.set_size(1);
-  msg->Velocities[0] = t2_Velocities;
+  msg->Velocities[0] = t0_Velocities;
   msg->Accelerations.set_size(1);
-  msg->Accelerations[0] = t2_Accelerations;
+  msg->Accelerations[0] = t0_Accelerations;
   msg->Transforms.set_size(0);
   msg->Velocities.set_size(0);
   msg->Accelerations.set_size(0);

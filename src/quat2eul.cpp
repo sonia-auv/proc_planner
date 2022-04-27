@@ -5,7 +5,7 @@
 // File: quat2eul.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
@@ -14,7 +14,6 @@
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <cmath>
-#include <string.h>
 
 // Function Declarations
 static void binary_expand_op(double in1[3],

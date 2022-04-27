@@ -5,50 +5,48 @@
 // File: diff.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
 #include "diff.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
-#include <string.h>
 
 // Function Definitions
 //
-// Arguments    : const ::coder::array<creal_T, 2U> &x
-//                ::coder::array<creal_T, 2U> &y
+// Arguments    : const ::coder::array<double, 1U> &x
+//                ::coder::array<double, 1U> &y
 // Return Type  : void
 //
 namespace coder {
-void diff(const ::coder::array<creal_T, 2U> &x, ::coder::array<creal_T, 2U> &y)
+void diff(const ::coder::array<double, 1U> &x, ::coder::array<double, 1U> &y)
 {
-  array<creal_T, 1U> work;
+  array<double, 1U> work;
   int dimSize;
-  dimSize = x.size(1);
-  if (x.size(1) == 0) {
-    y.set_size(1, 0);
+  dimSize = x.size(0);
+  if (x.size(0) == 0) {
+    y.set_size(0);
   } else {
     int u0;
-    u0 = x.size(1) - 1;
+    u0 = x.size(0) - 1;
     if (u0 > 1) {
       u0 = 1;
     }
     if (u0 < 1) {
-      y.set_size(1, 0);
+      y.set_size(0);
     } else {
       work.set_size(1);
-      y.set_size(1, x.size(1) - 1);
-      if (x.size(1) - 1 != 0) {
+      y.set_size(x.size(0) - 1);
+      if (x.size(0) - 1 != 0) {
         work[0] = x[0];
         for (u0 = 2; u0 <= dimSize; u0++) {
-          double tmp2_im;
-          double tmp2_re;
-          tmp2_re = work[0].re;
-          tmp2_im = work[0].im;
-          work[0] = x[u0 - 1];
-          y[u0 - 2].re = x[u0 - 1].re - tmp2_re;
-          y[u0 - 2].im = x[u0 - 1].im - tmp2_im;
+          double tmp2;
+          double work_tmp;
+          tmp2 = work[0];
+          work_tmp = x[u0 - 1];
+          work[0] = work_tmp;
+          y[u0 - 2] = work_tmp - tmp2;
         }
       }
     }

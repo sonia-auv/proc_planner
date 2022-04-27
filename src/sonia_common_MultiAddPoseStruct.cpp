@@ -5,7 +5,7 @@
 // File: sonia_common_MultiAddPoseStruct.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-Apr-2022 11:44:16
+// C/C++ source code generated on  : 26-Apr-2022 22:23:20
 //
 
 // Include Files
@@ -14,7 +14,6 @@
 #include "rt_nonfinite.h"
 #include "sonia_common_AddPoseStruct.h"
 #include "coder_array.h"
-#include <string.h>
 
 // Function Definitions
 //
@@ -33,6 +32,7 @@ void sonia_common_MultiAddPoseStruct(sonia_common_MultiAddPoseStruct_T *msg)
   for (int i{0}; i < 25; i++) {
     msg->MessageType[i] = cv[i];
   }
+  msg->InterpolationMethod = 0U;
   msg->Pose.set_size(1);
   msg->Pose[0] = t1_Pose;
   msg->Pose.set_size(0);
