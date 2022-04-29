@@ -5,7 +5,7 @@
 // File: proc_planner_data.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 26-Apr-2022 22:23:20
+// C/C++ source code generated on  : 28-Apr-2022 22:18:34
 //
 
 // Include Files
@@ -16,6 +16,8 @@
 bool newMadpPose;
 
 bool newInitialPose;
+
+bool TrajIsGenerating;
 
 double freq;
 
