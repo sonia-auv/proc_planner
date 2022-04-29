@@ -5,7 +5,7 @@
 // File: Publisher.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 26-Apr-2022 22:23:20
+// C/C++ source code generated on  : 28-Apr-2022 22:18:34
 //
 
 // Include Files
@@ -36,7 +36,7 @@ Publisher *Publisher::init()
     obj->TopicName[i] = topic[i];
   }
   obj->BufferSize = 1.0;
-  obj->IsLatching = true;
+  obj->IsLatching = false;
   trajectory_msgs_MultiDOFJointTrajectoryPointStruct(&r);
   obj->PublisherHelper = std::unique_ptr<
       MATLABPublisher<trajectory_msgs::MultiDOFJointTrajectoryPoint,
@@ -65,7 +65,7 @@ b_Publisher *b_Publisher::init()
     obj->TopicName[i] = topic[i];
   }
   obj->BufferSize = 1.0;
-  obj->IsLatching = true;
+  obj->IsLatching = false;
   std_msgs_Int8Struct();
   obj->PublisherHelper =
       std::unique_ptr<MATLABPublisher<std_msgs::Int8, std_msgs_Int8Struct_T>>(
