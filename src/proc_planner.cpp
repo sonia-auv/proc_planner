@@ -5,7 +5,7 @@
 // File: proc_planner.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 26-Apr-2022 22:23:20
+// C/C++ source code generated on  : 28-Apr-2022 22:18:34
 //
 
 // Include Files
@@ -144,6 +144,7 @@ void proc_planner()
   //  Variables globals
   newMadpPose = false;
   newInitialPose = false;
+  TrajIsGenerating = false;
   //  Variables locals
   r.init();
   //  Definir les message ros
@@ -750,6 +751,7 @@ void proc_planner()
       }
       newMadpPose = false;
       newInitialPose = false;
+      TrajIsGenerating = false;
       printf("INFO : proc planner : Wait for poses \n");
       fflush(stdout);
     }
