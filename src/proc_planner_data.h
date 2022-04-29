@@ -5,7 +5,7 @@
 // File: proc_planner_data.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 26-Apr-2022 22:23:20
+// C/C++ source code generated on  : 28-Apr-2022 22:18:34
 //
 
 #ifndef PROC_PLANNER_DATA_H
@@ -19,6 +19,7 @@
 // Variable Declarations
 extern bool newMadpPose;
 extern bool newInitialPose;
+extern bool TrajIsGenerating;
 extern double freq;
 extern bool freq_not_empty;
 extern bool isInitialized_proc_planner;

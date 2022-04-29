@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 26-Apr-2022 22:23:20
+// C/C++ source code generated on  : 28-Apr-2022 22:18:34
 //
 
 // Include Files
@@ -252,14 +252,14 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
       trajLinearAcceleration[(i + trajLinearAcceleration.size(0) * 2) + 1] =
           r[i];
     }
-    //  Interpoler l'orientation avec spline. résultat plus smooth/moins jerk
-    //  que slerp.
+    //  Interpoler l'orientation avec pchip. résultat plus smooth/moins jerk que
+    //  slerp. De plus, pas d'oscillation
     ni = quatList.size(0);
     b_this.set_size(ni);
     for (i = 0; i < ni; i++) {
       b_this[i] = quatList[i];
     }
-    coder::b_interp1(timeList, b_this, t, trajList);
+    coder::interp1(timeList, b_this, t, trajList);
     ni = trajList.size(1);
     for (i = 0; i < ni; i++) {
       trajQuat[i] = trajList[i];
@@ -270,7 +270,7 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
     for (i = 0; i < ni; i++) {
       b_this[i] = quatList[i + quatList.size(0)];
     }
-    coder::b_interp1(timeList, b_this, t, trajList);
+    coder::interp1(timeList, b_this, t, trajList);
     ni = trajList.size(1);
     for (i = 0; i < ni; i++) {
       trajQuat[i + trajQuat.size(0)] = trajList[i];
@@ -281,7 +281,7 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
     for (i = 0; i < ni; i++) {
       b_this[i] = quatList[i + quatList.size(0) * 2];
     }
-    coder::b_interp1(timeList, b_this, t, trajList);
+    coder::interp1(timeList, b_this, t, trajList);
     ni = trajList.size(1);
     for (i = 0; i < ni; i++) {
       trajQuat[i + trajQuat.size(0) * 2] = trajList[i];
@@ -292,7 +292,7 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
     for (i = 0; i < ni; i++) {
       b_this[i] = quatList[i + quatList.size(0) * 3];
     }
-    coder::b_interp1(timeList, b_this, t, trajList);
+    coder::interp1(timeList, b_this, t, trajList);
     ni = trajList.size(1);
     for (i = 0; i < ni; i++) {
       trajQuat[i + trajQuat.size(0) * 3] = trajList[i];

@@ -5,7 +5,7 @@
 // File: Subscriber.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 26-Apr-2022 22:23:20
+// C/C++ source code generated on  : 28-Apr-2022 22:18:34
 //
 
 // Include Files
@@ -46,9 +46,10 @@ void Subscriber::callback()
 void b_Subscriber::callback()
 {
   MessageCount = get_MessageCount() + 1.0;
-  if (IsInitialized && newMadpPose) {
+  if (IsInitialized && newMadpPose && (!TrajIsGenerating)) {
     //  Initial condition (IC) callback
     newInitialPose = true;
+    TrajIsGenerating = true;
     printf("INFO : proc planner : Initial poses received \n");
     fflush(stdout);
   }
