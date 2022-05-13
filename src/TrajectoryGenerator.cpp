@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 28-Apr-2022 22:18:34
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 // Include Files
@@ -933,6 +933,10 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         qRel[1] = this_->quatList[(loop_ub + this_->quatList.size(0)) - 1];
         qRel[2] = this_->quatList[(loop_ub + this_->quatList.size(0) * 2) - 1];
         qRel[3] = this_->quatList[(loop_ub + this_->quatList.size(0) * 3) - 1];
+        // ---------------------------------------------------------------
+        //  Code not ready for deploy yet. It is comment to avoid instablitiy
+        //  during pool testing.
+        // ---------------------------------------------------------------
         //            norm = dot(lq,q);
         //              % conjuger le quaternion au besoin
         //              %if  norm > 1 && dir == 0 || norm < 1 && dir == 1
@@ -1037,6 +1041,10 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         qRel[1] = this_->quatList[(loop_ub + this_->quatList.size(0)) - 1];
         qRel[2] = this_->quatList[(loop_ub + this_->quatList.size(0) * 2) - 1];
         qRel[3] = this_->quatList[(loop_ub + this_->quatList.size(0) * 3) - 1];
+        // ---------------------------------------------------------------
+        //  Code not ready for deploy yet. It is comment to avoid instablitiy
+        //  during pool testing.
+        // ---------------------------------------------------------------
         //            norm = dot(lq,q);
         //              % conjuger le quaternion au besoin
         //              %if  norm > 1 && dir == 0 || norm < 1 && dir == 1
