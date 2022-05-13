@@ -5,7 +5,7 @@
 // File: Subscriber.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 28-Apr-2022 22:18:34
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef SUBSCRIBER_H
@@ -51,7 +51,7 @@ public:
   void get_LatestMessage(
       geometry_msgs_PointStruct_T *lastSubMsg_Position,
       geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation) const;
-  char TopicName[25];
+  char TopicName[28];
   double BufferSize;
   double MessageCount;
 
