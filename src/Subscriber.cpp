@@ -5,7 +5,7 @@
 // File: Subscriber.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 28-Apr-2022 22:18:34
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 // Include Files
@@ -153,13 +153,13 @@ Subscriber *Subscriber::init()
 //
 b_Subscriber *b_Subscriber::init()
 {
-  static const char topic[25]{'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n',
-                              'n', 'e', 'r', '/', 'i', 'n', 'i', 't', 'i',
-                              'a', 'l', '_', 'p', 'o', 's', 'e'};
+  static const char topic[28]{'/', 'p', 'r', 'o', 'c', '_', 'c', 'o', 'n', 't',
+                              'r', 'o', 'l', '/', 'c', 'u', 'r', 'r', 'e', 'n',
+                              't', '_', 't', 'a', 'r', 'g', 'e', 't'};
   b_Subscriber *obj;
   obj = this;
   obj->IsInitialized = false;
-  for (int i{0}; i < 25; i++) {
+  for (int i{0}; i < 28; i++) {
     obj->TopicName[i] = topic[i];
   }
   obj->BufferSize = 1.0;
@@ -171,7 +171,7 @@ b_Subscriber *b_Subscriber::init()
       new MATLABSubscriber<geometry_msgs::Pose, geometry_msgs_PoseStruct_T>(
           structPtr, [this] { this->callback(); })); //();
   MATLABSUBSCRIBER_createSubscriber(obj->SubscriberHelper, &obj->TopicName[0],
-                                    25.0, obj->BufferSize);
+                                    28.0, obj->BufferSize);
   obj->callback();
   obj->IsInitialized = true;
   return obj;
