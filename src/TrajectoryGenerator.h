@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: TrajectoryGenerator.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef TRAJECTORYGENERATOR_H
@@ -18,26 +18,63 @@
 #include <cstddef>
 #include <cstdlib>
 
+// Type Declarations
+namespace coder {
+namespace ros {
+class Publisher;
+
+}
+} // namespace coder
+
 // Type Definitions
 struct struct_T {
-  double ts;
   double amax;
   double vlmax;
   double vamax;
 };
 
+struct b_struct_T {
+  double ts;
+  struct_T lowSpeed;
+  struct_T normalSpeed;
+  struct_T highSpeed;
+};
+
 class TrajectoryGenerator {
 public:
-  bool status;
-  double n;
-  coder::array<double, 2U> pointList;
-  coder::array<double, 2U> quatList;
-  coder::array<double, 1U> timeList;
-  double nbPoint;
+  void Compute(const coder::ros::Publisher *trajpub);
+  TrajectoryGenerator *
+  init(const char multiAddposeMsg_MessageType[25],
+       unsigned char multiAddposeMsg_InterpolationMethod,
+       const coder::array<sonia_common_AddPoseStruct_T, 1U>
+           &multiAddposeMsg_Pose,
+       double param_lowSpeed_amax, double param_lowSpeed_vlmax,
+       double param_lowSpeed_vamax, double param_normalSpeed_amax,
+       double param_normalSpeed_vlmax, double param_normalSpeed_vamax,
+       double param_highSpeed_amax, double param_highSpeed_vlmax,
+       double param_highSpeed_vamax,
+       const geometry_msgs_PointStruct_T icMsg_Position,
+       const geometry_msgs_QuaternionStruct_T icMsg_Orientation);
+  double status;
 
 private:
   sonia_common_MultiAddPoseStruct_T MAPM;
-  struct_T param;
+  b_struct_T param;
+  double nMAPM;
+  double n;
+  double icOffset;
+  coder::array<double, 2U> pointList;
+  coder::array<double, 2U> quatList;
+  coder::array<double, 1U> timeList;
+  coder::array<double, 2U> courseList;
+  coder::array<double, 2U> speedList;
+  double nbPoint;
+  coder::array<double, 2U> trajPosition;
+  coder::array<double, 2U> trajQuat;
+  coder::array<double, 2U> trajBodyVelocity;
+  coder::array<double, 2U> trajAngulairRates;
+  coder::array<double, 2U> trajLinearAcceleration;
+  coder::array<double, 2U> trajAngularAcceleration;
 };
 
 #endif

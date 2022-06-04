@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: proc_planner_rtwutil.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef PROC_PLANNER_RTWUTIL_H
@@ -17,13 +17,7 @@
 #include <cstdlib>
 
 // Function Declarations
-extern int div_nzp_s32_floor(int numerator, int denominator);
-
 extern double rt_atan2d_snf(double u0, double u1);
-
-extern double rt_hypotd_snf(double u0, double u1);
-
-extern double rt_powd_snf(double u0, double u1);
 
 #endif
 //

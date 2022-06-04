@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: proc_planner_initialize.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 // Include Files
@@ -13,7 +13,6 @@
 #include "CoderTimeAPI.h"
 #include "proc_planner_data.h"
 #include "rt_nonfinite.h"
-#include <string.h>
 
 // Function Definitions
 //
@@ -23,6 +22,9 @@
 void proc_planner_initialize()
 {
   freq_not_empty_init();
+  TrajIsGenerating = false;
+  newInitialPose = false;
+  newMadpPose = false;
   isInitialized_proc_planner = true;
 }
 

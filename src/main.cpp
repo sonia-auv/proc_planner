@@ -1,10 +1,24 @@
 #include "ros/ros.h"
-#include<thread>
+#include <thread>
 #include "proc_planner.h"
+
+bool threadTerminating = false;
 
 void threadFunction(void)
 {
-    proc_planner();
+   try
+   {
+       proc_planner();
+   }
+   catch (std::runtime_error e)
+   {
+       std::cout << "Caught exception: " << e.what() << std::endl;
+   }
+   catch (...)
+   {
+       std::cout << "Caught unknown exception, terminating the program." << std::endl;
+   }
+    threadTerminating = true;
     ros::shutdown();
 }
 
@@ -15,7 +29,9 @@ int main(int argc, char** argv)
     std::thread threadObj(threadFunction);
 
     ros::spin();
+    if (threadTerminating) {
     threadObj.join();
+    }
 
     return 0;
 }

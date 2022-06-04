@@ -4,15 +4,14 @@
 // government, commercial, or other organizational use.
 // File: xrotg.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 // Include Files
 #include "xrotg.h"
 #include "rt_nonfinite.h"
 #include <cmath>
-#include <string.h>
 
 // Function Definitions
 //

@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: minOrMax.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef MINORMAX_H
@@ -19,11 +19,9 @@
 // Function Declarations
 namespace coder {
 namespace internal {
-double b_maximum(const double x[3]);
+double maximum(const double x[3]);
 
-double maximum(const double x[2]);
-
-} // namespace internal
+}
 } // namespace coder
 
 #endif

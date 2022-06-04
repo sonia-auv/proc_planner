@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: dot.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef DOT_H
@@ -13,20 +13,14 @@
 
 // Include Files
 #include "rtwtypes.h"
-#include "coder_array.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace coder {
-double b_dot(const double a[4], const double b[4]);
-
 double dot(const double a[3], const double b[3]);
 
-void dot(const ::coder::array<double, 2U> &a,
-         const ::coder::array<double, 2U> &b, ::coder::array<double, 1U> &c);
-
-} // namespace coder
+}
 
 #endif
 //

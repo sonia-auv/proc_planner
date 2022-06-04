@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: proc_planner_types.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef PROC_PLANNER_TYPES_H
@@ -59,9 +59,9 @@ struct geometry_msgs_PoseStruct_T {
   geometry_msgs_QuaternionStruct_T Orientation;
 };
 
-struct std_msgs_BoolStruct_T {
+struct std_msgs_Int8Struct_T {
   char MessageType[13];
-  bool Data;
+  signed char Data;
 };
 
 struct geometry_msgs_TransformStruct_T {
@@ -78,6 +78,7 @@ struct geometry_msgs_TwistStruct_T {
 
 struct sonia_common_MultiAddPoseStruct_T {
   char MessageType[25];
+  unsigned char InterpolationMethod;
   coder::array<sonia_common_AddPoseStruct_T, 1U> Pose;
 };
 

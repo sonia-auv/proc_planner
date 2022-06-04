@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: svd.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef SVD_H
@@ -13,14 +13,13 @@
 
 // Include Files
 #include "rtwtypes.h"
-#include "coder_array.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace coder {
 namespace internal {
-void svd(const ::coder::array<double, 2U> &A, ::coder::array<double, 1U> &U);
+void svd(const double A[12], double U[12], double s[3], double V[9]);
 
 }
 } // namespace coder

@@ -4,15 +4,14 @@
 // government, commercial, or other organizational use.
 // File: minOrMax.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 // Include Files
 #include "minOrMax.h"
 #include "rt_nonfinite.h"
 #include <cmath>
-#include <string.h>
 
 // Function Definitions
 //
@@ -21,7 +20,7 @@
 //
 namespace coder {
 namespace internal {
-double b_maximum(const double x[3])
+double maximum(const double x[3])
 {
   double ex;
   int idx;
@@ -54,21 +53,6 @@ double b_maximum(const double x[3])
         ex = d;
       }
     }
-  }
-  return ex;
-}
-
-//
-// Arguments    : const double x[2]
-// Return Type  : double
-//
-double maximum(const double x[2])
-{
-  double ex;
-  if ((x[0] < x[1]) || (std::isnan(x[0]) && (!std::isnan(x[1])))) {
-    ex = x[1];
-  } else {
-    ex = x[0];
   }
   return ex;
 }

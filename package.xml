@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>proc_planner</name>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <description>The proc_planner package</description>
 
-  <maintainer email="francisalonzo29@gmail.com">francis</maintainer>
+  <maintainer email="alexandre.lamarre.2@ens.etsmtl.ca">Alexandre</maintainer>
 
   <license>GPLv3</license>
 

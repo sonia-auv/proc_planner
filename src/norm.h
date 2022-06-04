@@ -4,8 +4,8 @@
 // government, commercial, or other organizational use.
 // File: norm.h
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 #ifndef NORM_H
@@ -13,7 +13,6 @@
 
 // Include Files
 #include "rtwtypes.h"
-#include "coder_array.h"
 #include <cstddef>
 #include <cstdlib>
 
@@ -21,9 +20,7 @@
 namespace coder {
 double b_norm(const double x[3]);
 
-double b_norm(const ::coder::array<double, 1U> &x);
-
-} // namespace coder
+}
 
 #endif
 //

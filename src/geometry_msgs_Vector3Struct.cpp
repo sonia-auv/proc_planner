@@ -4,15 +4,14 @@
 // government, commercial, or other organizational use.
 // File: geometry_msgs_Vector3Struct.cpp
 //
-// MATLAB Coder version            : 5.3
-// C/C++ source code generated on  : 08-Feb-2022 23:30:50
+// MATLAB Coder version            : 5.4
+// C/C++ source code generated on  : 12-May-2022 22:37:14
 //
 
 // Include Files
 #include "geometry_msgs_Vector3Struct.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
-#include <string.h>
 
 // Function Definitions
 //
