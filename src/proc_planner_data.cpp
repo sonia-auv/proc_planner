@@ -5,7 +5,7 @@
 // File: proc_planner_data.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-May-2022 22:37:14
+// C/C++ source code generated on  : 07-Jun-2022 23:08:47
 //
 
 // Include Files
@@ -13,15 +13,13 @@
 #include "rt_nonfinite.h"
 
 // Variable Definitions
-bool newMadpPose;
-
-bool newInitialPose;
-
-bool TrajIsGenerating;
-
 double freq;
 
 bool freq_not_empty;
+
+bool newMadpPose;
+
+bool newInitialPose;
 
 bool isInitialized_proc_planner{false};
 
