@@ -2,39 +2,36 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: Rate.h
+// File: proc_planner_internal_types.h
 //
 // MATLAB Coder version            : 5.4
 // C/C++ source code generated on  : 07-Jun-2022 23:08:47
 //
 
-#ifndef RATE_H
-#define RATE_H
+#ifndef PROC_PLANNER_INTERNAL_TYPES_H
+#define PROC_PLANNER_INTERNAL_TYPES_H
 
 // Include Files
+#include "proc_planner_types.h"
 #include "rtwtypes.h"
-#include "coder_posix_time.h"
-#include "mlroscpp_rate.h"
-#include <cstddef>
-#include <cstdlib>
 
 // Type Definitions
-namespace coder {
-namespace ros {
-class Rate {
-public:
-  Rate *init();
-  std::unique_ptr<MATLABRate> RateHelper;
-  double DesiredRate;
-  coderTimespec PreviousPeriod;
+struct struct_T {
+  double amax;
+  double vlmax;
+  double vamax;
 };
 
-} // namespace ros
-} // namespace coder
+struct b_struct_T {
+  double ts;
+  struct_T lowSpeed;
+  struct_T normalSpeed;
+  struct_T highSpeed;
+};
 
 #endif
 //
-// File trailer for Rate.h
+// File trailer for proc_planner_internal_types.h
 //
 // [EOF]
 //

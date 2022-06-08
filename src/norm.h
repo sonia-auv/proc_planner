@@ -5,7 +5,7 @@
 // File: norm.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-May-2022 22:37:14
+// C/C++ source code generated on  : 07-Jun-2022 23:08:47
 //
 
 #ifndef NORM_H
@@ -20,7 +20,9 @@
 namespace coder {
 double b_norm(const double x[3]);
 
-}
+double c_norm(const double x[4]);
+
+} // namespace coder
 
 #endif
 //

@@ -5,7 +5,7 @@
 // File: proc_planner.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-May-2022 22:37:14
+// C/C++ source code generated on  : 07-Jun-2022 23:08:47
 //
 
 // Include Files
@@ -14,21 +14,14 @@
 #include "Publisher.h"
 #include "Rate.h"
 #include "Subscriber.h"
-#include "TrajectoryGenerator.h"
 #include "proc_planner_data.h"
 #include "proc_planner_initialize.h"
-#include "proc_planner_types.h"
+#include "proc_planner_internal_types.h"
+#include "ros_node.h"
 #include "rt_nonfinite.h"
 #include "startsWith.h"
-#include "std_msgs_Int8Struct.h"
-#include "tic.h"
-#include "toc.h"
 #include "coder_array.h"
-#include "coder_posix_time.h"
 #include "mlroscpp_param.h"
-#include "mlroscpp_pub.h"
-#include "mlroscpp_rate.h"
-#include <cmath>
 #include <cstddef>
 #include <functional>
 #include <stdio.h>
@@ -85,21 +78,15 @@ void proc_planner()
       'l', 'o', 'w', '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a', 'x', 'i',
       'm', 'u', 'm', '_', 'v', 'e', 'l', 'o', 'c', 'i', 't', 'y'};
   char *rawValue;
-  TrajectoryGenerator TG;
   coder::ros::ParameterTree lobj_1;
-  coder::ros::Publisher trajpub;
+  coder::ros::Publisher *pub;
   coder::ros::Rate r;
-  coder::ros::Subscriber madpSub;
-  coder::ros::b_Publisher validPub;
-  coder::ros::b_Subscriber icSub;
-  coder::array<sonia_common_AddPoseStruct_T, 1U> t2_Pose;
+  coder::ros::Subscriber *sub;
+  coder::ros::b_Publisher *b_pub;
+  coder::ros::b_Subscriber *b_sub;
+  ros_node planner;
   coder::array<char, 2U> formatSpec;
   coder::array<char, 2U> parameterName;
-  geometry_msgs_PointStruct_T t3_Position;
-  geometry_msgs_QuaternionStruct_T t3_Orientation;
-  std_msgs_Int8Struct_T validMsg;
-  double b_expl_temp;
-  double expl_temp;
   double param_highSpeed_amax;
   double param_highSpeed_vamax;
   double param_highSpeed_vlmax;
@@ -116,8 +103,6 @@ void proc_planner()
   char h_name[43];
   char m_name[41];
   char c_name[40];
-  char t2_MessageType[25];
-  unsigned char t2_InterpolationMethod;
   bool nameExists;
   if (!isInitialized_proc_planner) {
     proc_planner_initialize();
@@ -140,22 +125,22 @@ void proc_planner()
   parameterName[formatSpec.size(1)] = '\x00';
   printf("INFO : proc planner : Load config for %s \n", &parameterName[0]);
   fflush(stdout);
-  //  Definir les variables
-  //  Variables globals
-  newMadpPose = false;
-  newInitialPose = false;
-  TrajIsGenerating = false;
   //  Variables locals
   r.init();
-  //  Definir les message ros
-  validMsg = std_msgs_Int8Struct();
+  //  Démarer le planner
   //  Definir les Subscrier ros
-  madpSub.init();
-  icSub.init();
+  planner.TrajIsGenerating = false;
+  //  Constructor
+  sub = planner._pobj3.init();
+  planner.madpSub = sub;
+  b_sub = planner._pobj2.init();
+  planner.icSub = b_sub;
   //  Definir les publisher ROS
-  trajpub.init();
-  validPub.init();
-  //  Definir les parametre de trajectoire
+  pub = planner._pobj1.init();
+  planner.trajpub = pub;
+  b_pub = planner._pobj0.init();
+  planner.validPub = b_pub;
+  //  Get ros param
   //  Get rosparam
   lobj_1.ParameterHelper = MATLABROSParameter();
   UNUSED_PARAM(lobj_1.ParameterHelper);
@@ -710,55 +695,17 @@ void proc_planner()
   } else {
     param_highSpeed_vamax = 0.8;
   }
-  //  Ros Spin
-  printf("INFO : proc planner : Node is started \n");
-  fflush(stdout);
-  printf("INFO : proc planner : Wait for poses \n");
-  fflush(stdout);
-  MATLABRate_reset(r.RateHelper);
-  coder::tic(&expl_temp, &b_expl_temp);
-  while (1) {
-    if (newMadpPose && newInitialPose) {
-      signed char i1;
-      //  Cree l'objet trajectoire
-      madpSub.get_LatestMessage(t2_MessageType, &t2_InterpolationMethod,
-                                t2_Pose);
-      icSub.get_LatestMessage(&t3_Position, &t3_Orientation);
-      TG.init(t2_MessageType, t2_InterpolationMethod, t2_Pose,
-              param_lowSpeed_amax, param_lowSpeed_vlmax, param_lowSpeed_vamax,
-              param_normalSpeed_amax, param_normalSpeed_vlmax,
-              param_normalSpeed_vamax, param_highSpeed_amax,
-              param_highSpeed_vlmax, param_highSpeed_vamax, t3_Position,
-              t3_Orientation);
-      //  Envoyer a ros si le mAddpose est valide
-      expl_temp = std::round(TG.status);
-      if (expl_temp < 128.0) {
-        if (expl_temp >= -128.0) {
-          i1 = static_cast<signed char>(expl_temp);
-        } else {
-          i1 = MIN_int8_T;
-        }
-      } else if (expl_temp >= 128.0) {
-        i1 = MAX_int8_T;
-      } else {
-        i1 = 0;
-      }
-      validMsg.Data = i1;
-      MATLABPUBLISHER_publish(validPub.PublisherHelper, &validMsg);
-      //  Si la trajectoire est valide generer la trajectoire
-      if (TG.status == 0.0) {
-        TG.Compute(&trajpub);
-      }
-      newMadpPose = false;
-      newInitialPose = false;
-      TrajIsGenerating = false;
-      printf("INFO : proc planner : Wait for poses \n");
-      fflush(stdout);
-    }
-    MATLABRate_sleep(r.RateHelper);
-    coder::toc(r.PreviousPeriod.tv_sec, r.PreviousPeriod.tv_nsec);
-    coder::tic(&r.PreviousPeriod.tv_sec, &r.PreviousPeriod.tv_nsec);
-  }
+  planner.param.ts = 0.1;
+  planner.param.lowSpeed.amax = param_lowSpeed_amax;
+  planner.param.lowSpeed.vlmax = param_lowSpeed_vlmax;
+  planner.param.lowSpeed.vamax = param_lowSpeed_vamax;
+  planner.param.normalSpeed.amax = param_normalSpeed_amax;
+  planner.param.normalSpeed.vlmax = param_normalSpeed_vlmax;
+  planner.param.normalSpeed.vamax = param_normalSpeed_vamax;
+  planner.param.highSpeed.amax = param_highSpeed_amax;
+  planner.param.highSpeed.vlmax = param_highSpeed_vlmax;
+  planner.param.highSpeed.vamax = param_highSpeed_vamax;
+  planner.spin(&r);
 }
 
 //
