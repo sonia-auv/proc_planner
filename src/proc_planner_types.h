@@ -5,7 +5,7 @@
 // File: proc_planner_types.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-May-2022 22:37:14
+// C/C++ source code generated on  : 07-Jun-2022 23:08:47
 //
 
 #ifndef PROC_PLANNER_TYPES_H
@@ -59,11 +59,6 @@ struct geometry_msgs_PoseStruct_T {
   geometry_msgs_QuaternionStruct_T Orientation;
 };
 
-struct std_msgs_Int8Struct_T {
-  char MessageType[13];
-  signed char Data;
-};
-
 struct geometry_msgs_TransformStruct_T {
   char MessageType[23];
   geometry_msgs_Vector3Struct_T Translation;
@@ -74,6 +69,11 @@ struct geometry_msgs_TwistStruct_T {
   char MessageType[19];
   geometry_msgs_Vector3Struct_T Linear;
   geometry_msgs_Vector3Struct_T Angular;
+};
+
+struct std_msgs_Int8Struct_T {
+  char MessageType[13];
+  signed char Data;
 };
 
 struct sonia_common_MultiAddPoseStruct_T {

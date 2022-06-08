@@ -2,35 +2,32 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xswap.h
+// File: repelem.h
 //
 // MATLAB Coder version            : 5.4
 // C/C++ source code generated on  : 07-Jun-2022 23:08:47
 //
 
-#ifndef XSWAP_H
-#define XSWAP_H
+#ifndef REPELEM_H
+#define REPELEM_H
 
 // Include Files
+#include "proc_planner_types.h"
 #include "rtwtypes.h"
+#include "coder_array.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace coder {
-namespace internal {
-namespace blas {
-void b_xswap(double x[12], int ix0, int iy0);
+void repelem(const geometry_msgs_TwistStruct_T *x, double varargin_1,
+             ::coder::array<geometry_msgs_TwistStruct_T, 2U> &y);
 
-void xswap(double x[9], int ix0, int iy0);
-
-} // namespace blas
-} // namespace internal
-} // namespace coder
+}
 
 #endif
 //
-// File trailer for xswap.h
+// File trailer for repelem.h
 //
 // [EOF]
 //

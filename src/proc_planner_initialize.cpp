@@ -5,13 +5,14 @@
 // File: proc_planner_initialize.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 12-May-2022 22:37:14
+// C/C++ source code generated on  : 07-Jun-2022 23:08:47
 //
 
 // Include Files
 #include "proc_planner_initialize.h"
 #include "CoderTimeAPI.h"
 #include "proc_planner_data.h"
+#include "ros_node.h"
 #include "rt_nonfinite.h"
 
 // Function Definitions
@@ -22,9 +23,7 @@
 void proc_planner_initialize()
 {
   freq_not_empty_init();
-  TrajIsGenerating = false;
-  newInitialPose = false;
-  newMadpPose = false;
+  ros_node::persistentDataStore_init();
   isInitialized_proc_planner = true;
 }
 
