@@ -5,7 +5,7 @@
 // File: proc_planner.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 07-Jun-2022 23:08:47
+// C/C++ source code generated on  : 13-Jun-2022 22:36:24
 //
 
 // Include Files
@@ -93,9 +93,11 @@ void proc_planner()
   double param_lowSpeed_amax;
   double param_lowSpeed_vamax;
   double param_lowSpeed_vlmax;
+  double param_maxDepth;
   double param_normalSpeed_amax;
   double param_normalSpeed_vamax;
   double param_normalSpeed_vlmax;
+  double param_surfaceWarning;
   int loop_ub;
   char f_name[47];
   char k_name[45];
@@ -695,6 +697,52 @@ void proc_planner()
   } else {
     param_highSpeed_vamax = 0.8;
   }
+  coder::ros::ParameterTree::canonicalizeName(&lobj_1, formatSpec);
+  parameterName.set_size(1, formatSpec.size(1) + 1);
+  loop_ub = formatSpec.size(1);
+  for (int i{0}; i < loop_ub; i++) {
+    parameterName[i] = formatSpec[i];
+  }
+  parameterName[formatSpec.size(1)] = '\x00';
+  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
+      lobj_1.ParameterHelper, &parameterName[0]);
+  if (nameExists) {
+    coder::ros::ParameterTree::canonicalizeName(&lobj_1, formatSpec);
+    parameterName.set_size(1, formatSpec.size(1) + 1);
+    loop_ub = formatSpec.size(1);
+    for (int i{0}; i < loop_ub; i++) {
+      parameterName[i] = formatSpec[i];
+    }
+    parameterName[formatSpec.size(1)] = '\x00';
+    param_maxDepth = 0.0;
+    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
+        &lobj_1.ParameterHelper, &parameterName[0], &param_maxDepth);
+  } else {
+    param_maxDepth = 5.0;
+  }
+  coder::ros::ParameterTree::b_canonicalizeName(&lobj_1, formatSpec);
+  parameterName.set_size(1, formatSpec.size(1) + 1);
+  loop_ub = formatSpec.size(1);
+  for (int i{0}; i < loop_ub; i++) {
+    parameterName[i] = formatSpec[i];
+  }
+  parameterName[formatSpec.size(1)] = '\x00';
+  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
+      lobj_1.ParameterHelper, &parameterName[0]);
+  if (nameExists) {
+    coder::ros::ParameterTree::b_canonicalizeName(&lobj_1, formatSpec);
+    parameterName.set_size(1, formatSpec.size(1) + 1);
+    loop_ub = formatSpec.size(1);
+    for (int i{0}; i < loop_ub; i++) {
+      parameterName[i] = formatSpec[i];
+    }
+    parameterName[formatSpec.size(1)] = '\x00';
+    param_surfaceWarning = 0.0;
+    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
+        &lobj_1.ParameterHelper, &parameterName[0], &param_surfaceWarning);
+  } else {
+    param_surfaceWarning = 0.3;
+  }
   planner.param.ts = 0.1;
   planner.param.lowSpeed.amax = param_lowSpeed_amax;
   planner.param.lowSpeed.vlmax = param_lowSpeed_vlmax;
@@ -705,6 +753,8 @@ void proc_planner()
   planner.param.highSpeed.amax = param_highSpeed_amax;
   planner.param.highSpeed.vlmax = param_highSpeed_vlmax;
   planner.param.highSpeed.vamax = param_highSpeed_vamax;
+  planner.param.maxDepth = param_maxDepth;
+  planner.param.surfaceWarning = param_surfaceWarning;
   planner.spin(&r);
 }
 

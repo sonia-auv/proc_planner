@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 07-Jun-2022 23:08:47
+// C/C++ source code generated on  : 13-Jun-2022 22:36:24
 //
 
 // Include Files
@@ -45,6 +45,7 @@ TrajectoryGenerator *TrajectoryGenerator::init(
     const geometry_msgs_QuaternionStruct_T icMsg_Orientation)
 {
   TrajectoryGenerator *this_;
+  coder::array<double, 1U> varargin_1;
   double c_this[4];
   double q[4];
   double qRel[4];
@@ -814,6 +815,21 @@ TrajectoryGenerator *TrajectoryGenerator::init(
   } else {
     this_->nbPoint = 1.0;
   }
+  //  vérifier la profondeur maximum.
+  loop_ub = this_->pointList.size(0);
+  varargin_1.set_size(loop_ub);
+  for (b_this = 0; b_this < loop_ub; b_this++) {
+    varargin_1[b_this] =
+        this_->pointList[b_this + this_->pointList.size(0) * 2];
+  }
+  if (coder::internal::maximum(varargin_1) > this_->param.maxDepth) {
+    this_->status = -6.0;
+  }
+  //  NEED MISSION CLEAN UP
+  //              % Vérifier si le sub peut faire surface;
+  //              if (min(this.pointList(:,3)) > this.param.surface_warning )
+  //                  this.status = this.WARN_AUV_MAY_SURFACE;
+  //              end
   //  Definir la taille de la trajectoire
   loop_ub = static_cast<int>(this_->nbPoint);
   this_->trajPosition.set_size(loop_ub, 3);

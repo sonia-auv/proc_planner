@@ -5,7 +5,7 @@
 // File: geometry_msgs_QuaternionStruct.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 07-Jun-2022 23:08:47
+// C/C++ source code generated on  : 13-Jun-2022 22:36:24
 //
 
 #ifndef GEOMETRY_MSGS_QUATERNIONSTRUCT_H

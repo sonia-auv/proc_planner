@@ -5,7 +5,7 @@
 // File: ParameterTree.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 07-Jun-2022 23:08:47
+// C/C++ source code generated on  : 13-Jun-2022 22:36:24
 //
 
 #ifndef PARAMETERTREE_H
@@ -13,6 +13,7 @@
 
 // Include Files
 #include "rtwtypes.h"
+#include "coder_array.h"
 #include "mlroscpp_param.h"
 #include <cstddef>
 #include <cstdlib>
@@ -22,6 +23,10 @@ namespace coder {
 namespace ros {
 class ParameterTree {
 public:
+  static void canonicalizeName(ParameterTree *obj,
+                               ::coder::array<char, 2U> &validName);
+  static void b_canonicalizeName(ParameterTree *obj,
+                                 ::coder::array<char, 2U> &validName);
   MATLABROSParameter ParameterHelper;
 };
 
