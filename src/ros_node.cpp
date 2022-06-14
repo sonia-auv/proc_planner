@@ -5,7 +5,7 @@
 // File: ros_node.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 07-Jun-2022 23:08:47
+// C/C++ source code generated on  : 13-Jun-2022 22:36:24
 //
 
 // Include Files
@@ -89,6 +89,7 @@ void ros_node::spin(coder::ros::Rate *b_spin)
   fflush(stdout);
   while (1) {
     bool out;
+    //  Regarder si un nouveau multi-addPose
     //  initialte variables
     //  GET
     out = newMadpPose;
@@ -133,6 +134,7 @@ void ros_node::spin(coder::ros::Rate *b_spin)
         //  Si la trajectoire est valide generer la trajectoire
         if (TG.status == 0.0) {
           b_trajpub = trajpub;
+          // Vérifier la pré-validation
           // ==================================================================
           //  Fonction Main qui génère les waypoints
           if (TG.status == 0.0) {
