@@ -5,7 +5,7 @@
 // File: ParameterTree.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 13-Jun-2022 22:36:24
+// C/C++ source code generated on  : 25-Jun-2022 15:23:16
 //
 
 #ifndef PARAMETERTREE_H
@@ -26,6 +26,14 @@ public:
   static void canonicalizeName(ParameterTree *obj,
                                ::coder::array<char, 2U> &validName);
   static void b_canonicalizeName(ParameterTree *obj,
+                                 ::coder::array<char, 2U> &validName);
+  static void c_canonicalizeName(ParameterTree *obj,
+                                 ::coder::array<char, 2U> &validName);
+  static void d_canonicalizeName(ParameterTree *obj,
+                                 ::coder::array<char, 2U> &validName);
+  static void e_canonicalizeName(ParameterTree *obj,
+                                 ::coder::array<char, 2U> &validName);
+  static void f_canonicalizeName(ParameterTree *obj,
                                  ::coder::array<char, 2U> &validName);
   MATLABROSParameter ParameterHelper;
 };

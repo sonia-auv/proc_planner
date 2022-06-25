@@ -5,7 +5,7 @@
 // File: proc_planner.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 13-Jun-2022 22:36:24
+// C/C++ source code generated on  : 25-Jun-2022 15:23:16
 //
 
 // Include Files
@@ -42,21 +42,6 @@ void proc_planner()
                                '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a', 'x',
                                'i', 'm', 'u', 'm', '_', 'a', 'c', 'c', 'e', 'l',
                                'e', 'r', 'a', 't', 'i', 'o', 'n'};
-  static const char j_name[47]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n',
-                               'n', 'e', 'r', '/', 'n', 'o', 'r', 'm', 'a', 'l',
-                               '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a', 'x',
-                               'i', 'm', 'u', 'm', '_', 'a', 'n', 'g', 'u', 'l',
-                               'a', 'r', '_', 'r', 'a', 't', 'e'};
-  static const char l_name[45]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a',
-                               'n', 'n', 'e', 'r', '/', 'h', 'i', 'g', 'h',
-                               '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a',
-                               'x', 'i', 'm', 'u', 'm', '_', 'a', 'c', 'c',
-                               'e', 'l', 'e', 'r', 'a', 't', 'i', 'o', 'n'};
-  static const char o_name[45]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a',
-                               'n', 'n', 'e', 'r', '/', 'h', 'i', 'g', 'h',
-                               '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a',
-                               'x', 'i', 'm', 'u', 'm', '_', 'a', 'n', 'g',
-                               'u', 'l', 'a', 'r', '_', 'r', 'a', 't', 'e'};
   static const char b_name[44]{
       '/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n', 'n', 'e', 'r', '/', 'l',
       'o', 'w', '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a', 'x', 'i', 'm', 'u',
@@ -68,10 +53,6 @@ void proc_planner()
   static const char i_name[43]{
       '/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n', 'n', 'e', 'r', '/', 'n',
       'o', 'r', 'm', 'a', 'l', '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a', 'x',
-      'i', 'm', 'u', 'm', '_', 'v', 'e', 'l', 'o', 'c', 'i', 't', 'y'};
-  static const char n_name[41]{
-      '/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n', 'n', 'e', 'r', '/',
-      'h', 'i', 'g', 'h', '_', 's', 'p', 'e', 'e', 'd', '/', 'm', 'a', 'x',
       'i', 'm', 'u', 'm', '_', 'v', 'e', 'l', 'o', 'c', 'i', 't', 'y'};
   static const char d_name[40]{
       '/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n', 'n', 'e', 'r', '/',
@@ -87,23 +68,21 @@ void proc_planner()
   ros_node planner;
   coder::array<char, 2U> formatSpec;
   coder::array<char, 2U> parameterName;
-  double param_highSpeed_amax;
-  double param_highSpeed_vamax;
-  double param_highSpeed_vlmax;
-  double param_lowSpeed_amax;
-  double param_lowSpeed_vamax;
-  double param_lowSpeed_vlmax;
-  double param_maxDepth;
-  double param_normalSpeed_amax;
-  double param_normalSpeed_vamax;
-  double param_normalSpeed_vlmax;
-  double param_surfaceWarning;
+  double b_val;
+  double c_val;
+  double d_val;
+  double e_val;
+  double f_val;
+  double g_val;
+  double h_val;
+  double i_val;
+  double j_val;
+  double k_val;
+  double val;
   int loop_ub;
   char f_name[47];
-  char k_name[45];
   char name[44];
   char h_name[43];
-  char m_name[41];
   char c_name[40];
   bool nameExists;
   if (!isInitialized_proc_planner) {
@@ -148,6 +127,7 @@ void proc_planner()
   UNUSED_PARAM(lobj_1.ParameterHelper);
   // ROSPARAM Construct an instance of this class
   //    Detailed explanation goes here
+  //         %% get rosparam number
   for (int i{0}; i < 44; i++) {
     name[i] = b_name[i];
   }
@@ -203,12 +183,15 @@ void proc_planner()
       parameterName[i] = formatSpec[i];
     }
     parameterName[formatSpec.size(1)] = '\x00';
-    param_lowSpeed_amax = 0.0;
+    val = 0.0;
     std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_lowSpeed_amax);
+        &lobj_1.ParameterHelper, &parameterName[0], &val);
+    printf("%s : %f \n", "/proc_planner/low_speed/maximum_acceleration", val);
+    fflush(stdout);
   } else {
-    param_lowSpeed_amax = 0.05;
+    val = 0.05;
   }
+  //         %% get rosparam number
   for (int i{0}; i < 40; i++) {
     c_name[i] = d_name[i];
   }
@@ -264,12 +247,15 @@ void proc_planner()
       parameterName[i] = formatSpec[i];
     }
     parameterName[formatSpec.size(1)] = '\x00';
-    param_lowSpeed_vlmax = 0.0;
+    b_val = 0.0;
     std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_lowSpeed_vlmax);
+        &lobj_1.ParameterHelper, &parameterName[0], &b_val);
+    printf("%s : %f \n", "/proc_planner/low_speed/maximum_velocity", b_val);
+    fflush(stdout);
   } else {
-    param_lowSpeed_vlmax = 0.2;
+    b_val = 0.2;
   }
+  //         %% get rosparam number
   for (int i{0}; i < 44; i++) {
     name[i] = e_name[i];
   }
@@ -325,12 +311,15 @@ void proc_planner()
       parameterName[i] = formatSpec[i];
     }
     parameterName[formatSpec.size(1)] = '\x00';
-    param_lowSpeed_vamax = 0.0;
+    c_val = 0.0;
     std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_lowSpeed_vamax);
+        &lobj_1.ParameterHelper, &parameterName[0], &c_val);
+    printf("%s : %f \n", "/proc_planner/low_speed/maximum_angular_rate", c_val);
+    fflush(stdout);
   } else {
-    param_lowSpeed_vamax = 0.3;
+    c_val = 0.3;
   }
+  //         %% get rosparam number
   for (int i{0}; i < 47; i++) {
     f_name[i] = g_name[i];
   }
@@ -386,12 +375,16 @@ void proc_planner()
       parameterName[i] = formatSpec[i];
     }
     parameterName[formatSpec.size(1)] = '\x00';
-    param_normalSpeed_amax = 0.0;
+    d_val = 0.0;
     std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_normalSpeed_amax);
+        &lobj_1.ParameterHelper, &parameterName[0], &d_val);
+    printf("%s : %f \n", "/proc_planner/normal_speed/maximum_acceleration",
+           d_val);
+    fflush(stdout);
   } else {
-    param_normalSpeed_amax = 0.1;
+    d_val = 0.1;
   }
+  //         %% get rosparam number
   for (int i{0}; i < 43; i++) {
     h_name[i] = i_name[i];
   }
@@ -447,256 +440,15 @@ void proc_planner()
       parameterName[i] = formatSpec[i];
     }
     parameterName[formatSpec.size(1)] = '\x00';
-    param_normalSpeed_vlmax = 0.0;
+    e_val = 0.0;
     std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_normalSpeed_vlmax);
+        &lobj_1.ParameterHelper, &parameterName[0], &e_val);
+    printf("%s : %f \n", "/proc_planner/normal_speed/maximum_velocity", e_val);
+    fflush(stdout);
   } else {
-    param_normalSpeed_vlmax = 0.5;
+    e_val = 0.5;
   }
-  for (int i{0}; i < 47; i++) {
-    f_name[i] = j_name[i];
-  }
-  std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                    &f_name[0]);
-  formatSpec.set_size(1, 47);
-  for (int i{0}; i < 47; i++) {
-    formatSpec[i] = j_name[i];
-  }
-  if (coder::startsWith(formatSpec)) {
-    parameterName.set_size(1, 46);
-    parameterName[0] = '~';
-    for (int i{0}; i < 45; i++) {
-      parameterName[i + 1] = formatSpec[i + 2];
-    }
-    formatSpec.set_size(1, 46);
-    for (int i{0}; i < 46; i++) {
-      formatSpec[i] = parameterName[i];
-    }
-  }
-  parameterName.set_size(1, formatSpec.size(1) + 1);
-  loop_ub = formatSpec.size(1);
-  for (int i{0}; i < loop_ub; i++) {
-    parameterName[i] = formatSpec[i];
-  }
-  parameterName[formatSpec.size(1)] = '\x00';
-  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
-      lobj_1.ParameterHelper, &parameterName[0]);
-  if (nameExists) {
-    for (int i{0}; i < 47; i++) {
-      f_name[i] = j_name[i];
-    }
-    std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                      &f_name[0]);
-    formatSpec.set_size(1, 47);
-    for (int i{0}; i < 47; i++) {
-      formatSpec[i] = j_name[i];
-    }
-    if (coder::startsWith(formatSpec)) {
-      parameterName.set_size(1, 46);
-      parameterName[0] = '~';
-      for (int i{0}; i < 45; i++) {
-        parameterName[i + 1] = formatSpec[i + 2];
-      }
-      formatSpec.set_size(1, 46);
-      for (int i{0}; i < 46; i++) {
-        formatSpec[i] = parameterName[i];
-      }
-    }
-    parameterName.set_size(1, formatSpec.size(1) + 1);
-    loop_ub = formatSpec.size(1);
-    for (int i{0}; i < loop_ub; i++) {
-      parameterName[i] = formatSpec[i];
-    }
-    parameterName[formatSpec.size(1)] = '\x00';
-    param_normalSpeed_vamax = 0.0;
-    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_normalSpeed_vamax);
-  } else {
-    param_normalSpeed_vamax = 0.5;
-  }
-  for (int i{0}; i < 45; i++) {
-    k_name[i] = l_name[i];
-  }
-  std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                    &k_name[0]);
-  formatSpec.set_size(1, 45);
-  for (int i{0}; i < 45; i++) {
-    formatSpec[i] = l_name[i];
-  }
-  if (coder::startsWith(formatSpec)) {
-    parameterName.set_size(1, 44);
-    parameterName[0] = '~';
-    for (int i{0}; i < 43; i++) {
-      parameterName[i + 1] = formatSpec[i + 2];
-    }
-    formatSpec.set_size(1, 44);
-    for (int i{0}; i < 44; i++) {
-      formatSpec[i] = parameterName[i];
-    }
-  }
-  parameterName.set_size(1, formatSpec.size(1) + 1);
-  loop_ub = formatSpec.size(1);
-  for (int i{0}; i < loop_ub; i++) {
-    parameterName[i] = formatSpec[i];
-  }
-  parameterName[formatSpec.size(1)] = '\x00';
-  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
-      lobj_1.ParameterHelper, &parameterName[0]);
-  if (nameExists) {
-    for (int i{0}; i < 45; i++) {
-      k_name[i] = l_name[i];
-    }
-    std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                      &k_name[0]);
-    formatSpec.set_size(1, 45);
-    for (int i{0}; i < 45; i++) {
-      formatSpec[i] = l_name[i];
-    }
-    if (coder::startsWith(formatSpec)) {
-      parameterName.set_size(1, 44);
-      parameterName[0] = '~';
-      for (int i{0}; i < 43; i++) {
-        parameterName[i + 1] = formatSpec[i + 2];
-      }
-      formatSpec.set_size(1, 44);
-      for (int i{0}; i < 44; i++) {
-        formatSpec[i] = parameterName[i];
-      }
-    }
-    parameterName.set_size(1, formatSpec.size(1) + 1);
-    loop_ub = formatSpec.size(1);
-    for (int i{0}; i < loop_ub; i++) {
-      parameterName[i] = formatSpec[i];
-    }
-    parameterName[formatSpec.size(1)] = '\x00';
-    param_highSpeed_amax = 0.0;
-    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_highSpeed_amax);
-  } else {
-    param_highSpeed_amax = 0.15;
-  }
-  for (int i{0}; i < 41; i++) {
-    m_name[i] = n_name[i];
-  }
-  std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                    &m_name[0]);
-  formatSpec.set_size(1, 41);
-  for (int i{0}; i < 41; i++) {
-    formatSpec[i] = n_name[i];
-  }
-  if (coder::startsWith(formatSpec)) {
-    parameterName.set_size(1, 40);
-    parameterName[0] = '~';
-    for (int i{0}; i < 39; i++) {
-      parameterName[i + 1] = formatSpec[i + 2];
-    }
-    formatSpec.set_size(1, 40);
-    for (int i{0}; i < 40; i++) {
-      formatSpec[i] = parameterName[i];
-    }
-  }
-  parameterName.set_size(1, formatSpec.size(1) + 1);
-  loop_ub = formatSpec.size(1);
-  for (int i{0}; i < loop_ub; i++) {
-    parameterName[i] = formatSpec[i];
-  }
-  parameterName[formatSpec.size(1)] = '\x00';
-  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
-      lobj_1.ParameterHelper, &parameterName[0]);
-  if (nameExists) {
-    for (int i{0}; i < 41; i++) {
-      m_name[i] = n_name[i];
-    }
-    std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                      &m_name[0]);
-    formatSpec.set_size(1, 41);
-    for (int i{0}; i < 41; i++) {
-      formatSpec[i] = n_name[i];
-    }
-    if (coder::startsWith(formatSpec)) {
-      parameterName.set_size(1, 40);
-      parameterName[0] = '~';
-      for (int i{0}; i < 39; i++) {
-        parameterName[i + 1] = formatSpec[i + 2];
-      }
-      formatSpec.set_size(1, 40);
-      for (int i{0}; i < 40; i++) {
-        formatSpec[i] = parameterName[i];
-      }
-    }
-    parameterName.set_size(1, formatSpec.size(1) + 1);
-    loop_ub = formatSpec.size(1);
-    for (int i{0}; i < loop_ub; i++) {
-      parameterName[i] = formatSpec[i];
-    }
-    parameterName[formatSpec.size(1)] = '\x00';
-    param_highSpeed_vlmax = 0.0;
-    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_highSpeed_vlmax);
-  } else {
-    param_highSpeed_vlmax = 0.8;
-  }
-  for (int i{0}; i < 45; i++) {
-    k_name[i] = o_name[i];
-  }
-  std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                    &k_name[0]);
-  formatSpec.set_size(1, 45);
-  for (int i{0}; i < 45; i++) {
-    formatSpec[i] = o_name[i];
-  }
-  if (coder::startsWith(formatSpec)) {
-    parameterName.set_size(1, 44);
-    parameterName[0] = '~';
-    for (int i{0}; i < 43; i++) {
-      parameterName[i + 1] = formatSpec[i + 2];
-    }
-    formatSpec.set_size(1, 44);
-    for (int i{0}; i < 44; i++) {
-      formatSpec[i] = parameterName[i];
-    }
-  }
-  parameterName.set_size(1, formatSpec.size(1) + 1);
-  loop_ub = formatSpec.size(1);
-  for (int i{0}; i < loop_ub; i++) {
-    parameterName[i] = formatSpec[i];
-  }
-  parameterName[formatSpec.size(1)] = '\x00';
-  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
-      lobj_1.ParameterHelper, &parameterName[0]);
-  if (nameExists) {
-    for (int i{0}; i < 45; i++) {
-      k_name[i] = o_name[i];
-    }
-    std::mem_fn (&MATLABROSParameter::isValidPattern)(&lobj_1.ParameterHelper,
-                                                      &k_name[0]);
-    formatSpec.set_size(1, 45);
-    for (int i{0}; i < 45; i++) {
-      formatSpec[i] = o_name[i];
-    }
-    if (coder::startsWith(formatSpec)) {
-      parameterName.set_size(1, 44);
-      parameterName[0] = '~';
-      for (int i{0}; i < 43; i++) {
-        parameterName[i + 1] = formatSpec[i + 2];
-      }
-      formatSpec.set_size(1, 44);
-      for (int i{0}; i < 44; i++) {
-        formatSpec[i] = parameterName[i];
-      }
-    }
-    parameterName.set_size(1, formatSpec.size(1) + 1);
-    loop_ub = formatSpec.size(1);
-    for (int i{0}; i < loop_ub; i++) {
-      parameterName[i] = formatSpec[i];
-    }
-    parameterName[formatSpec.size(1)] = '\x00';
-    param_highSpeed_vamax = 0.0;
-    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_highSpeed_vamax);
-  } else {
-    param_highSpeed_vamax = 0.8;
-  }
+  //         %% get rosparam number
   coder::ros::ParameterTree::canonicalizeName(&lobj_1, formatSpec);
   parameterName.set_size(1, formatSpec.size(1) + 1);
   loop_ub = formatSpec.size(1);
@@ -714,12 +466,16 @@ void proc_planner()
       parameterName[i] = formatSpec[i];
     }
     parameterName[formatSpec.size(1)] = '\x00';
-    param_maxDepth = 0.0;
+    f_val = 0.0;
     std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_maxDepth);
+        &lobj_1.ParameterHelper, &parameterName[0], &f_val);
+    printf("%s : %f \n", "/proc_planner/normal_speed/maximum_angular_rate",
+           f_val);
+    fflush(stdout);
   } else {
-    param_maxDepth = 5.0;
+    f_val = 0.5;
   }
+  //         %% get rosparam number
   coder::ros::ParameterTree::b_canonicalizeName(&lobj_1, formatSpec);
   parameterName.set_size(1, formatSpec.size(1) + 1);
   loop_ub = formatSpec.size(1);
@@ -737,24 +493,132 @@ void proc_planner()
       parameterName[i] = formatSpec[i];
     }
     parameterName[formatSpec.size(1)] = '\x00';
-    param_surfaceWarning = 0.0;
+    g_val = 0.0;
     std::mem_fn (&MATLABROSParameter::getParameter<double>)(
-        &lobj_1.ParameterHelper, &parameterName[0], &param_surfaceWarning);
+        &lobj_1.ParameterHelper, &parameterName[0], &g_val);
+    printf("%s : %f \n", "/proc_planner/high_speed/maximum_acceleration",
+           g_val);
+    fflush(stdout);
   } else {
-    param_surfaceWarning = 0.3;
+    g_val = 0.15;
+  }
+  //         %% get rosparam number
+  coder::ros::ParameterTree::c_canonicalizeName(&lobj_1, formatSpec);
+  parameterName.set_size(1, formatSpec.size(1) + 1);
+  loop_ub = formatSpec.size(1);
+  for (int i{0}; i < loop_ub; i++) {
+    parameterName[i] = formatSpec[i];
+  }
+  parameterName[formatSpec.size(1)] = '\x00';
+  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
+      lobj_1.ParameterHelper, &parameterName[0]);
+  if (nameExists) {
+    coder::ros::ParameterTree::c_canonicalizeName(&lobj_1, formatSpec);
+    parameterName.set_size(1, formatSpec.size(1) + 1);
+    loop_ub = formatSpec.size(1);
+    for (int i{0}; i < loop_ub; i++) {
+      parameterName[i] = formatSpec[i];
+    }
+    parameterName[formatSpec.size(1)] = '\x00';
+    h_val = 0.0;
+    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
+        &lobj_1.ParameterHelper, &parameterName[0], &h_val);
+    printf("%s : %f \n", "/proc_planner/high_speed/maximum_velocity", h_val);
+    fflush(stdout);
+  } else {
+    h_val = 0.8;
+  }
+  //         %% get rosparam number
+  coder::ros::ParameterTree::d_canonicalizeName(&lobj_1, formatSpec);
+  parameterName.set_size(1, formatSpec.size(1) + 1);
+  loop_ub = formatSpec.size(1);
+  for (int i{0}; i < loop_ub; i++) {
+    parameterName[i] = formatSpec[i];
+  }
+  parameterName[formatSpec.size(1)] = '\x00';
+  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
+      lobj_1.ParameterHelper, &parameterName[0]);
+  if (nameExists) {
+    coder::ros::ParameterTree::d_canonicalizeName(&lobj_1, formatSpec);
+    parameterName.set_size(1, formatSpec.size(1) + 1);
+    loop_ub = formatSpec.size(1);
+    for (int i{0}; i < loop_ub; i++) {
+      parameterName[i] = formatSpec[i];
+    }
+    parameterName[formatSpec.size(1)] = '\x00';
+    i_val = 0.0;
+    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
+        &lobj_1.ParameterHelper, &parameterName[0], &i_val);
+    printf("%s : %f \n", "/proc_planner/high_speed/maximum_angular_rate",
+           i_val);
+    fflush(stdout);
+  } else {
+    i_val = 0.8;
+  }
+  //         %% get rosparam number
+  coder::ros::ParameterTree::e_canonicalizeName(&lobj_1, formatSpec);
+  parameterName.set_size(1, formatSpec.size(1) + 1);
+  loop_ub = formatSpec.size(1);
+  for (int i{0}; i < loop_ub; i++) {
+    parameterName[i] = formatSpec[i];
+  }
+  parameterName[formatSpec.size(1)] = '\x00';
+  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
+      lobj_1.ParameterHelper, &parameterName[0]);
+  if (nameExists) {
+    coder::ros::ParameterTree::e_canonicalizeName(&lobj_1, formatSpec);
+    parameterName.set_size(1, formatSpec.size(1) + 1);
+    loop_ub = formatSpec.size(1);
+    for (int i{0}; i < loop_ub; i++) {
+      parameterName[i] = formatSpec[i];
+    }
+    parameterName[formatSpec.size(1)] = '\x00';
+    j_val = 0.0;
+    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
+        &lobj_1.ParameterHelper, &parameterName[0], &j_val);
+    printf("%s : %f \n", "/proc_planner/max_depth", j_val);
+    fflush(stdout);
+  } else {
+    j_val = 5.0;
+  }
+  //         %% get rosparam number
+  coder::ros::ParameterTree::f_canonicalizeName(&lobj_1, formatSpec);
+  parameterName.set_size(1, formatSpec.size(1) + 1);
+  loop_ub = formatSpec.size(1);
+  for (int i{0}; i < loop_ub; i++) {
+    parameterName[i] = formatSpec[i];
+  }
+  parameterName[formatSpec.size(1)] = '\x00';
+  nameExists = std::mem_fn(&MATLABROSParameter::hasParam)(
+      lobj_1.ParameterHelper, &parameterName[0]);
+  if (nameExists) {
+    coder::ros::ParameterTree::f_canonicalizeName(&lobj_1, formatSpec);
+    parameterName.set_size(1, formatSpec.size(1) + 1);
+    loop_ub = formatSpec.size(1);
+    for (int i{0}; i < loop_ub; i++) {
+      parameterName[i] = formatSpec[i];
+    }
+    parameterName[formatSpec.size(1)] = '\x00';
+    k_val = 0.0;
+    std::mem_fn (&MATLABROSParameter::getParameter<double>)(
+        &lobj_1.ParameterHelper, &parameterName[0], &k_val);
+    printf("%s : %f \n", "/proc_planner/surface_warning", k_val);
+    fflush(stdout);
+  } else {
+    k_val = 0.3;
   }
   planner.param.ts = 0.1;
-  planner.param.lowSpeed.amax = param_lowSpeed_amax;
-  planner.param.lowSpeed.vlmax = param_lowSpeed_vlmax;
-  planner.param.lowSpeed.vamax = param_lowSpeed_vamax;
-  planner.param.normalSpeed.amax = param_normalSpeed_amax;
-  planner.param.normalSpeed.vlmax = param_normalSpeed_vlmax;
-  planner.param.normalSpeed.vamax = param_normalSpeed_vamax;
-  planner.param.highSpeed.amax = param_highSpeed_amax;
-  planner.param.highSpeed.vlmax = param_highSpeed_vlmax;
-  planner.param.highSpeed.vamax = param_highSpeed_vamax;
-  planner.param.maxDepth = param_maxDepth;
-  planner.param.surfaceWarning = param_surfaceWarning;
+  planner.param.lowSpeed.amax = val;
+  planner.param.lowSpeed.vlmax = b_val;
+  planner.param.lowSpeed.vamax = c_val;
+  planner.param.normalSpeed.amax = d_val;
+  planner.param.normalSpeed.vlmax = e_val;
+  planner.param.normalSpeed.vamax = f_val;
+  planner.param.highSpeed.amax = g_val;
+  planner.param.highSpeed.vlmax = h_val;
+  planner.param.highSpeed.vamax = i_val;
+  planner.param.maxDepth = j_val;
+  planner.param.surfaceWarning = k_val;
   planner.spin(&r);
 }
 
