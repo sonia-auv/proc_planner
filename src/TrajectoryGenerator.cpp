@@ -5,12 +5,13 @@
 // File: TrajectoryGenerator.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 13-Jun-2022 22:36:24
+// C/C++ source code generated on  : 25-Jun-2022 15:23:16
 //
 
 // Include Files
 #include "TrajectoryGenerator.h"
 #include "dot.h"
+#include "eul2quat.h"
 #include "minOrMax.h"
 #include "mod.h"
 #include "norm.h"
@@ -77,11 +78,10 @@ TrajectoryGenerator *TrajectoryGenerator::init(
   for (b_this = 0; b_this < loop_ub; b_this++) {
     this_->MAPM.Pose[b_this] = multiAddposeMsg_Pose[b_this];
   }
-  if (multiAddposeMsg_Pose.size(0) < 1) {
-    this_->nMAPM = 1.0;
-  } else {
-    this_->nMAPM = multiAddposeMsg_Pose.size(0);
-  }
+  double b_multiAddposeMsg_Pose[2];
+  b_multiAddposeMsg_Pose[0] = multiAddposeMsg_Pose.size(0);
+  b_multiAddposeMsg_Pose[1] = 1.0;
+  this_->nMAPM = coder::internal::maximum(b_multiAddposeMsg_Pose);
   //  matlab and cpp dont use same index. return max instead
   //  Initialiser les parametres
   this_->param = *b_param;
@@ -200,33 +200,15 @@ TrajectoryGenerator *TrajectoryGenerator::init(
   do {
     exitg1 = 0;
     if (i <= static_cast<int>(d) - 1) {
-      double s_idx_0;
-      double s_idx_1;
-      double s_idx_2;
       //  pour chaques AddPose
       //  transformer les angle d'euler quaternions
-      s_idx_0 = this_->MAPM.Pose[i].Orientation.Z;
-      s_idx_1 = this_->MAPM.Pose[i].Orientation.Y;
-      s_idx_2 = this_->MAPM.Pose[i].Orientation.X;
-      b_d = 0.017453292519943295 * s_idx_0 / 2.0;
-      eul[0] = std::cos(b_d);
-      b_d = std::sin(b_d);
-      s_idx_0 = b_d;
-      b_d = 0.017453292519943295 * s_idx_1 / 2.0;
-      eul[1] = std::cos(b_d);
-      b_d = std::sin(b_d);
-      s_idx_1 = b_d;
-      b_d = 0.017453292519943295 * s_idx_2 / 2.0;
-      eul[2] = std::cos(b_d);
-      b_d = std::sin(b_d);
-      suppPoint = eul[0] * eul[1];
-      R_Bar = s_idx_0 * s_idx_1;
-      q[0] = suppPoint * eul[2] + R_Bar * b_d;
-      q[1] = suppPoint * b_d - R_Bar * eul[2];
-      suppPoint = s_idx_0 * eul[1];
-      R_Bar = eul[0] * s_idx_1;
-      q[2] = R_Bar * eul[2] + suppPoint * b_d;
-      q[3] = suppPoint * eul[2] - R_Bar * b_d;
+      eul[0] = this_->MAPM.Pose[i].Orientation.Z;
+      eul[1] = this_->MAPM.Pose[i].Orientation.Y;
+      eul[2] = this_->MAPM.Pose[i].Orientation.X;
+      eul[0] *= 0.017453292519943295;
+      eul[1] *= 0.017453292519943295;
+      eul[2] *= 0.017453292519943295;
+      coder::eul2quat(eul, q);
       //  cree le vecteur pose
       eul[0] = this_->MAPM.Pose[i].Position.X;
       eul[1] = this_->MAPM.Pose[i].Position.Y;
@@ -236,6 +218,21 @@ TrajectoryGenerator *TrajectoryGenerator::init(
       switch (this_->MAPM.Pose[i].Frame) {
       case 0U:
         //  position et angle absolue
+        loop_ub = static_cast<int>(
+            ((static_cast<double>(i) + 1.0) + this_->icOffset) - 1.0);
+        qRel[0] = this_->quatList[loop_ub - 1];
+        qRel[1] = this_->quatList[(loop_ub + this_->quatList.size(0)) - 1];
+        qRel[2] = this_->quatList[(loop_ub + this_->quatList.size(0) * 2) - 1];
+        qRel[3] = this_->quatList[(loop_ub + this_->quatList.size(0) * 3) - 1];
+        //  Regarder la discontinuité entre le qk et qk-1
+        // =================================================================
+        //  Fonction qui assure la continuité entre 2 quaternions
+        if (coder::dot(qRel, q) < 0.0) {
+          q[0] = -q[0];
+          q[1] = -q[1];
+          q[2] = -q[2];
+          q[3] = -q[3];
+        }
         loop_ub =
             static_cast<int>((static_cast<double>(i) + 1.0) + this_->icOffset);
         this_->quatList[loop_ub - 1] = q[0];
@@ -292,9 +289,9 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         //  quaternion partie scalaire
         //  quaternion partie vectoriel
         //  QuatRotate n'est pas compilable
-        b_d = 2.0 * coder::dot(*(double(*)[3]) & q[1], eul);
-        suppPoint = q[0] * q[0] -
-                    coder::dot(*(double(*)[3]) & q[1], *(double(*)[3]) & q[1]);
+        b_d = 2.0 * coder::b_dot(*(double(*)[3]) & q[1], eul);
+        suppPoint = q[0] * q[0] - coder::b_dot(*(double(*)[3]) & q[1],
+                                               *(double(*)[3]) & q[1]);
         R_Bar = 2.0 * q[0];
         loop_ub = static_cast<int>(
             ((static_cast<double>(i) + 1.0) + this_->icOffset) - 1.0);
@@ -317,6 +314,21 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         break;
       case 2U:
         //  position relatif et angle absolue
+        loop_ub = static_cast<int>(
+            ((static_cast<double>(i) + 1.0) + this_->icOffset) - 1.0);
+        qRel[0] = this_->quatList[loop_ub - 1];
+        qRel[1] = this_->quatList[(loop_ub + this_->quatList.size(0)) - 1];
+        qRel[2] = this_->quatList[(loop_ub + this_->quatList.size(0) * 2) - 1];
+        qRel[3] = this_->quatList[(loop_ub + this_->quatList.size(0) * 3) - 1];
+        //  Regarder la discontinuité entre le qk et qk-1
+        // =================================================================
+        //  Fonction qui assure la continuité entre 2 quaternions
+        if (coder::dot(qRel, q) < 0.0) {
+          q[0] = -q[0];
+          q[1] = -q[1];
+          q[2] = -q[2];
+          q[3] = -q[3];
+        }
         loop_ub =
             static_cast<int>((static_cast<double>(i) + 1.0) + this_->icOffset);
         this_->quatList[loop_ub - 1] = q[0];
@@ -334,9 +346,9 @@ TrajectoryGenerator *TrajectoryGenerator::init(
         //  quaternion partie scalaire
         //  quaternion partie vectoriel
         //  QuatRotate n'est pas compilable
-        b_d = 2.0 * coder::dot(*(double(*)[3]) & q[1], eul);
-        suppPoint = q[0] * q[0] -
-                    coder::dot(*(double(*)[3]) & q[1], *(double(*)[3]) & q[1]);
+        b_d = 2.0 * coder::b_dot(*(double(*)[3]) & q[1], eul);
+        suppPoint = q[0] * q[0] - coder::b_dot(*(double(*)[3]) & q[1],
+                                               *(double(*)[3]) & q[1]);
         R_Bar = 2.0 * q[0];
         loop_ub = static_cast<int>(
             ((static_cast<double>(i) + 1.0) + this_->icOffset) - 1.0);
@@ -432,6 +444,9 @@ TrajectoryGenerator *TrajectoryGenerator::init(
                  .Pose[static_cast<int>((static_cast<double>(i) + 1.0) - 1.0) -
                        1]
                  .Fine != 0.0)) {
+          double P1_idx_0;
+          double P1_idx_1;
+          double P1_idx_2;
           bool valid;
           suppPoint = (static_cast<double>(i) + 1.0) + this_->icOffset;
           // ==================================================================
@@ -453,13 +468,13 @@ TrajectoryGenerator *TrajectoryGenerator::init(
             eul[2] = this_->pointList[(static_cast<int>(suppPoint - 2.0) +
                                        this_->pointList.size(0) * 2) -
                                       1];
-            s_idx_0 = this_->pointList[static_cast<int>(suppPoint - 1.0) - 1];
-            s_idx_1 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
-                                        this_->pointList.size(0)) -
-                                       1];
-            s_idx_2 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
-                                        this_->pointList.size(0) * 2) -
-                                       1];
+            P1_idx_0 = this_->pointList[static_cast<int>(suppPoint - 1.0) - 1];
+            P1_idx_1 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
+                                         this_->pointList.size(0)) -
+                                        1];
+            P1_idx_2 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
+                                         this_->pointList.size(0) * 2) -
+                                        1];
             P2[0] = this_->pointList[static_cast<int>(suppPoint) - 1];
             P2[1] = this_->pointList[(static_cast<int>(suppPoint) +
                                       this_->pointList.size(0)) -
@@ -469,14 +484,14 @@ TrajectoryGenerator *TrajectoryGenerator::init(
                                      1];
             //  Determiner les vecteurs
             //  Determiner les longeures du triangle
-            v01[0] = s_idx_0 - eul[0];
-            v12[0] = P2[0] - s_idx_0;
+            v01[0] = P1_idx_0 - eul[0];
+            v12[0] = P2[0] - P1_idx_0;
             P2[0] -= eul[0];
-            v01[1] = s_idx_1 - eul[1];
-            v12[1] = P2[1] - s_idx_1;
+            v01[1] = P1_idx_1 - eul[1];
+            v12[1] = P2[1] - P1_idx_1;
             P2[1] -= eul[1];
-            v01[2] = s_idx_2 - eul[2];
-            v12[2] = P2[2] - s_idx_2;
+            v01[2] = P1_idx_2 - eul[2];
+            v12[2] = P2[2] - P1_idx_2;
             P2[2] -= eul[2];
             b_d = coder::b_norm(P2);
             b = coder::b_norm(v01);
@@ -493,19 +508,19 @@ TrajectoryGenerator *TrajectoryGenerator::init(
               //  Calculer les points tangeant au cercle de rayon.
               R_Bar = b - suppPoint;
               eul[0] += v01[0] / b * R_Bar;
-              s_idx_0 += v12[0] / c * suppPoint;
+              P1_idx_0 += v12[0] / c * suppPoint;
               eul[1] += v01[1] / b * R_Bar;
-              s_idx_1 += v12[1] / c * suppPoint;
+              P1_idx_1 += v12[1] / c * suppPoint;
               eul[2] += v01[2] / b * R_Bar;
-              s_idx_2 += v12[2] / c * suppPoint;
+              P1_idx_2 += v12[2] / c * suppPoint;
               valid = true;
             } else {
               eul[0] = 0.0;
-              s_idx_0 = 0.0;
+              P1_idx_0 = 0.0;
               eul[1] = 0.0;
-              s_idx_1 = 0.0;
+              P1_idx_1 = 0.0;
               eul[2] = 0.0;
-              s_idx_2 = 0.0;
+              P1_idx_2 = 0.0;
               valid = false;
             }
             //  Si rayon negatif. copier le point 2 fois
@@ -517,13 +532,13 @@ TrajectoryGenerator *TrajectoryGenerator::init(
             eul[2] = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
                                        this_->pointList.size(0) * 2) -
                                       1];
-            s_idx_0 = this_->pointList[static_cast<int>(suppPoint - 1.0) - 1];
-            s_idx_1 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
-                                        this_->pointList.size(0)) -
-                                       1];
-            s_idx_2 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
-                                        this_->pointList.size(0) * 2) -
-                                       1];
+            P1_idx_0 = this_->pointList[static_cast<int>(suppPoint - 1.0) - 1];
+            P1_idx_1 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
+                                         this_->pointList.size(0)) -
+                                        1];
+            P1_idx_2 = this_->pointList[(static_cast<int>(suppPoint - 1.0) +
+                                         this_->pointList.size(0) * 2) -
+                                        1];
             valid = true;
           }
           if (!valid) {
@@ -547,11 +562,11 @@ TrajectoryGenerator *TrajectoryGenerator::init(
                 v01[2];
             loop_ub = static_cast<int>((static_cast<double>(i) + 1.0) +
                                        this_->icOffset);
-            this_->pointList[loop_ub - 1] = s_idx_0;
+            this_->pointList[loop_ub - 1] = P1_idx_0;
             this_->pointList[(loop_ub + this_->pointList.size(0)) - 1] =
-                s_idx_1;
+                P1_idx_1;
             this_->pointList[(loop_ub + this_->pointList.size(0) * 2) - 1] =
-                s_idx_2;
+                P1_idx_2;
             loop_ub = static_cast<int>(
                 ((static_cast<double>(i) + 1.0) + this_->icOffset) - 1.0);
             this_->pointList[loop_ub - 1] = eul[0];
@@ -786,11 +801,11 @@ TrajectoryGenerator *TrajectoryGenerator::init(
           coder::quatmultiply(q, c_this, qRel);
           //  Déterminer le temps angulaire
           //  Déterminer le temps maximale
-          b_d = coder::b_norm(*(double(*)[3]) & qRel[1]);
+          suppPoint = coder::b_norm(*(double(*)[3]) & qRel[1]);
           eul[0] = c;
-          eul[1] = 2.0 * rt_atan2d_snf(b_d, qRel[0]) / b;
+          eul[1] = 2.0 * rt_atan2d_snf(suppPoint, qRel[0]) / b;
           eul[2] = this_->param.ts;
-          suppPoint = coder::internal::maximum(eul);
+          suppPoint = coder::internal::b_maximum(eul);
           //  Arrondire supperieur selont ts
           R_Bar = coder::b_mod(suppPoint, this_->param.ts);
           if (R_Bar > 0.0) {
