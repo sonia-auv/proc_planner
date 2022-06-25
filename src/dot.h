@@ -5,7 +5,7 @@
 // File: dot.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 13-Jun-2022 22:36:24
+// C/C++ source code generated on  : 25-Jun-2022 15:23:16
 //
 
 #ifndef DOT_H
@@ -18,9 +18,11 @@
 
 // Function Declarations
 namespace coder {
-double dot(const double a[3], const double b[3]);
+double b_dot(const double a[3], const double b[3]);
 
-}
+double dot(const double a[4], const double b[4]);
+
+} // namespace coder
 
 #endif
 //
