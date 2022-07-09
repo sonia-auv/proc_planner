@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 09-Jul-2022 16:26:05
+// C/C++ source code generated on  : 09-Jul-2022 18:30:27
 //
 
 // Include Files
@@ -1139,7 +1139,6 @@ void TrajectoryGenerator::processWpt()
         guard1 = true;
         break;
       default: {
-        unsigned int qY;
         unsigned int varargin_1_idx_0;
         unsigned char id;
         //  Référentiel obstacles
@@ -1157,65 +1156,21 @@ void TrajectoryGenerator::processWpt()
         absxk = 0.0;
         scale = 0.0;
         //  check if obstacle exist
-        b_this = MAPM.Pose[i].Frame;
-        qY = id - 3U;
-        if (b_this - 3U > id) {
-          qY = 0U;
-        }
         if (static_cast<int>(varargin_1_idx_0) < 1) {
-          c_this = 1;
+          b_this = 1;
         } else {
-          c_this = static_cast<int>(varargin_1_idx_0);
+          b_this = static_cast<int>(varargin_1_idx_0);
         }
-        if (static_cast<int>(qY) > c_this) {
+        if ((id <= b_this + 10U) && (id > 10)) {
           //  check if obstacle is found
-          qY = id - 3U;
-          if (b_this - 3U > id) {
-            qY = 0U;
-          }
-          if (obstacleData.Obstacles[static_cast<int>(qY) - 1].IsValid) {
-            qY = id - 3U;
-            if (b_this - 3U > id) {
-              qY = 0U;
-            }
-            s_idx_0 = obstacleData.Obstacles[static_cast<int>(qY) - 1]
-                          .Pose.Position.X;
-            qY = id - 3U;
-            if (b_this - 3U > id) {
-              qY = 0U;
-            }
-            s_idx_1 = obstacleData.Obstacles[static_cast<int>(qY) - 1]
-                          .Pose.Position.Y;
-            qY = id - 3U;
-            if (b_this - 3U > id) {
-              qY = 0U;
-            }
-            s_idx_2 = obstacleData.Obstacles[static_cast<int>(qY) - 1]
-                          .Pose.Position.Z;
-            qY = id - 3U;
-            if (b_this - 3U > id) {
-              qY = 0U;
-            }
-            t = obstacleData.Obstacles[static_cast<int>(qY) - 1]
-                    .Pose.Orientation.W;
-            qY = id - 3U;
-            if (b_this - 3U > id) {
-              qY = 0U;
-            }
-            R_Bar = obstacleData.Obstacles[static_cast<int>(qY) - 1]
-                        .Pose.Orientation.X;
-            qY = id - 3U;
-            if (b_this - 3U > id) {
-              qY = 0U;
-            }
-            absxk = obstacleData.Obstacles[static_cast<int>(qY) - 1]
-                        .Pose.Orientation.Y;
-            qY = id - 3U;
-            if (b_this - 3U > id) {
-              qY = 0U;
-            }
-            scale = obstacleData.Obstacles[static_cast<int>(qY) - 1]
-                        .Pose.Orientation.Z;
+          if (obstacleData.Obstacles[id - 11].IsValid) {
+            s_idx_0 = obstacleData.Obstacles[id - 11].Pose.Position.X;
+            s_idx_1 = obstacleData.Obstacles[id - 11].Pose.Position.Y;
+            s_idx_2 = obstacleData.Obstacles[id - 11].Pose.Position.Z;
+            t = obstacleData.Obstacles[id - 11].Pose.Orientation.W;
+            R_Bar = obstacleData.Obstacles[id - 11].Pose.Orientation.X;
+            absxk = obstacleData.Obstacles[id - 11].Pose.Orientation.Y;
+            scale = obstacleData.Obstacles[id - 11].Pose.Orientation.Z;
           } else {
             status = -7.0;
             printf("INFO : proc planner : Desired obstacle is not detected.\n");
