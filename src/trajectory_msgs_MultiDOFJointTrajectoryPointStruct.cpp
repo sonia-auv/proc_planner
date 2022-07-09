@@ -5,7 +5,7 @@
 // File: trajectory_msgs_MultiDOFJointTrajectoryPointStruct.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
 // Include Files
@@ -27,7 +27,7 @@
 void trajectory_msgs_MultiDOFJointTrajectoryPointStruct(
     trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T *msg)
 {
-  static const char cv[44]{
+  static const char b_cv[44]{
       't', 'r', 'a', 'j', 'e', 'c', 't', 'o', 'r', 'y', '_', 'm', 's', 'g', 's',
       '/', 'M', 'u', 'l', 't', 'i', 'D', 'O', 'F', 'J', 'o', 'i', 'n', 't', 'T',
       'r', 'a', 'j', 'e', 'c', 't', 'o', 'r', 'y', 'P', 'o', 'i', 'n', 't'};
@@ -39,7 +39,7 @@ void trajectory_msgs_MultiDOFJointTrajectoryPointStruct(
   geometry_msgs_TwistStruct(&t0_Accelerations);
   msg->TimeFromStart = ros_DurationStruct();
   for (int i{0}; i < 44; i++) {
-    msg->MessageType[i] = cv[i];
+    msg->MessageType[i] = b_cv[i];
   }
   msg->Transforms.set_size(1);
   msg->Transforms[0] = t0_Transforms;

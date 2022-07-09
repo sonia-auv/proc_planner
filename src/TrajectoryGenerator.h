@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
 #ifndef TRAJECTORYGENERATOR_H
@@ -19,23 +19,31 @@
 #include <cstddef>
 #include <cstdlib>
 
+// Type Declarations
+namespace coder {
+namespace ros {
+class Publisher;
+
+}
+} // namespace coder
+
 // Type Definitions
 class TrajectoryGenerator {
 public:
-  TrajectoryGenerator *
-  init(const char multiAddposeMsg_MessageType[25],
-       unsigned char multiAddposeMsg_InterpolationMethod,
-       const coder::array<sonia_common_AddPoseStruct_T, 1U>
-           &multiAddposeMsg_Pose,
-       const b_struct_T *b_param,
-       const geometry_msgs_PointStruct_T icMsg_Position,
-       const geometry_msgs_QuaternionStruct_T icMsg_Orientation);
+  void processWpt();
+  void Compute(const coder::ros::Publisher *trajpub);
   double status;
   sonia_common_MultiAddPoseStruct_T MAPM;
   b_struct_T param;
+  sonia_common_ObstacleArrayStruct_T obstacleData;
+  double nMAPM;
+  double n;
+  double icOffset;
   coder::array<double, 2U> pointList;
   coder::array<double, 2U> quatList;
   coder::array<double, 1U> timeList;
+  coder::array<double, 2U> courseList;
+  coder::array<double, 2U> speedList;
   double nbPoint;
   coder::array<double, 2U> trajPosition;
   coder::array<double, 2U> trajQuat;
@@ -43,13 +51,6 @@ public:
   coder::array<double, 2U> trajAngulairRates;
   coder::array<double, 2U> trajLinearAcceleration;
   coder::array<double, 2U> trajAngularAcceleration;
-
-private:
-  double nMAPM;
-  double n;
-  double icOffset;
-  coder::array<double, 2U> courseList;
-  coder::array<double, 2U> speedList;
 };
 
 #endif

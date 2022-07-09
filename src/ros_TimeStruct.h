@@ -2,35 +2,29 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: rt_nonfinite.h
+// File: ros_TimeStruct.h
 //
 // MATLAB Coder version            : 5.4
 // C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
-#ifndef RT_NONFINITE_H
-#define RT_NONFINITE_H
+#ifndef ROS_TIMESTRUCT_H
+#define ROS_TIMESTRUCT_H
 
 // Include Files
 #include "rtwtypes.h"
+#include <cstddef>
+#include <cstdlib>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// Type Declarations
+struct ros_TimeStruct_T;
 
-extern real_T rtInf;
-extern real_T rtMinusInf;
-extern real_T rtNaN;
-extern real32_T rtInfF;
-extern real32_T rtMinusInfF;
-extern real32_T rtNaNF;
+// Function Declarations
+ros_TimeStruct_T ros_TimeStruct();
 
-#ifdef __cplusplus
-}
-#endif
 #endif
 //
-// File trailer for rt_nonfinite.h
+// File trailer for ros_TimeStruct.h
 //
 // [EOF]
 //

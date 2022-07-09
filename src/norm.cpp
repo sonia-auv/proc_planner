@@ -5,7 +5,7 @@
 // File: norm.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
 // Include Files
@@ -44,55 +44,6 @@ double b_norm(const double x[3])
     y += t * t;
   }
   absxk = std::abs(x[2]);
-  if (absxk > scale) {
-    t = scale / absxk;
-    y = y * t * t + 1.0;
-    scale = absxk;
-  } else {
-    t = absxk / scale;
-    y += t * t;
-  }
-  return scale * std::sqrt(y);
-}
-
-//
-// Arguments    : const double x[4]
-// Return Type  : double
-//
-double c_norm(const double x[4])
-{
-  double absxk;
-  double scale;
-  double t;
-  double y;
-  scale = 3.3121686421112381E-170;
-  absxk = std::abs(x[0]);
-  if (absxk > 3.3121686421112381E-170) {
-    y = 1.0;
-    scale = absxk;
-  } else {
-    t = absxk / 3.3121686421112381E-170;
-    y = t * t;
-  }
-  absxk = std::abs(x[1]);
-  if (absxk > scale) {
-    t = scale / absxk;
-    y = y * t * t + 1.0;
-    scale = absxk;
-  } else {
-    t = absxk / scale;
-    y += t * t;
-  }
-  absxk = std::abs(x[2]);
-  if (absxk > scale) {
-    t = scale / absxk;
-    y = y * t * t + 1.0;
-    scale = absxk;
-  } else {
-    t = absxk / scale;
-    y += t * t;
-  }
-  absxk = std::abs(x[3]);
   if (absxk > scale) {
     t = scale / absxk;
     y = y * t * t + 1.0;

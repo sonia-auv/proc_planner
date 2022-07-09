@@ -5,7 +5,7 @@
 // File: Subscriber.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
 #ifndef SUBSCRIBER_H
@@ -48,9 +48,13 @@ public:
   b_Subscriber *init();
   void callback();
   double get_MessageCount() const;
-  void get_LatestMessage(
-      geometry_msgs_PointStruct_T *lastSubMsg_Position,
-      geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation) const;
+  void get_LatestMessage(double *lastSubMsg_Position_X,
+                         double *lastSubMsg_Position_Y,
+                         double *lastSubMsg_Position_Z,
+                         double *lastSubMsg_Orientation_X,
+                         double *lastSubMsg_Orientation_Y,
+                         double *lastSubMsg_Orientation_Z,
+                         double *lastSubMsg_Orientation_W) const;
   char TopicName[28];
   double BufferSize;
   double MessageCount;
@@ -61,6 +65,23 @@ private:
       SubscriberHelper;
   geometry_msgs_PoseStruct_T MsgStruct;
   bool IsInitialized;
+};
+
+class c_Subscriber {
+public:
+  c_Subscriber *init();
+  void callback();
+  double get_MessageCount() const;
+  void get_LatestMessage(sonia_common_ObstacleArrayStruct_T *lastSubMsg) const;
+  char TopicName[28];
+  double BufferSize;
+  double MessageCount;
+
+private:
+  std::unique_ptr<MATLABSubscriber<sonia_common::ObstacleArray,
+                                   sonia_common_ObstacleArrayStruct_T>>
+      SubscriberHelper;
+  sonia_common_ObstacleArrayStruct_T MsgStruct;
 };
 
 } // namespace ros

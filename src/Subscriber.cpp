@@ -5,7 +5,7 @@
 // File: Subscriber.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
 // Include Files
@@ -15,6 +15,7 @@
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
 #include "sonia_common_MultiAddPoseStruct.h"
+#include "sonia_common_ObstacleArrayStruct.h"
 #include "coder_array.h"
 #include "mlroscpp_sub.h"
 #include <stdio.h>
@@ -58,6 +59,15 @@ void b_Subscriber::callback()
 
 //
 // Arguments    : void
+// Return Type  : void
+//
+void c_Subscriber::callback()
+{
+  MessageCount = get_MessageCount() + 1.0;
+}
+
+//
+// Arguments    : void
 // Return Type  : double
 //
 double Subscriber::get_MessageCount() const
@@ -70,6 +80,15 @@ double Subscriber::get_MessageCount() const
 // Return Type  : double
 //
 double b_Subscriber::get_MessageCount() const
+{
+  return MessageCount;
+}
+
+//
+// Arguments    : void
+// Return Type  : double
+//
+double c_Subscriber::get_MessageCount() const
 {
   return MessageCount;
 }
@@ -101,17 +120,43 @@ void Subscriber::get_LatestMessage(
 }
 
 //
-// Arguments    : geometry_msgs_PointStruct_T *lastSubMsg_Position
-//                geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation
+// Arguments    : double *lastSubMsg_Position_X
+//                double *lastSubMsg_Position_Y
+//                double *lastSubMsg_Position_Z
+//                double *lastSubMsg_Orientation_X
+//                double *lastSubMsg_Orientation_Y
+//                double *lastSubMsg_Orientation_Z
+//                double *lastSubMsg_Orientation_W
 // Return Type  : void
 //
-void b_Subscriber::get_LatestMessage(
-    geometry_msgs_PointStruct_T *lastSubMsg_Position,
-    geometry_msgs_QuaternionStruct_T *lastSubMsg_Orientation) const
+void b_Subscriber::get_LatestMessage(double *lastSubMsg_Position_X,
+                                     double *lastSubMsg_Position_Y,
+                                     double *lastSubMsg_Position_Z,
+                                     double *lastSubMsg_Orientation_X,
+                                     double *lastSubMsg_Orientation_Y,
+                                     double *lastSubMsg_Orientation_Z,
+                                     double *lastSubMsg_Orientation_W) const
 {
   MATLABSUBSCRIBER_lock(SubscriberHelper);
-  *lastSubMsg_Position = MsgStruct.Position;
-  *lastSubMsg_Orientation = MsgStruct.Orientation;
+  *lastSubMsg_Position_X = MsgStruct.Position.X;
+  *lastSubMsg_Position_Y = MsgStruct.Position.Y;
+  *lastSubMsg_Position_Z = MsgStruct.Position.Z;
+  *lastSubMsg_Orientation_X = MsgStruct.Orientation.X;
+  *lastSubMsg_Orientation_Y = MsgStruct.Orientation.Y;
+  *lastSubMsg_Orientation_Z = MsgStruct.Orientation.Z;
+  *lastSubMsg_Orientation_W = MsgStruct.Orientation.W;
+  MATLABSUBSCRIBER_unlock(SubscriberHelper);
+}
+
+//
+// Arguments    : sonia_common_ObstacleArrayStruct_T *lastSubMsg
+// Return Type  : void
+//
+void c_Subscriber::get_LatestMessage(
+    sonia_common_ObstacleArrayStruct_T *lastSubMsg) const
+{
+  MATLABSUBSCRIBER_lock(SubscriberHelper);
+  *lastSubMsg = MsgStruct;
   MATLABSUBSCRIBER_unlock(SubscriberHelper);
 }
 
@@ -175,6 +220,36 @@ b_Subscriber *b_Subscriber::init()
                                     28.0, obj->BufferSize);
   obj->callback();
   obj->IsInitialized = true;
+  return obj;
+}
+
+//
+// Arguments    : void
+// Return Type  : c_Subscriber *
+//
+c_Subscriber *c_Subscriber::init()
+{
+  static const char topic[28]{'/', 'p', 'r', 'o', 'c', '_', 'm', 'a', 'p', 'p',
+                              'i', 'n', 'g', '/', 'o', 'b', 's', 't', 'a', 'c',
+                              'l', 'e', '_', 'i', 'n', 'f', 'o', 's'};
+  c_Subscriber *obj;
+  obj = this;
+  for (int i{0}; i < 28; i++) {
+    obj->TopicName[i] = topic[i];
+  }
+  obj->BufferSize = 1.0;
+  obj->MessageCount = 0.0;
+  sonia_common_ObstacleArrayStruct(&obj->MsgStruct);
+  auto structPtr = (&obj->MsgStruct);
+  obj->SubscriberHelper =
+      std::unique_ptr<MATLABSubscriber<sonia_common::ObstacleArray,
+                                       sonia_common_ObstacleArrayStruct_T>>(
+          new MATLABSubscriber<sonia_common::ObstacleArray,
+                               sonia_common_ObstacleArrayStruct_T>(
+              structPtr, [this] { this->callback(); })); //();
+  MATLABSUBSCRIBER_createSubscriber(obj->SubscriberHelper, &obj->TopicName[0],
+                                    28.0, obj->BufferSize);
+  obj->callback();
   return obj;
 }
 

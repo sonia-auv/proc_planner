@@ -142,6 +142,25 @@ void msg2struct(ros_DurationStruct_T* structPtr, ros::Duration const* msgPtr)
 }
 
 
+// Conversions between ros_TimeStruct_T and ros::Time
+
+void struct2msg(ros::Time* msgPtr, ros_TimeStruct_T const* structPtr)
+{
+  const std::string rosMessageType("ros_time/Time");
+
+  msgPtr->nsec =  structPtr->Nsec;
+  msgPtr->sec =  structPtr->Sec;
+}
+
+void msg2struct(ros_TimeStruct_T* structPtr, ros::Time const* msgPtr)
+{
+  const std::string rosMessageType("ros_time/Time");
+
+  structPtr->Nsec =  msgPtr->nsec;
+  structPtr->Sec =  msgPtr->sec;
+}
+
+
 // Conversions between sonia_common_AddPoseStruct_T and sonia_common::AddPose
 
 void struct2msg(sonia_common::AddPose* msgPtr, sonia_common_AddPoseStruct_T const* structPtr)
@@ -185,6 +204,69 @@ void msg2struct(sonia_common_MultiAddPoseStruct_T* structPtr, sonia_common::Mult
 
   structPtr->InterpolationMethod =  msgPtr->interpolation_method;
   convertToStructNestedArray(structPtr->Pose, msgPtr->pose);
+}
+
+
+// Conversions between sonia_common_ObstacleArrayStruct_T and sonia_common::ObstacleArray
+
+void struct2msg(sonia_common::ObstacleArray* msgPtr, sonia_common_ObstacleArrayStruct_T const* structPtr)
+{
+  const std::string rosMessageType("sonia_common/ObstacleArray");
+
+  struct2msg(&msgPtr->header, &structPtr->Header);
+  convertFromStructNestedArray(msgPtr->obstacles, structPtr->Obstacles);
+}
+
+void msg2struct(sonia_common_ObstacleArrayStruct_T* structPtr, sonia_common::ObstacleArray const* msgPtr)
+{
+  const std::string rosMessageType("sonia_common/ObstacleArray");
+
+  msg2struct(&structPtr->Header, &msgPtr->header);
+  convertToStructNestedArray(structPtr->Obstacles, msgPtr->obstacles);
+}
+
+
+// Conversions between sonia_common_ObstacleInfoStruct_T and sonia_common::ObstacleInfo
+
+void struct2msg(sonia_common::ObstacleInfo* msgPtr, sonia_common_ObstacleInfoStruct_T const* structPtr)
+{
+  const std::string rosMessageType("sonia_common/ObstacleInfo");
+
+  msgPtr->confidence =  structPtr->Confidence;
+  msgPtr->is_valid =  structPtr->IsValid;
+  convertFromStructPrimitiveArray(msgPtr->name, structPtr->Name);
+  struct2msg(&msgPtr->pose, &structPtr->Pose);
+}
+
+void msg2struct(sonia_common_ObstacleInfoStruct_T* structPtr, sonia_common::ObstacleInfo const* msgPtr)
+{
+  const std::string rosMessageType("sonia_common/ObstacleInfo");
+
+  structPtr->Confidence =  msgPtr->confidence;
+  structPtr->IsValid =  msgPtr->is_valid;
+  convertToStructPrimitiveArray(structPtr->Name, msgPtr->name);
+  msg2struct(&structPtr->Pose, &msgPtr->pose);
+}
+
+
+// Conversions between std_msgs_HeaderStruct_T and std_msgs::Header
+
+void struct2msg(std_msgs::Header* msgPtr, std_msgs_HeaderStruct_T const* structPtr)
+{
+  const std::string rosMessageType("std_msgs/Header");
+
+  convertFromStructPrimitiveArray(msgPtr->frame_id, structPtr->FrameId);
+  msgPtr->seq =  structPtr->Seq;
+  struct2msg(&msgPtr->stamp, &structPtr->Stamp);
+}
+
+void msg2struct(std_msgs_HeaderStruct_T* structPtr, std_msgs::Header const* msgPtr)
+{
+  const std::string rosMessageType("std_msgs/Header");
+
+  convertToStructPrimitiveArray(structPtr->FrameId, msgPtr->frame_id);
+  structPtr->Seq =  msgPtr->seq;
+  msg2struct(&structPtr->Stamp, &msgPtr->stamp);
 }
 
 

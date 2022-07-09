@@ -5,7 +5,7 @@
 // File: proc_planner_types.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
 #ifndef PROC_PLANNER_TYPES_H
@@ -16,6 +16,11 @@
 #include "coder_array.h"
 
 // Type Definitions
+struct ros_TimeStruct_T {
+  unsigned int Sec;
+  unsigned int Nsec;
+};
+
 struct ros_DurationStruct_T {
   int Sec;
   int Nsec;
@@ -59,6 +64,11 @@ struct geometry_msgs_PoseStruct_T {
   geometry_msgs_QuaternionStruct_T Orientation;
 };
 
+struct std_msgs_Int8Struct_T {
+  char MessageType[13];
+  signed char Data;
+};
+
 struct geometry_msgs_TransformStruct_T {
   char MessageType[23];
   geometry_msgs_Vector3Struct_T Translation;
@@ -71,15 +81,31 @@ struct geometry_msgs_TwistStruct_T {
   geometry_msgs_Vector3Struct_T Angular;
 };
 
-struct std_msgs_Int8Struct_T {
-  char MessageType[13];
-  signed char Data;
+struct sonia_common_ObstacleInfoStruct_T {
+  char MessageType[25];
+  coder::array<char, 2U> Name;
+  bool IsValid;
+  float Confidence;
+  geometry_msgs_PoseStruct_T Pose;
 };
 
 struct sonia_common_MultiAddPoseStruct_T {
   char MessageType[25];
   unsigned char InterpolationMethod;
   coder::array<sonia_common_AddPoseStruct_T, 1U> Pose;
+};
+
+struct std_msgs_HeaderStruct_T {
+  char MessageType[15];
+  unsigned int Seq;
+  ros_TimeStruct_T Stamp;
+  coder::array<char, 2U> FrameId;
+};
+
+struct sonia_common_ObstacleArrayStruct_T {
+  char MessageType[26];
+  std_msgs_HeaderStruct_T Header;
+  coder::array<sonia_common_ObstacleInfoStruct_T, 1U> Obstacles;
 };
 
 struct trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T {

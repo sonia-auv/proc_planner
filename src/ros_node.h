@@ -5,7 +5,7 @@
 // File: ros_node.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 09-Jul-2022 16:26:05
 //
 
 #ifndef ROS_NODE_H
@@ -19,29 +19,22 @@
 #include <cstddef>
 #include <cstdlib>
 
-// Type Declarations
-namespace coder {
-namespace ros {
-class Rate;
-
-}
-} // namespace coder
-
 // Type Definitions
 class ros_node {
 public:
-  void spin(coder::ros::Rate *b_spin);
   static void persistentDataStore_init();
   coder::ros::Subscriber *madpSub;
   coder::ros::b_Subscriber *icSub;
+  coder::ros::c_Subscriber *obstacleSub;
   coder::ros::Publisher *trajpub;
   coder::ros::b_Publisher *validPub;
   b_struct_T param;
   bool TrajIsGenerating;
   coder::ros::b_Publisher _pobj0;
   coder::ros::Publisher _pobj1;
-  coder::ros::b_Subscriber _pobj2;
-  coder::ros::Subscriber _pobj3;
+  coder::ros::c_Subscriber _pobj2;
+  coder::ros::b_Subscriber _pobj3;
+  coder::ros::Subscriber _pobj4;
 };
 
 #endif
