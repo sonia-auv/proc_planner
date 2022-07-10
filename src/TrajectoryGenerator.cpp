@@ -5,7 +5,7 @@
 // File: TrajectoryGenerator.cpp
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 09-Jul-2022 18:30:27
+// C/C++ source code generated on  : 10-Jul-2022 02:34:17
 //
 
 // Include Files
@@ -16,6 +16,7 @@
 #include "geometry_msgs_TransformStruct.h"
 #include "geometry_msgs_TwistStruct.h"
 #include "interp1.h"
+#include "norm.h"
 #include "pinv.h"
 #include "proc_planner_internal_types.h"
 #include "proc_planner_types.h"
@@ -698,46 +699,45 @@ void TrajectoryGenerator::processWpt()
     exitg1 = 0;
     if (i <= static_cast<int>(d) - 1) {
       double q[4];
+      double c[3];
+      double d_this[3];
+      double s[3];
+      double R_1;
       double R_Bar;
       double a;
-      double absxk;
-      double b_scale;
-      double c_idx_0;
-      double c_idx_1;
-      double c_idx_2;
-      double c_scale;
+      double b;
+      double b_a;
+      double b_c;
       double i_tmp_tmp;
-      double s_idx_0;
-      double s_idx_1;
-      double s_idx_2;
-      double scale;
-      double t;
+      double qObst_idx_1;
+      double qObst_idx_2;
+      double qObst_idx_3;
       int b_this;
       int c_this;
       bool guard1{false};
       //  pour chaques AddPose
       //  transformer les angle d'euler quaternions
-      s_idx_0 = 0.017453292519943295 * MAPM.Pose[i].Orientation.Z / 2.0;
-      s_idx_1 = 0.017453292519943295 * MAPM.Pose[i].Orientation.Y / 2.0;
-      s_idx_2 = 0.017453292519943295 * MAPM.Pose[i].Orientation.X / 2.0;
-      c_idx_0 = std::cos(s_idx_0);
-      s_idx_0 = std::sin(s_idx_0);
-      c_idx_1 = std::cos(s_idx_1);
-      s_idx_1 = std::sin(s_idx_1);
-      c_idx_2 = std::cos(s_idx_2);
-      s_idx_2 = std::sin(s_idx_2);
-      absxk = c_idx_0 * c_idx_1;
-      scale = s_idx_0 * s_idx_1;
-      q[0] = absxk * c_idx_2 + scale * s_idx_2;
-      q[1] = absxk * s_idx_2 - scale * c_idx_2;
-      absxk = s_idx_0 * c_idx_1;
-      scale = c_idx_0 * s_idx_1;
-      q[2] = scale * c_idx_2 + absxk * s_idx_2;
-      q[3] = absxk * c_idx_2 - scale * s_idx_2;
+      s[0] = 0.017453292519943295 * MAPM.Pose[i].Orientation.Z / 2.0;
+      s[1] = 0.017453292519943295 * MAPM.Pose[i].Orientation.Y / 2.0;
+      s[2] = 0.017453292519943295 * MAPM.Pose[i].Orientation.X / 2.0;
+      c[0] = std::cos(s[0]);
+      s[0] = std::sin(s[0]);
+      c[1] = std::cos(s[1]);
+      s[1] = std::sin(s[1]);
+      c[2] = std::cos(s[2]);
+      s[2] = std::sin(s[2]);
+      R_1 = c[0] * c[1];
+      R_Bar = s[0] * s[1];
+      q[0] = R_1 * c[2] + R_Bar * s[2];
+      q[1] = R_1 * s[2] - R_Bar * c[2];
+      R_1 = s[0] * c[1];
+      R_Bar = c[0] * s[1];
+      q[2] = R_Bar * c[2] + R_1 * s[2];
+      q[3] = R_1 * c[2] - R_Bar * s[2];
       //  cree le vecteur pose
-      c_idx_0 = MAPM.Pose[i].Position.X;
-      c_idx_1 = MAPM.Pose[i].Position.Y;
-      c_idx_2 = MAPM.Pose[i].Position.Z;
+      c[0] = MAPM.Pose[i].Position.X;
+      c[1] = MAPM.Pose[i].Position.Y;
+      c[2] = MAPM.Pose[i].Position.Z;
       //  transformer le point en fonction du frame
       guard1 = false;
       switch (MAPM.Pose[i].Frame) {
@@ -746,15 +746,14 @@ void TrajectoryGenerator::processWpt()
         //  Regarder la discontinuité entre le qk et qk-1
         // =================================================================
         //  Fonction qui assure la continuité entre 2 quaternions
-        absxk = (static_cast<double>(i) + 1.0) + icOffset;
-        if (((quatList[static_cast<int>(absxk - 1.0) - 1] * q[0] +
-              quatList[(static_cast<int>(absxk - 1.0) + quatList.size(0)) - 1] *
+        R_1 = (static_cast<double>(i) + 1.0) + icOffset;
+        if (((quatList[static_cast<int>(R_1 - 1.0) - 1] * q[0] +
+              quatList[(static_cast<int>(R_1 - 1.0) + quatList.size(0)) - 1] *
                   q[1]) +
-             quatList[(static_cast<int>(absxk - 1.0) + quatList.size(0) * 2) -
+             quatList[(static_cast<int>(R_1 - 1.0) + quatList.size(0) * 2) -
                       1] *
                  q[2]) +
-                quatList[(static_cast<int>(absxk - 1.0) +
-                          quatList.size(0) * 3) -
+                quatList[(static_cast<int>(R_1 - 1.0) + quatList.size(0) * 3) -
                          1] *
                     q[3] <
             0.0) {
@@ -763,14 +762,14 @@ void TrajectoryGenerator::processWpt()
           q[2] = -q[2];
           q[3] = -q[3];
         }
-        quatList[static_cast<int>(absxk) - 1] = q[0];
-        quatList[(static_cast<int>(absxk) + quatList.size(0)) - 1] = q[1];
-        quatList[(static_cast<int>(absxk) + quatList.size(0) * 2) - 1] = q[2];
-        quatList[(static_cast<int>(absxk) + quatList.size(0) * 3) - 1] = q[3];
+        quatList[static_cast<int>(R_1) - 1] = q[0];
+        quatList[(static_cast<int>(R_1) + quatList.size(0)) - 1] = q[1];
+        quatList[(static_cast<int>(R_1) + quatList.size(0) * 2) - 1] = q[2];
+        quatList[(static_cast<int>(R_1) + quatList.size(0) * 3) - 1] = q[3];
         b_this = static_cast<int>((static_cast<double>(i) + 1.0) + icOffset);
-        pointList[b_this - 1] = c_idx_0;
-        pointList[(b_this + pointList.size(0)) - 1] = c_idx_1;
-        pointList[(b_this + pointList.size(0) * 2) - 1] = c_idx_2;
+        pointList[b_this - 1] = c[0];
+        pointList[(b_this + pointList.size(0)) - 1] = c[1];
+        pointList[(b_this + pointList.size(0) * 2) - 1] = c[2];
         guard1 = true;
         break;
       case 1U:
@@ -790,24 +789,22 @@ void TrajectoryGenerator::processWpt()
         // ==================================================================
         //  Fonnction qui retoure le quaternion le plus court/long selon
         //  l'utilisateur
-        absxk =
-            quatList[static_cast<int>(
-                         ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
-                     1];
-        scale =
+        R_1 = quatList[static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                       1];
+        R_Bar =
             quatList[(static_cast<int>(
                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
                       quatList.size(0) * 2) -
                      1];
-        t = quatList[(static_cast<int>(
+        b = quatList[(static_cast<int>(
                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
                       quatList.size(0) * 3) -
                      1];
-        R_Bar =
-            quatList[(static_cast<int>(
-                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
-                      quatList.size(0)) -
-                     1];
+        b_c = quatList[(static_cast<int>(
+                            ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                        quatList.size(0)) -
+                       1];
         b_this = static_cast<int>((static_cast<double>(i) + 1.0) + icOffset);
         quatList[b_this - 1] =
             ((quatList[static_cast<int>(
@@ -830,11 +827,11 @@ void TrajectoryGenerator::processWpt()
                      1] *
                 q[3];
         quatList[(b_this + quatList.size(0)) - 1] =
-            (absxk * q[1] + q[0] * R_Bar) + (scale * q[3] - q[2] * t);
+            (R_1 * q[1] + q[0] * b_c) + (R_Bar * q[3] - q[2] * b);
         quatList[(b_this + quatList.size(0) * 2) - 1] =
-            (absxk * q[2] + q[0] * scale) + (q[1] * t - R_Bar * q[3]);
+            (R_1 * q[2] + q[0] * R_Bar) + (q[1] * b - b_c * q[3]);
         quatList[(b_this + quatList.size(0) * 3) - 1] =
-            (absxk * q[3] + q[0] * t) + (R_Bar * q[2] - q[1] * scale);
+            (R_1 * q[3] + q[0] * b) + (b_c * q[2] - q[1] * R_Bar);
         c_this =
             static_cast<int>(((static_cast<double>(i) + 1.0) + icOffset) - 1.0);
         // =================================================================
@@ -842,81 +839,73 @@ void TrajectoryGenerator::processWpt()
         //  quaternion partie scalaire
         //  quaternion partie vectoriel
         //  QuatRotate n'est pas compilable
-        a = 2.0 * ((quatList[(c_this + quatList.size(0)) - 1] * c_idx_0 +
-                    quatList[(c_this + quatList.size(0) * 2) - 1] * c_idx_1) +
-                   quatList[(c_this + quatList.size(0) * 3) - 1] * c_idx_2);
-        b_scale =
-            quatList[static_cast<int>(
-                         ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
-                     1] *
-                quatList[static_cast<int>(
-                             ((static_cast<double>(i) + 1.0) + icOffset) -
-                             1.0) -
-                         1] -
-            ((quatList[(c_this + quatList.size(0)) - 1] *
-                  quatList[(c_this + quatList.size(0)) - 1] +
-              quatList[(c_this + quatList.size(0) * 2) - 1] *
-                  quatList[(c_this + quatList.size(0) * 2) - 1]) +
-             quatList[(c_this + quatList.size(0) * 3) - 1] *
-                 quatList[(c_this + quatList.size(0) * 3) - 1]);
-        c_scale =
-            2.0 *
+        a = 2.0 * ((quatList[(c_this + quatList.size(0)) - 1] * c[0] +
+                    quatList[(c_this + quatList.size(0) * 2) - 1] * c[1]) +
+                   quatList[(c_this + quatList.size(0) * 3) - 1] * c[2]);
+        b_a = quatList[static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                       1] *
+                  quatList[static_cast<int>(
+                               ((static_cast<double>(i) + 1.0) + icOffset) -
+                               1.0) -
+                           1] -
+              ((quatList[(c_this + quatList.size(0)) - 1] *
+                    quatList[(c_this + quatList.size(0)) - 1] +
+                quatList[(c_this + quatList.size(0) * 2) - 1] *
+                    quatList[(c_this + quatList.size(0) * 2) - 1]) +
+               quatList[(c_this + quatList.size(0) * 3) - 1] *
+                   quatList[(c_this + quatList.size(0) * 3) - 1]);
+        b = 2.0 *
             quatList[static_cast<int>(
                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                      1];
-        R_Bar =
+        d_this[1] =
             pointList[(c_this + pointList.size(0)) - 1] +
-            ((a * quatList[(c_this + quatList.size(0) * 2) - 1] +
-              b_scale * c_idx_1) +
-             c_scale *
-                 (c_idx_0 * quatList[(static_cast<int>(
-                                          ((static_cast<double>(i) + 1.0) +
-                                           icOffset) -
-                                          1.0) +
-                                      quatList.size(0) * 3) -
-                                     1] -
+            ((a * quatList[(c_this + quatList.size(0) * 2) - 1] + b_a * c[1]) +
+             b * (c[0] * quatList[(static_cast<int>(
+                                       ((static_cast<double>(i) + 1.0) +
+                                        icOffset) -
+                                       1.0) +
+                                   quatList.size(0) * 3) -
+                                  1] -
                   quatList[(static_cast<int>(
                                 ((static_cast<double>(i) + 1.0) + icOffset) -
                                 1.0) +
                             quatList.size(0)) -
                            1] *
-                      c_idx_2));
-        absxk =
+                      c[2]));
+        d_this[2] =
             pointList[(c_this + pointList.size(0) * 2) - 1] +
-            ((a * quatList[(c_this + quatList.size(0) * 3) - 1] +
-              b_scale * c_idx_2) +
-             c_scale *
-                 (quatList[(static_cast<int>(
+            ((a * quatList[(c_this + quatList.size(0) * 3) - 1] + b_a * c[2]) +
+             b * (quatList[(static_cast<int>(
                                 ((static_cast<double>(i) + 1.0) + icOffset) -
                                 1.0) +
                             quatList.size(0)) -
                            1] *
-                      c_idx_1 -
-                  c_idx_0 * quatList[(static_cast<int>(
-                                          ((static_cast<double>(i) + 1.0) +
-                                           icOffset) -
-                                          1.0) +
-                                      quatList.size(0) * 2) -
-                                     1]));
+                      c[1] -
+                  c[0] * quatList[(static_cast<int>(
+                                       ((static_cast<double>(i) + 1.0) +
+                                        icOffset) -
+                                       1.0) +
+                                   quatList.size(0) * 2) -
+                                  1]));
         pointList[b_this - 1] =
             pointList[c_this - 1] +
-            ((a * quatList[(c_this + quatList.size(0)) - 1] +
-              b_scale * c_idx_0) +
-             c_scale *
-                 (quatList[(static_cast<int>(
+            ((a * quatList[(c_this + quatList.size(0)) - 1] + b_a * c[0]) +
+             b * (quatList[(static_cast<int>(
                                 ((static_cast<double>(i) + 1.0) + icOffset) -
                                 1.0) +
                             quatList.size(0) * 2) -
                            1] *
-                      c_idx_2 -
-                  c_idx_1 * quatList[(static_cast<int>(
-                                          ((static_cast<double>(i) + 1.0) +
-                                           icOffset) -
-                                          1.0) +
-                                      quatList.size(0) * 3) -
-                                     1]));
-        pointList[(b_this + pointList.size(0)) - 1] = R_Bar;
-        pointList[(b_this + pointList.size(0) * 2) - 1] = absxk;
+                      c[2] -
+                  c[1] * quatList[(static_cast<int>(
+                                       ((static_cast<double>(i) + 1.0) +
+                                        icOffset) -
+                                       1.0) +
+                                   quatList.size(0) * 3) -
+                                  1]));
+        pointList[(b_this + pointList.size(0)) - 1] = d_this[1];
+        pointList[(b_this + pointList.size(0) * 2) - 1] = d_this[2];
         guard1 = true;
         break;
       case 2U:
@@ -957,21 +946,20 @@ void TrajectoryGenerator::processWpt()
         a = 2.0 *
             ((quatList[(static_cast<int>(i_tmp_tmp - 1.0) + quatList.size(0)) -
                        1] *
-                  c_idx_0 +
+                  c[0] +
               quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
                         quatList.size(0) * 2) -
                        1] *
-                  c_idx_1) +
+                  c[1]) +
              quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
                        quatList.size(0) * 3) -
                       1] *
-                 c_idx_2);
-        absxk =
-            quatList[static_cast<int>(
-                         ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
-                     1];
-        b_scale =
-            absxk * absxk -
+                 c[2]);
+        R_1 = quatList[static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                       1];
+        b_a =
+            R_1 * R_1 -
             ((quatList[(static_cast<int>(i_tmp_tmp - 1.0) + quatList.size(0)) -
                        1] *
                   quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
@@ -989,48 +977,47 @@ void TrajectoryGenerator::processWpt()
                  quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
                            quatList.size(0) * 3) -
                           1]);
-        c_scale = 2.0 * absxk;
-        scale =
+        b = 2.0 * R_1;
+        R_1 = quatList[(static_cast<int>(
+                            ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                        quatList.size(0) * 3) -
+                       1];
+        R_Bar =
             quatList[(static_cast<int>(
-                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
-                      quatList.size(0) * 3) -
-                     1];
-        t = quatList[(static_cast<int>(
                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
                       quatList.size(0) * 2) -
                      1];
-        absxk =
-            quatList[(static_cast<int>(
-                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
-                      quatList.size(0)) -
-                     1];
-        R_Bar =
+        b_c = quatList[(static_cast<int>(
+                            ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                        quatList.size(0)) -
+                       1];
+        d_this[1] =
             pointList[(static_cast<int>(i_tmp_tmp - 1.0) + pointList.size(0)) -
                       1] +
             ((a * quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
                             quatList.size(0) * 2) -
                            1] +
-              b_scale * c_idx_1) +
-             c_scale * (c_idx_0 * scale - absxk * c_idx_2));
-        absxk = pointList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                           pointList.size(0) * 2) -
-                          1] +
-                ((a * quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                                quatList.size(0) * 3) -
-                               1] +
-                  b_scale * c_idx_2) +
-                 c_scale * (absxk * c_idx_1 - c_idx_0 * t));
+              b_a * c[1]) +
+             b * (c[0] * R_1 - b_c * c[2]));
+        d_this[2] = pointList[(static_cast<int>(i_tmp_tmp - 1.0) +
+                               pointList.size(0) * 2) -
+                              1] +
+                    ((a * quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
+                                    quatList.size(0) * 3) -
+                                   1] +
+                      b_a * c[2]) +
+                     b * (b_c * c[1] - c[0] * R_Bar));
         pointList[static_cast<int>(i_tmp_tmp) - 1] =
             pointList[static_cast<int>(i_tmp_tmp - 1.0) - 1] +
             ((a * quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
                             quatList.size(0)) -
                            1] +
-              b_scale * c_idx_0) +
-             c_scale * (t * c_idx_2 - c_idx_1 * scale));
+              b_a * c[0]) +
+             b * (R_Bar * c[2] - c[1] * R_1));
         pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) - 1] =
-            R_Bar;
+            d_this[1];
         pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0) * 2) - 1] =
-            absxk;
+            d_this[2];
         guard1 = true;
         break;
       case 3U:
@@ -1050,7 +1037,7 @@ void TrajectoryGenerator::processWpt()
         // ==================================================================
         //  Fonnction qui retoure le quaternion le plus court/long selon
         //  l'utilisateur
-        absxk =
+        qObst_idx_1 =
             (quatList[static_cast<int>(
                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                       1] *
@@ -1070,7 +1057,7 @@ void TrajectoryGenerator::processWpt()
                                   1.0) +
                               quatList.size(0) * 3) -
                              1]);
-        scale =
+        qObst_idx_2 =
             (quatList[static_cast<int>(
                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                       1] *
@@ -1090,7 +1077,8 @@ void TrajectoryGenerator::processWpt()
                        quatList.size(0)) -
                       1] *
                  q[3]);
-        t = (quatList[static_cast<int>(
+        qObst_idx_3 =
+            (quatList[static_cast<int>(
                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                       1] *
                  q[3] +
@@ -1130,12 +1118,12 @@ void TrajectoryGenerator::processWpt()
                       quatList.size(0) * 3) -
                      1] *
                 q[3];
-        quatList[(b_this + quatList.size(0)) - 1] = absxk;
-        quatList[(b_this + quatList.size(0) * 2) - 1] = scale;
-        quatList[(b_this + quatList.size(0) * 3) - 1] = t;
-        pointList[b_this - 1] = c_idx_0;
-        pointList[(b_this + pointList.size(0)) - 1] = c_idx_1;
-        pointList[(b_this + pointList.size(0) * 2) - 1] = c_idx_2;
+        quatList[(b_this + quatList.size(0)) - 1] = qObst_idx_1;
+        quatList[(b_this + quatList.size(0) * 2) - 1] = qObst_idx_2;
+        quatList[(b_this + quatList.size(0) * 3) - 1] = qObst_idx_3;
+        pointList[b_this - 1] = c[0];
+        pointList[(b_this + pointList.size(0)) - 1] = c[1];
+        pointList[(b_this + pointList.size(0) * 2) - 1] = c[2];
         guard1 = true;
         break;
       default: {
@@ -1148,13 +1136,13 @@ void TrajectoryGenerator::processWpt()
         //  Fonction qui vérifie frame obstacles
         varargin_1_idx_0 =
             static_cast<unsigned int>(obstacleData.Obstacles.size(0));
-        s_idx_0 = 0.0;
-        s_idx_1 = 0.0;
-        s_idx_2 = 0.0;
-        t = 0.0;
-        R_Bar = 0.0;
-        absxk = 0.0;
-        scale = 0.0;
+        s[0] = 0.0;
+        s[1] = 0.0;
+        s[2] = 0.0;
+        b_c = 0.0;
+        qObst_idx_1 = 0.0;
+        qObst_idx_2 = 0.0;
+        qObst_idx_3 = 0.0;
         //  check if obstacle exist
         if (static_cast<int>(varargin_1_idx_0) < 1) {
           b_this = 1;
@@ -1164,13 +1152,13 @@ void TrajectoryGenerator::processWpt()
         if ((id <= b_this + 10U) && (id > 10)) {
           //  check if obstacle is found
           if (obstacleData.Obstacles[id - 11].IsValid) {
-            s_idx_0 = obstacleData.Obstacles[id - 11].Pose.Position.X;
-            s_idx_1 = obstacleData.Obstacles[id - 11].Pose.Position.Y;
-            s_idx_2 = obstacleData.Obstacles[id - 11].Pose.Position.Z;
-            t = obstacleData.Obstacles[id - 11].Pose.Orientation.W;
-            R_Bar = obstacleData.Obstacles[id - 11].Pose.Orientation.X;
-            absxk = obstacleData.Obstacles[id - 11].Pose.Orientation.Y;
-            scale = obstacleData.Obstacles[id - 11].Pose.Orientation.Z;
+            s[0] = obstacleData.Obstacles[id - 11].Pose.Position.X;
+            s[1] = obstacleData.Obstacles[id - 11].Pose.Position.Y;
+            s[2] = obstacleData.Obstacles[id - 11].Pose.Position.Z;
+            b_c = obstacleData.Obstacles[id - 11].Pose.Orientation.W;
+            qObst_idx_1 = obstacleData.Obstacles[id - 11].Pose.Orientation.X;
+            qObst_idx_2 = obstacleData.Obstacles[id - 11].Pose.Orientation.Y;
+            qObst_idx_3 = obstacleData.Obstacles[id - 11].Pose.Orientation.Z;
           } else {
             status = -7.0;
             printf("INFO : proc planner : Desired obstacle is not detected.\n");
@@ -1182,110 +1170,57 @@ void TrajectoryGenerator::processWpt()
           fflush(stdout);
         }
         if (status >= 0.0) {
-          // ---------------------------------------------------------------
-          //  Code not ready for deploy yet. It is comment to avoid instablitiy
-          //  during pool testing.
-          // ---------------------------------------------------------------
-          //            norm = dot(lq,q);
-          //              % conjuger le quaternion au besoin
-          //              %if  norm > 1 && dir == 0 || norm < 1 && dir == 1
-          //             if  norm < 0  && dir == 0 || norm >= 0 && dir == 1
-          //                  q = quatconj(q);
-          //                  this.lastConj =true;
-          //
-          //              end
-          // ==================================================================
-          //  Fonnction qui retoure le quaternion le plus court/long selon
-          //  l'utilisateur
-          b_this = static_cast<int>((static_cast<double>(i) + 1.0) + icOffset);
-          quatList[b_this - 1] =
-              ((t * q[0] - R_Bar * q[1]) - absxk * q[2]) - scale * q[3];
-          quatList[(b_this + quatList.size(0)) - 1] =
-              (t * q[1] + q[0] * R_Bar) + (absxk * q[3] - q[2] * scale);
-          quatList[(b_this + quatList.size(0) * 2) - 1] =
-              (t * q[2] + q[0] * absxk) + (q[1] * scale - R_Bar * q[3]);
-          quatList[(b_this + quatList.size(0) * 3) - 1] =
-              (t * q[3] + q[0] * scale) + (R_Bar * q[2] - q[1] * absxk);
-          c_this = static_cast<int>(
+          R_1 = q[0];
+          R_Bar = q[1];
+          b = q[2];
+          q[0] = ((b_c * q[0] - qObst_idx_1 * q[1]) - qObst_idx_2 * q[2]) -
+                 qObst_idx_3 * q[3];
+          q[1] = (b_c * q[1] + R_1 * qObst_idx_1) +
+                 (qObst_idx_2 * q[3] - q[2] * qObst_idx_3);
+          q[2] = (b_c * q[2] + R_1 * qObst_idx_2) +
+                 (R_Bar * qObst_idx_3 - qObst_idx_1 * q[3]);
+          q[3] = (b_c * q[3] + R_1 * qObst_idx_3) +
+                 (qObst_idx_1 * b - R_Bar * qObst_idx_2);
+          //  Regarder la discontinuité entre le qk et qk-1
+          // =================================================================
+          //  Fonction qui assure la continuité entre 2 quaternions
+          b_this = static_cast<int>(
               ((static_cast<double>(i) + 1.0) + icOffset) - 1.0);
-          q[2] = quatList[(c_this + quatList.size(0) * 2) - 1];
-          q[3] = quatList[(c_this + quatList.size(0) * 3) - 1];
+          if (((quatList[b_this - 1] * q[0] +
+                quatList[(b_this + quatList.size(0)) - 1] * q[1]) +
+               quatList[(b_this + quatList.size(0) * 2) - 1] * q[2]) +
+                  quatList[(b_this + quatList.size(0) * 3) - 1] * q[3] <
+              0.0) {
+            q[0] = -q[0];
+            q[1] = -q[1];
+            q[2] = -q[2];
+            q[3] = -q[3];
+          }
+          b_this = static_cast<int>((static_cast<double>(i) + 1.0) + icOffset);
+          quatList[b_this - 1] = q[0];
+          quatList[(b_this + quatList.size(0)) - 1] = q[1];
+          quatList[(b_this + quatList.size(0) * 2) - 1] = q[2];
+          quatList[(b_this + quatList.size(0) * 3) - 1] = q[3];
           // =================================================================
           //  Fonction qui tourne un vecteur selon un quaternion.
           //  quaternion partie scalaire
           //  quaternion partie vectoriel
           //  QuatRotate n'est pas compilable
-          a = 2.0 * ((quatList[(c_this + quatList.size(0)) - 1] * c_idx_0 +
-                      quatList[(c_this + quatList.size(0) * 2) - 1] * c_idx_1) +
-                     quatList[(c_this + quatList.size(0) * 3) - 1] * c_idx_2);
-          b_scale =
-              quatList[static_cast<int>(
-                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
-                       1] *
-                  quatList[static_cast<int>(
-                               ((static_cast<double>(i) + 1.0) + icOffset) -
-                               1.0) -
-                           1] -
-              ((quatList[(c_this + quatList.size(0)) - 1] *
-                    quatList[(c_this + quatList.size(0)) - 1] +
-                quatList[(c_this + quatList.size(0) * 2) - 1] *
-                    quatList[(c_this + quatList.size(0) * 2) - 1]) +
-               quatList[(c_this + quatList.size(0) * 3) - 1] *
-                   quatList[(c_this + quatList.size(0) * 3) - 1]);
-          c_scale =
-              2.0 *
-              quatList[static_cast<int>(
-                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
-                       1];
-          absxk =
-              c_scale *
-              (c_idx_0 *
-                   quatList[(static_cast<int>(
-                                 ((static_cast<double>(i) + 1.0) + icOffset) -
-                                 1.0) +
-                             quatList.size(0) * 3) -
-                            1] -
-               quatList[(static_cast<int>(
-                             ((static_cast<double>(i) + 1.0) + icOffset) -
-                             1.0) +
-                         quatList.size(0)) -
-                        1] *
-                   c_idx_2);
-          scale =
-              c_scale *
-              (quatList[(static_cast<int>(
-                             ((static_cast<double>(i) + 1.0) + icOffset) -
-                             1.0) +
-                         quatList.size(0)) -
-                        1] *
-                   c_idx_1 -
-               c_idx_0 *
-                   quatList[(static_cast<int>(
-                                 ((static_cast<double>(i) + 1.0) + icOffset) -
-                                 1.0) +
-                             quatList.size(0) * 2) -
-                            1]);
+          a = 2.0 *
+              ((c[0] * qObst_idx_1 + c[1] * qObst_idx_2) + c[2] * qObst_idx_3);
+          b_a = b_c * b_c -
+                ((qObst_idx_1 * qObst_idx_1 + qObst_idx_2 * qObst_idx_2) +
+                 qObst_idx_3 * qObst_idx_3);
+          b = 2.0 * b_c;
           pointList[b_this - 1] =
-              s_idx_0 +
-              ((a * quatList[(c_this + quatList.size(0)) - 1] +
-                b_scale * c_idx_0) +
-               c_scale *
-                   (quatList[(static_cast<int>(
-                                  ((static_cast<double>(i) + 1.0) + icOffset) -
-                                  1.0) +
-                              quatList.size(0) * 2) -
-                             1] *
-                        c_idx_2 -
-                    c_idx_1 * quatList[(static_cast<int>(
-                                            ((static_cast<double>(i) + 1.0) +
-                                             icOffset) -
-                                            1.0) +
-                                        quatList.size(0) * 3) -
-                                       1]));
+              s[0] + ((a * qObst_idx_1 + b_a * c[0]) +
+                      b * (qObst_idx_2 * c[2] - c[1] * qObst_idx_3));
           pointList[(b_this + pointList.size(0)) - 1] =
-              s_idx_1 + ((a * q[2] + b_scale * c_idx_1) + absxk);
+              s[1] + ((a * qObst_idx_2 + b_a * c[1]) +
+                      b * (c[0] * qObst_idx_3 - qObst_idx_1 * c[2]));
           pointList[(b_this + pointList.size(0) * 2) - 1] =
-              s_idx_2 + ((a * q[3] + b_scale * c_idx_2) + scale);
+              s[2] + ((a * qObst_idx_3 + b_a * c[2]) +
+                      b * (qObst_idx_1 * c[1] - c[0] * qObst_idx_2));
           guard1 = true;
         } else {
           exitg1 = 1;
@@ -1293,7 +1228,6 @@ void TrajectoryGenerator::processWpt()
       } break;
       }
       if (guard1) {
-        double dv[3];
         //  copier le parametre de vitesse
         speedList[static_cast<int>((static_cast<double>(i) + 1.0) + icOffset) -
                   1] = MAPM.Pose[i].Speed;
@@ -1305,13 +1239,13 @@ void TrajectoryGenerator::processWpt()
         q[3] = quatList[(b_this + quatList.size(0) * 3) - 1];
         // ==================================================================
         //  Fonction qui retourne l'angle de course
-        coder::quat2eul(q, dv);
-        c_idx_0 = 57.295779513082323 * dv[0];
-        if (c_idx_0 < 0.0) {
-          c_idx_0 += 360.0;
+        coder::quat2eul(q, d_this);
+        c[0] = 57.295779513082323 * d_this[0];
+        if (c[0] < 0.0) {
+          c[0] += 360.0;
         }
         courseList[static_cast<int>((static_cast<double>(i) + 1.0) + icOffset) -
-                   1] = c_idx_0;
+                   1] = c[0];
         //  verifier si faut arrondire la trajectoire.
         if ((static_cast<double>(i) + 1.0 > 1.0) &&
             (MAPM.Pose[static_cast<int>((static_cast<double>(i) + 1.0) - 1.0) -
@@ -1325,167 +1259,83 @@ void TrajectoryGenerator::processWpt()
                       .Fine;
           //  Si rayon positif calculer la courbe
           if (R_Bar > 0.0) {
-            double b;
-            double c;
-            double d1;
-            double d2;
-            double d3;
-            double d4;
-            double d5;
-            double d6;
+            double b_c_tmp;
+            double c_tmp;
             //  Definition point.
             //  Determiner les vecteurs
             //  Determiner les longeures du triangle
-            c_scale = 3.3121686421112381E-170;
-            b_scale = 3.3121686421112381E-170;
-            scale = 3.3121686421112381E-170;
-            s_idx_2 = pointList[static_cast<int>(i_tmp_tmp) - 2];
-            c_idx_2 = pointList[static_cast<int>(i_tmp_tmp) - 3];
-            d1 = s_idx_2 - c_idx_2;
-            c_idx_0 = d1;
-            d2 = pointList[static_cast<int>(i_tmp_tmp) - 1];
-            d3 = d2 - s_idx_2;
-            s_idx_0 = d3;
-            absxk = std::abs(d2 - c_idx_2);
-            if (absxk > 3.3121686421112381E-170) {
-              a = 1.0;
-              c_scale = absxk;
-            } else {
-              t = absxk / 3.3121686421112381E-170;
-              a = t * t;
-            }
-            absxk = std::abs(d1);
-            if (absxk > 3.3121686421112381E-170) {
-              b = 1.0;
-              b_scale = absxk;
-            } else {
-              t = absxk / 3.3121686421112381E-170;
-              b = t * t;
-            }
-            absxk = std::abs(d3);
-            if (absxk > 3.3121686421112381E-170) {
-              c = 1.0;
-              scale = absxk;
-            } else {
-              t = absxk / 3.3121686421112381E-170;
-              c = t * t;
-            }
-            d2 = pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) -
-                           2];
-            d4 = pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) -
-                           3];
-            d1 = d2 - d4;
-            c_idx_1 = d1;
-            d5 = pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) -
-                           1];
-            d3 = d5 - d2;
-            s_idx_1 = d3;
-            absxk = std::abs(d5 - d4);
-            if (absxk > c_scale) {
-              t = c_scale / absxk;
-              a = a * t * t + 1.0;
-              c_scale = absxk;
-            } else {
-              t = absxk / c_scale;
-              a += t * t;
-            }
-            absxk = std::abs(d1);
-            if (absxk > b_scale) {
-              t = b_scale / absxk;
-              b = b * t * t + 1.0;
-              b_scale = absxk;
-            } else {
-              t = absxk / b_scale;
-              b += t * t;
-            }
-            absxk = std::abs(d3);
-            if (absxk > scale) {
-              t = scale / absxk;
-              c = c * t * t + 1.0;
-              scale = absxk;
-            } else {
-              t = absxk / scale;
-              c += t * t;
-            }
-            d5 = pointList[(static_cast<int>(i_tmp_tmp) +
-                            pointList.size(0) * 2) -
-                           2];
-            d6 = pointList[(static_cast<int>(i_tmp_tmp) +
-                            pointList.size(0) * 2) -
-                           3];
-            d1 = d5 - d6;
-            absxk = pointList[(static_cast<int>(i_tmp_tmp) +
+            qObst_idx_1 = pointList[static_cast<int>(i_tmp_tmp) - 2];
+            qObst_idx_2 = pointList[static_cast<int>(i_tmp_tmp) - 3];
+            c[0] = qObst_idx_1 - qObst_idx_2;
+            R_1 = pointList[static_cast<int>(i_tmp_tmp) - 1];
+            s[0] = R_1 - qObst_idx_1;
+            d_this[0] = R_1 - qObst_idx_2;
+            qObst_idx_3 =
+                pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) -
+                          2];
+            b_a = pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) -
+                            3];
+            c[1] = qObst_idx_3 - b_a;
+            R_1 = pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) -
+                            1];
+            s[1] = R_1 - qObst_idx_3;
+            d_this[1] = R_1 - b_a;
+            c_tmp = pointList[(static_cast<int>(i_tmp_tmp) +
                                pointList.size(0) * 2) -
-                              1];
-            d3 = absxk - d5;
-            absxk = std::abs(absxk - d6);
-            if (absxk > c_scale) {
-              t = c_scale / absxk;
-              a = a * t * t + 1.0;
-              c_scale = absxk;
-            } else {
-              t = absxk / c_scale;
-              a += t * t;
-            }
-            absxk = std::abs(d1);
-            if (absxk > b_scale) {
-              t = b_scale / absxk;
-              b = b * t * t + 1.0;
-              b_scale = absxk;
-            } else {
-              t = absxk / b_scale;
-              b += t * t;
-            }
-            absxk = std::abs(d3);
-            if (absxk > scale) {
-              t = scale / absxk;
-              c = c * t * t + 1.0;
-              scale = absxk;
-            } else {
-              t = absxk / scale;
-              c += t * t;
-            }
-            a = c_scale * std::sqrt(a);
-            b = b_scale * std::sqrt(b);
-            c = scale * std::sqrt(c);
+                              2];
+            b_c_tmp = pointList[(static_cast<int>(i_tmp_tmp) +
+                                 pointList.size(0) * 2) -
+                                3];
+            c[2] = c_tmp - b_c_tmp;
+            R_1 = pointList[(static_cast<int>(i_tmp_tmp) +
+                             pointList.size(0) * 2) -
+                            1];
+            s[2] = R_1 - c_tmp;
+            d_this[2] = R_1 - b_c_tmp;
+            a = coder::b_norm(d_this);
+            b = coder::b_norm(c);
+            b_c = coder::b_norm(s);
             //  Calculer alpha 1 (loi de cos)
             //  radians
             //  Calculer R
-            scale =
-                R_Bar / std::tan(0.5 * std::acos(((-(a * a) + b * b) + c * c) /
-                                                 (2.0 * b * c)));
+            R_1 = R_Bar /
+                  std::tan(0.5 * std::acos(((-(a * a) + b * b) + b_c * b_c) /
+                                           (2.0 * b * b_c)));
             //  Verifier que le rayon n'est pas trop grand
-            if ((scale < b) || (scale < c)) {
+            if ((R_1 < b) || (R_1 < b_c)) {
               //  Calculer les points tangeant au cercle de rayon.
-              absxk = b - scale;
-              c_idx_0 = c_idx_2 + c_idx_0 / b * absxk;
-              s_idx_0 = s_idx_2 + s_idx_0 / c * scale;
-              c_idx_1 = d4 + c_idx_1 / b * absxk;
-              s_idx_1 = d2 + s_idx_1 / c * scale;
-              c_idx_2 = d6 + d1 / b * absxk;
-              s_idx_2 = d5 + d3 / c * scale;
+              R_Bar = b - R_1;
+              c[0] = qObst_idx_2 + c[0] / b * R_Bar;
+              s[0] = qObst_idx_1 + s[0] / b_c * R_1;
+              c[1] = b_a + c[1] / b * R_Bar;
+              s[1] = qObst_idx_3 + s[1] / b_c * R_1;
+              c[2] = b_c_tmp + c[2] / b * R_Bar;
+              s[2] = c_tmp + s[2] / b_c * R_1;
               valid = true;
             } else {
-              c_idx_0 = 0.0;
-              s_idx_0 = 0.0;
-              c_idx_1 = 0.0;
-              s_idx_1 = 0.0;
-              c_idx_2 = 0.0;
-              s_idx_2 = 0.0;
+              c[0] = 0.0;
+              s[0] = 0.0;
+              c[1] = 0.0;
+              s[1] = 0.0;
+              c[2] = 0.0;
+              s[2] = 0.0;
               valid = false;
             }
             //  Si rayon negatif. copier le point 2 fois
           } else {
-            c_idx_0 = pointList[static_cast<int>(i_tmp_tmp - 1.0) - 1];
-            s_idx_0 = c_idx_0;
-            c_idx_1 = pointList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                                 pointList.size(0)) -
-                                1];
-            s_idx_1 = c_idx_1;
-            c_idx_2 = pointList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                                 pointList.size(0) * 2) -
-                                1];
-            s_idx_2 = c_idx_2;
+            qObst_idx_1 = pointList[static_cast<int>(i_tmp_tmp - 1.0) - 1];
+            c[0] = qObst_idx_1;
+            s[0] = qObst_idx_1;
+            qObst_idx_1 = pointList[(static_cast<int>(i_tmp_tmp - 1.0) +
+                                     pointList.size(0)) -
+                                    1];
+            c[1] = qObst_idx_1;
+            s[1] = qObst_idx_1;
+            qObst_idx_1 = pointList[(static_cast<int>(i_tmp_tmp - 1.0) +
+                                     pointList.size(0) * 2) -
+                                    1];
+            c[2] = qObst_idx_1;
+            s[2] = qObst_idx_1;
             valid = true;
           }
           if (!valid) {
@@ -1495,23 +1345,23 @@ void TrajectoryGenerator::processWpt()
             exitg1 = 1;
           } else {
             //  Decaler les waypoints
-            R_Bar = pointList[(b_this + pointList.size(0)) - 1];
-            absxk = pointList[(b_this + pointList.size(0) * 2) - 1];
+            d_this[1] = pointList[(b_this + pointList.size(0)) - 1];
+            d_this[2] = pointList[(b_this + pointList.size(0) * 2) - 1];
             pointList[static_cast<int>(i_tmp_tmp + 1.0) - 1] =
                 pointList[b_this - 1];
             pointList[(static_cast<int>(i_tmp_tmp + 1.0) + pointList.size(0)) -
-                      1] = R_Bar;
+                      1] = d_this[1];
             pointList[(static_cast<int>(i_tmp_tmp + 1.0) +
                        pointList.size(0) * 2) -
-                      1] = absxk;
-            pointList[b_this - 1] = s_idx_0;
-            pointList[(b_this + pointList.size(0)) - 1] = s_idx_1;
-            pointList[(b_this + pointList.size(0) * 2) - 1] = s_idx_2;
+                      1] = d_this[2];
+            pointList[b_this - 1] = s[0];
+            pointList[(b_this + pointList.size(0)) - 1] = s[1];
+            pointList[(b_this + pointList.size(0) * 2) - 1] = s[2];
             c_this = static_cast<int>(
                 ((static_cast<double>(i) + 1.0) + icOffset) - 1.0);
-            pointList[c_this - 1] = c_idx_0;
-            pointList[(c_this + pointList.size(0)) - 1] = c_idx_1;
-            pointList[(c_this + pointList.size(0) * 2) - 1] = c_idx_2;
+            pointList[c_this - 1] = c[0];
+            pointList[(c_this + pointList.size(0)) - 1] = c[1];
+            pointList[(c_this + pointList.size(0) * 2) - 1] = c[2];
             q[1] = quatList[(b_this + quatList.size(0)) - 1];
             q[2] = quatList[(b_this + quatList.size(0) * 2) - 1];
             q[3] = quatList[(b_this + quatList.size(0) * 3) - 1];
