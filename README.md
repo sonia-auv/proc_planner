@@ -5,11 +5,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sonia-auv/proc_planner)
 ![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/sonia-auv/proc_planner.svg)
 
-
-*Please read the instructions and fill in the blanks*
-
-
-One Paragraph of project description goes here
+This repository contains the matlab generated code for proc_planner. To modify this proc, see [Control Library](https://github.com/sonia-auv/control_library)
 
 ## Getting Started
 
