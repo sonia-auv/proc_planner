@@ -2,25 +2,18 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: pchip.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// pchip.cpp
+//
+// Code generation for function 'pchip'
 //
 
-// Include Files
+// Include files
 #include "pchip.h"
 #include "rt_nonfinite.h"
 #include <cmath>
 
 // Function Definitions
-//
-// Arguments    : double d1
-//                double d2
-//                double h1
-//                double h2
-// Return Type  : double
-//
 namespace coder {
 double exteriorSlope(double d1, double d2, double h1, double h2)
 {
@@ -64,8 +57,4 @@ double exteriorSlope(double d1, double d2, double h1, double h2)
 
 } // namespace coder
 
-//
-// File trailer for pchip.cpp
-//
-// [EOF]
-//
+// End of code generation (pchip.cpp)

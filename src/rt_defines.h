@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: rt_defines.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// rt_defines.h
+//
+// Code generation for function 'proc_planner'
 //
 
 #ifndef RT_DEFINES_H
 #define RT_DEFINES_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 
 #ifdef __cplusplus
@@ -31,8 +31,4 @@ static const real32_T RT_EF{2.7182817F};
 }
 #endif
 #endif
-//
-// File trailer for rt_defines.h
-//
-// [EOF]
-//
+// End of code generation (rt_defines.h)

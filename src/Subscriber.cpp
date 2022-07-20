@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: Subscriber.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// Subscriber.cpp
+//
+// Code generation for function 'Subscriber'
 //
 
-// Include Files
+// Include files
 #include "Subscriber.h"
 #include "geometry_msgs_PoseStruct.h"
 #include "proc_planner_data.h"
@@ -21,10 +21,6 @@
 #include <stdio.h>
 
 // Function Definitions
-//
-// Arguments    : void
-// Return Type  : void
-//
 namespace coder {
 namespace ros {
 void Subscriber::callback()
@@ -42,10 +38,6 @@ void Subscriber::callback()
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : void
-//
 void b_Subscriber::callback()
 {
   MessageCount = get_MessageCount() + 1.0;
@@ -57,49 +49,26 @@ void b_Subscriber::callback()
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : void
-//
 void c_Subscriber::callback()
 {
   MessageCount = get_MessageCount() + 1.0;
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double Subscriber::get_MessageCount() const
 {
   return MessageCount;
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double b_Subscriber::get_MessageCount() const
 {
   return MessageCount;
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double c_Subscriber::get_MessageCount() const
 {
   return MessageCount;
 }
 
-//
-// Arguments    : char lastSubMsg_MessageType[25]
-//                unsigned char *lastSubMsg_InterpolationMethod
-//                ::coder::array<sonia_common_AddPoseStruct_T, 1U>
-//                &lastSubMsg_Pose
-// Return Type  : void
-//
 void Subscriber::get_LatestMessage(
     char lastSubMsg_MessageType[25],
     unsigned char *lastSubMsg_InterpolationMethod,
@@ -119,16 +88,6 @@ void Subscriber::get_LatestMessage(
   *lastSubMsg_InterpolationMethod = MsgStruct.InterpolationMethod;
 }
 
-//
-// Arguments    : double *lastSubMsg_Position_X
-//                double *lastSubMsg_Position_Y
-//                double *lastSubMsg_Position_Z
-//                double *lastSubMsg_Orientation_X
-//                double *lastSubMsg_Orientation_Y
-//                double *lastSubMsg_Orientation_Z
-//                double *lastSubMsg_Orientation_W
-// Return Type  : void
-//
 void b_Subscriber::get_LatestMessage(double *lastSubMsg_Position_X,
                                      double *lastSubMsg_Position_Y,
                                      double *lastSubMsg_Position_Z,
@@ -148,10 +107,6 @@ void b_Subscriber::get_LatestMessage(double *lastSubMsg_Position_X,
   MATLABSUBSCRIBER_unlock(SubscriberHelper);
 }
 
-//
-// Arguments    : sonia_common_ObstacleArrayStruct_T *lastSubMsg
-// Return Type  : void
-//
 void c_Subscriber::get_LatestMessage(
     sonia_common_ObstacleArrayStruct_T *lastSubMsg) const
 {
@@ -160,10 +115,6 @@ void c_Subscriber::get_LatestMessage(
   MATLABSUBSCRIBER_unlock(SubscriberHelper);
 }
 
-//
-// Arguments    : void
-// Return Type  : Subscriber *
-//
 Subscriber *Subscriber::init()
 {
   static const char topic[32]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l',
@@ -193,10 +144,6 @@ Subscriber *Subscriber::init()
   return obj;
 }
 
-//
-// Arguments    : void
-// Return Type  : b_Subscriber *
-//
 b_Subscriber *b_Subscriber::init()
 {
   static const char topic[28]{'/', 'p', 'r', 'o', 'c', '_', 'c', 'o', 'n', 't',
@@ -223,10 +170,6 @@ b_Subscriber *b_Subscriber::init()
   return obj;
 }
 
-//
-// Arguments    : void
-// Return Type  : c_Subscriber *
-//
 c_Subscriber *c_Subscriber::init()
 {
   static const char topic[28]{'/', 'p', 'r', 'o', 'c', '_', 'm', 'a', 'p', 'p',
@@ -256,8 +199,4 @@ c_Subscriber *c_Subscriber::init()
 } // namespace ros
 } // namespace coder
 
-//
-// File trailer for Subscriber.cpp
-//
-// [EOF]
-//
+// End of code generation (Subscriber.cpp)

@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: interp1.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// interp1.cpp
+//
+// Code generation for function 'interp1'
 //
 
-// Include Files
+// Include files
 #include "interp1.h"
 #include "bsearch.h"
 #include "pchip.h"
@@ -19,13 +19,6 @@
 #include <math.h>
 
 // Function Definitions
-//
-// Arguments    : const ::coder::array<double, 1U> &varargin_1
-//                const ::coder::array<double, 1U> &varargin_2
-//                const ::coder::array<double, 2U> &varargin_3
-//                ::coder::array<double, 2U> &Vq
-// Return Type  : void
-//
 namespace coder {
 void b_interp1(const ::coder::array<double, 1U> &varargin_1,
                const ::coder::array<double, 1U> &varargin_2,
@@ -124,13 +117,6 @@ void b_interp1(const ::coder::array<double, 1U> &varargin_1,
   }
 }
 
-//
-// Arguments    : const ::coder::array<double, 1U> &varargin_1
-//                const ::coder::array<double, 1U> &varargin_2
-//                const ::coder::array<double, 2U> &varargin_3
-//                ::coder::array<double, 2U> &Vq
-// Return Type  : void
-//
 void c_interp1(const ::coder::array<double, 1U> &varargin_1,
                const ::coder::array<double, 1U> &varargin_2,
                const ::coder::array<double, 2U> &varargin_3,
@@ -351,13 +337,6 @@ void c_interp1(const ::coder::array<double, 1U> &varargin_1,
   }
 }
 
-//
-// Arguments    : const ::coder::array<double, 1U> &varargin_1
-//                const ::coder::array<double, 1U> &varargin_2
-//                const ::coder::array<double, 2U> &varargin_3
-//                ::coder::array<double, 2U> &Vq
-// Return Type  : void
-//
 void interp1(const ::coder::array<double, 1U> &varargin_1,
              const ::coder::array<double, 1U> &varargin_2,
              const ::coder::array<double, 2U> &varargin_3,
@@ -518,8 +497,4 @@ void interp1(const ::coder::array<double, 1U> &varargin_1,
 
 } // namespace coder
 
-//
-// File trailer for interp1.cpp
-//
-// [EOF]
-//
+// End of code generation (interp1.cpp)

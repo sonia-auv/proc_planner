@@ -2,24 +2,18 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xnrm2.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// xnrm2.cpp
+//
+// Code generation for function 'xnrm2'
 //
 
-// Include Files
+// Include files
 #include "xnrm2.h"
 #include "rt_nonfinite.h"
 #include <cmath>
 
 // Function Definitions
-//
-// Arguments    : int n
-//                const double x[12]
-//                int ix0
-// Return Type  : double
-//
 namespace coder {
 namespace internal {
 namespace blas {
@@ -55,10 +49,6 @@ double xnrm2(int n, const double x[12], int ix0)
   return y;
 }
 
-//
-// Arguments    : const double x[3]
-// Return Type  : double
-//
 double xnrm2(const double x[3])
 {
   double scale;
@@ -86,8 +76,4 @@ double xnrm2(const double x[3])
 } // namespace internal
 } // namespace coder
 
-//
-// File trailer for xnrm2.cpp
-//
-// [EOF]
-//
+// End of code generation (xnrm2.cpp)

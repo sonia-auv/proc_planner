@@ -2,23 +2,19 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: minOrMax.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// minOrMax.cpp
+//
+// Code generation for function 'minOrMax'
 //
 
-// Include Files
+// Include files
 #include "minOrMax.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <cmath>
 
 // Function Definitions
-//
-// Arguments    : const double x[3]
-// Return Type  : double
-//
 namespace coder {
 namespace internal {
 double b_maximum(const double x[3])
@@ -58,10 +54,6 @@ double b_maximum(const double x[3])
   return ex;
 }
 
-//
-// Arguments    : const double x[2]
-// Return Type  : double
-//
 double maximum(const double x[2])
 {
   double ex;
@@ -73,10 +65,6 @@ double maximum(const double x[2])
   return ex;
 }
 
-//
-// Arguments    : const ::coder::array<double, 1U> &x
-// Return Type  : double
-//
 double maximum(const ::coder::array<double, 1U> &x)
 {
   double ex;
@@ -130,8 +118,4 @@ double maximum(const ::coder::array<double, 1U> &x)
 } // namespace internal
 } // namespace coder
 
-//
-// File trailer for minOrMax.cpp
-//
-// [EOF]
-//
+// End of code generation (minOrMax.cpp)

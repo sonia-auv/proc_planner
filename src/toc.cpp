@@ -2,24 +2,19 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: toc.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// toc.cpp
+//
+// Code generation for function 'toc'
 //
 
-// Include Files
+// Include files
 #include "toc.h"
 #include "proc_planner_data.h"
 #include "rt_nonfinite.h"
 #include "coder_posix_time.h"
 
 // Function Definitions
-//
-// Arguments    : double tstart_tv_sec
-//                double tstart_tv_nsec
-// Return Type  : double
-//
 namespace coder {
 double toc(double tstart_tv_sec, double tstart_tv_nsec)
 {
@@ -35,8 +30,4 @@ double toc(double tstart_tv_sec, double tstart_tv_nsec)
 
 } // namespace coder
 
-//
-// File trailer for toc.cpp
-//
-// [EOF]
-//
+// End of code generation (toc.cpp)

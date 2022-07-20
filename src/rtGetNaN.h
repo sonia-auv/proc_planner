@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: rtGetNaN.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// rtGetNaN.h
+//
+// Code generation for function 'proc_planner'
 //
 
 #ifndef RTGETNAN_H
 #define RTGETNAN_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 
 #ifdef __cplusplus
@@ -25,8 +25,4 @@ extern real32_T rtGetNaNF(void);
 }
 #endif
 #endif
-//
-// File trailer for rtGetNaN.h
-//
-// [EOF]
-//
+// End of code generation (rtGetNaN.h)

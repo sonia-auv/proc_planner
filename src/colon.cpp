@@ -2,26 +2,19 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: colon.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// colon.cpp
+//
+// Code generation for function 'colon'
 //
 
-// Include Files
+// Include files
 #include "colon.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 #include <cmath>
 
 // Function Definitions
-//
-// Arguments    : double a
-//                double d
-//                double b
-//                ::coder::array<double, 2U> &y
-// Return Type  : void
-//
 namespace coder {
 void eml_float_colon(double a, double d, double b,
                      ::coder::array<double, 2U> &y)
@@ -76,8 +69,4 @@ void eml_float_colon(double a, double d, double b,
 
 } // namespace coder
 
-//
-// File trailer for colon.cpp
-//
-// [EOF]
-//
+// End of code generation (colon.cpp)

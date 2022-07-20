@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: Subscriber.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// Subscriber.h
+//
+// Code generation for function 'Subscriber'
 //
 
 #ifndef SUBSCRIBER_H
 #define SUBSCRIBER_H
 
-// Include Files
+// Include files
 #include "proc_planner_types.h"
 #include "rtwtypes.h"
 #include "coder_array.h"
@@ -88,8 +88,4 @@ private:
 } // namespace coder
 
 #endif
-//
-// File trailer for Subscriber.h
-//
-// [EOF]
-//
+// End of code generation (Subscriber.h)

@@ -2,25 +2,17 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xrot.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// xrot.cpp
+//
+// Code generation for function 'xrot'
 //
 
-// Include Files
+// Include files
 #include "xrot.h"
 #include "rt_nonfinite.h"
 
 // Function Definitions
-//
-// Arguments    : double x[12]
-//                int ix0
-//                int iy0
-//                double c
-//                double s
-// Return Type  : void
-//
 namespace coder {
 namespace internal {
 namespace blas {
@@ -45,14 +37,6 @@ void b_xrot(double x[12], int ix0, int iy0, double c, double s)
   x[ix0 + 2] = c * temp_tmp + s * temp;
 }
 
-//
-// Arguments    : double x[9]
-//                int ix0
-//                int iy0
-//                double c
-//                double s
-// Return Type  : void
-//
 void xrot(double x[9], int ix0, int iy0, double c, double s)
 {
   double temp;
@@ -74,8 +58,4 @@ void xrot(double x[9], int ix0, int iy0, double c, double s)
 } // namespace internal
 } // namespace coder
 
-//
-// File trailer for xrot.cpp
-//
-// [EOF]
-//
+// End of code generation (xrot.cpp)

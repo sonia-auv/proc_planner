@@ -2,24 +2,17 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xaxpy.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// xaxpy.cpp
+//
+// Code generation for function 'xaxpy'
 //
 
-// Include Files
+// Include files
 #include "xaxpy.h"
 #include "rt_nonfinite.h"
 
 // Function Definitions
-//
-// Arguments    : double a
-//                const double x[12]
-//                int ix0
-//                double y[4]
-// Return Type  : void
-//
 namespace coder {
 namespace internal {
 namespace blas {
@@ -32,13 +25,6 @@ void xaxpy(double a, const double x[12], int ix0, double y[4])
   }
 }
 
-//
-// Arguments    : double a
-//                const double x[4]
-//                double y[12]
-//                int iy0
-// Return Type  : void
-//
 void xaxpy(double a, const double x[4], double y[12], int iy0)
 {
   if (!(a == 0.0)) {
@@ -50,14 +36,6 @@ void xaxpy(double a, const double x[4], double y[12], int iy0)
   }
 }
 
-//
-// Arguments    : int n
-//                double a
-//                int ix0
-//                double y[12]
-//                int iy0
-// Return Type  : void
-//
 void xaxpy(int n, double a, int ix0, double y[12], int iy0)
 {
   if ((n >= 1) && (!(a == 0.0))) {
@@ -71,12 +49,6 @@ void xaxpy(int n, double a, int ix0, double y[12], int iy0)
   }
 }
 
-//
-// Arguments    : double a
-//                double y[9]
-//                int iy0
-// Return Type  : void
-//
 void xaxpy(double a, double y[9], int iy0)
 {
   if (!(a == 0.0)) {
@@ -92,8 +64,4 @@ void xaxpy(double a, double y[9], int iy0)
 } // namespace internal
 } // namespace coder
 
-//
-// File trailer for xaxpy.cpp
-//
-// [EOF]
-//
+// End of code generation (xaxpy.cpp)

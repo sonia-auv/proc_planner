@@ -2,25 +2,18 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: spline.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// spline.cpp
+//
+// Code generation for function 'spline'
 //
 
-// Include Files
+// Include files
 #include "spline.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 
 // Function Definitions
-//
-// Arguments    : const ::coder::array<double, 1U> &x
-//                const ::coder::array<double, 2U> &y
-//                ::coder::array<double, 2U> &output_breaks
-//                ::coder::array<double, 2U> &output_coefs
-// Return Type  : void
-//
 namespace coder {
 void spline(const ::coder::array<double, 1U> &x,
             const ::coder::array<double, 2U> &y,
@@ -191,8 +184,4 @@ void spline(const ::coder::array<double, 1U> &x,
 
 } // namespace coder
 
-//
-// File trailer for spline.cpp
-//
-// [EOF]
-//
+// End of code generation (spline.cpp)

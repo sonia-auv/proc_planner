@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: getenv.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// getenv.cpp
+//
+// Code generation for function 'getenv'
 //
 
-// Include Files
+// Include files
 #include "getenv.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
@@ -17,10 +17,6 @@
 #include <string.h>
 
 // Function Definitions
-//
-// Arguments    : ::coder::array<char, 2U> &value
-// Return Type  : void
-//
 namespace coder {
 void b_getenv(::coder::array<char, 2U> &value)
 {
@@ -39,8 +35,4 @@ void b_getenv(::coder::array<char, 2U> &value)
 
 } // namespace coder
 
-//
-// File trailer for getenv.cpp
-//
-// [EOF]
-//
+// End of code generation (getenv.cpp)

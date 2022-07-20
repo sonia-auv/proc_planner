@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: pinv.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// pinv.h
+//
+// Code generation for function 'pinv'
 //
 
 #ifndef PINV_H
 #define PINV_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
@@ -23,8 +23,4 @@ void pinv(const double A[12], double X[12]);
 }
 
 #endif
-//
-// File trailer for pinv.h
-//
-// [EOF]
-//
+// End of code generation (pinv.h)

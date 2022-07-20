@@ -2,24 +2,19 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: proc_planner_rtwutil.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// proc_planner_rtwutil.cpp
+//
+// Code generation for function 'proc_planner_rtwutil'
 //
 
-// Include Files
+// Include files
 #include "proc_planner_rtwutil.h"
 #include "rt_nonfinite.h"
 #include "rt_defines.h"
 #include <cmath>
 
 // Function Definitions
-//
-// Arguments    : double u0
-//                double u1
-// Return Type  : double
-//
 double rt_atan2d_snf(double u0, double u1)
 {
   double y;
@@ -53,8 +48,4 @@ double rt_atan2d_snf(double u0, double u1)
   return y;
 }
 
-//
-// File trailer for proc_planner_rtwutil.cpp
-//
-// [EOF]
-//
+// End of code generation (proc_planner_rtwutil.cpp)

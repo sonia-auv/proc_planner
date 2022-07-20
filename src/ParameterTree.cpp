@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: ParameterTree.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// ParameterTree.cpp
+//
+// Code generation for function 'ParameterTree'
 //
 
-// Include Files
+// Include files
 #include "ParameterTree.h"
 #include "rt_nonfinite.h"
 #include "startsWith.h"
@@ -73,11 +73,6 @@ static const char cv10[29]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l', 'a', 'n',
                            'e', '_', 'w', 'a', 'r', 'n', 'i', 'n', 'g'};
 
 // Function Definitions
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 namespace coder {
 namespace ros {
 void ParameterTree::b_canonicalizeName(ParameterTree *obj,
@@ -107,10 +102,6 @@ void ParameterTree::b_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::b_get()
 {
   array<char, 2U> in;
@@ -149,11 +140,6 @@ double ParameterTree::b_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::c_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -181,10 +167,6 @@ void ParameterTree::c_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::c_get()
 {
   array<char, 2U> in;
@@ -223,11 +205,6 @@ double ParameterTree::c_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::canonicalizeName(ParameterTree *obj,
                                      ::coder::array<char, 2U> &validName)
 {
@@ -255,11 +232,6 @@ void ParameterTree::canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::d_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -287,10 +259,6 @@ void ParameterTree::d_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::d_get()
 {
   array<char, 2U> in;
@@ -329,11 +297,6 @@ double ParameterTree::d_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::e_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -361,10 +324,6 @@ void ParameterTree::e_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::e_get()
 {
   array<char, 2U> in;
@@ -403,11 +362,6 @@ double ParameterTree::e_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::f_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -435,10 +389,6 @@ void ParameterTree::f_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::f_get()
 {
   array<char, 2U> in;
@@ -477,11 +427,6 @@ double ParameterTree::f_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::g_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -509,10 +454,6 @@ void ParameterTree::g_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::g_get()
 {
   array<char, 2U> in;
@@ -551,10 +492,6 @@ double ParameterTree::g_get()
   return data;
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::get()
 {
   array<char, 2U> in;
@@ -593,11 +530,6 @@ double ParameterTree::get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::h_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -625,10 +557,6 @@ void ParameterTree::h_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::h_get()
 {
   array<char, 2U> in;
@@ -667,11 +595,6 @@ double ParameterTree::h_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::i_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -699,10 +622,6 @@ void ParameterTree::i_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::i_get()
 {
   array<char, 2U> in;
@@ -741,11 +660,6 @@ double ParameterTree::i_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::j_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -773,10 +687,6 @@ void ParameterTree::j_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::j_get()
 {
   array<char, 2U> in;
@@ -815,11 +725,6 @@ double ParameterTree::j_get()
   return data;
 }
 
-//
-// Arguments    : ParameterTree *obj
-//                ::coder::array<char, 2U> &validName
-// Return Type  : void
-//
 void ParameterTree::k_canonicalizeName(ParameterTree *obj,
                                        ::coder::array<char, 2U> &validName)
 {
@@ -847,10 +752,6 @@ void ParameterTree::k_canonicalizeName(ParameterTree *obj,
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : double
-//
 double ParameterTree::k_get()
 {
   array<char, 2U> in;
@@ -892,8 +793,4 @@ double ParameterTree::k_get()
 } // namespace ros
 } // namespace coder
 
-//
-// File trailer for ParameterTree.cpp
-//
-// [EOF]
-//
+// End of code generation (ParameterTree.cpp)

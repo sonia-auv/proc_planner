@@ -2,13 +2,14 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: trajectory_msgs_MultiDOFJointTrajectoryPointStruct.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// trajectory_msgs_MultiDOFJointTrajectoryPointStruct.cpp
+//
+// Code generation for function
+// 'trajectory_msgs_MultiDOFJointTrajectoryPointStruct'
 //
 
-// Include Files
+// Include files
 #include "trajectory_msgs_MultiDOFJointTrajectoryPointStruct.h"
 #include "geometry_msgs_TransformStruct.h"
 #include "geometry_msgs_TwistStruct.h"
@@ -18,12 +19,6 @@
 #include "coder_array.h"
 
 // Function Definitions
-//
-// Message struct definition for trajectory_msgs/MultiDOFJointTrajectoryPoint
-//
-// Arguments    : trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T *msg
-// Return Type  : void
-//
 void trajectory_msgs_MultiDOFJointTrajectoryPointStruct(
     trajectory_msgs_MultiDOFJointTrajectoryPointStruct_T *msg)
 {
@@ -34,6 +29,7 @@ void trajectory_msgs_MultiDOFJointTrajectoryPointStruct(
   geometry_msgs_TransformStruct_T t0_Transforms;
   geometry_msgs_TwistStruct_T t0_Accelerations;
   geometry_msgs_TwistStruct_T t0_Velocities;
+  //  Message struct definition for trajectory_msgs/MultiDOFJointTrajectoryPoint
   geometry_msgs_TransformStruct(&t0_Transforms);
   geometry_msgs_TwistStruct(&t0_Velocities);
   geometry_msgs_TwistStruct(&t0_Accelerations);
@@ -53,8 +49,5 @@ void trajectory_msgs_MultiDOFJointTrajectoryPointStruct(
   //(msg);
 }
 
-//
-// File trailer for trajectory_msgs_MultiDOFJointTrajectoryPointStruct.cpp
-//
-// [EOF]
-//
+// End of code generation
+// (trajectory_msgs_MultiDOFJointTrajectoryPointStruct.cpp)

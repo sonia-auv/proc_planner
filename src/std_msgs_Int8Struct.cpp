@@ -2,24 +2,18 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: std_msgs_Int8Struct.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// std_msgs_Int8Struct.cpp
+//
+// Code generation for function 'std_msgs_Int8Struct'
 //
 
-// Include Files
+// Include files
 #include "std_msgs_Int8Struct.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
 
 // Function Definitions
-//
-// Message struct definition for std_msgs/Int8
-//
-// Arguments    : void
-// Return Type  : std_msgs_Int8Struct_T
-//
 std_msgs_Int8Struct_T std_msgs_Int8Struct()
 {
   static const std_msgs_Int8Struct_T b_msg{
@@ -29,12 +23,9 @@ std_msgs_Int8Struct_T std_msgs_Int8Struct()
   };
   std_msgs_Int8Struct_T msg;
   msg = b_msg;
+  //  Message struct definition for std_msgs/Int8
   //(&b_msg);
   return msg;
 }
 
-//
-// File trailer for std_msgs_Int8Struct.cpp
-//
-// [EOF]
-//
+// End of code generation (std_msgs_Int8Struct.cpp)

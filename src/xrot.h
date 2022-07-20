@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xrot.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// xrot.h
+//
+// Code generation for function 'xrot'
 //
 
 #ifndef XROT_H
 #define XROT_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
@@ -29,8 +29,4 @@ void xrot(double x[9], int ix0, int iy0, double c, double s);
 } // namespace coder
 
 #endif
-//
-// File trailer for xrot.h
-//
-// [EOF]
-//
+// End of code generation (xrot.h)

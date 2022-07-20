@@ -2,23 +2,18 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: bsearch.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// bsearch.cpp
+//
+// Code generation for function 'bsearch'
 //
 
-// Include Files
+// Include files
 #include "bsearch.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 
 // Function Definitions
-//
-// Arguments    : const ::coder::array<double, 2U> &x
-//                double xi
-// Return Type  : int
-//
 namespace coder {
 namespace internal {
 int b_bsearch(const ::coder::array<double, 2U> &x, double xi)
@@ -48,8 +43,4 @@ int b_bsearch(const ::coder::array<double, 2U> &x, double xi)
 } // namespace internal
 } // namespace coder
 
-//
-// File trailer for bsearch.cpp
-//
-// [EOF]
-//
+// End of code generation (bsearch.cpp)
