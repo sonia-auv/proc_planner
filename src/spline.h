@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: spline.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// spline.h
+//
+// Code generation for function 'spline'
 //
 
 #ifndef SPLINE_H
 #define SPLINE_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
 #include <cstddef>
@@ -27,8 +27,4 @@ void spline(const ::coder::array<double, 1U> &x,
 }
 
 #endif
-//
-// File trailer for spline.h
-//
-// [EOF]
-//
+// End of code generation (spline.h)

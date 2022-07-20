@@ -2,23 +2,17 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xswap.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// xswap.cpp
+//
+// Code generation for function 'xswap'
 //
 
-// Include Files
+// Include files
 #include "xswap.h"
 #include "rt_nonfinite.h"
 
 // Function Definitions
-//
-// Arguments    : double x[12]
-//                int ix0
-//                int iy0
-// Return Type  : void
-//
 namespace coder {
 namespace internal {
 namespace blas {
@@ -39,12 +33,6 @@ void b_xswap(double x[12], int ix0, int iy0)
   x[iy0 + 2] = temp;
 }
 
-//
-// Arguments    : double x[9]
-//                int ix0
-//                int iy0
-// Return Type  : void
-//
 void xswap(double x[9], int ix0, int iy0)
 {
   double temp;
@@ -63,8 +51,4 @@ void xswap(double x[9], int ix0, int iy0)
 } // namespace internal
 } // namespace coder
 
-//
-// File trailer for xswap.cpp
-//
-// [EOF]
-//
+// End of code generation (xswap.cpp)

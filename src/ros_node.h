@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: ros_node.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// ros_node.h
+//
+// Code generation for function 'ros_node'
 //
 
 #ifndef ROS_NODE_H
 #define ROS_NODE_H
 
-// Include Files
+// Include files
 #include "Publisher.h"
 #include "Subscriber.h"
 #include "proc_planner_internal_types.h"
@@ -38,8 +38,4 @@ public:
 };
 
 #endif
-//
-// File trailer for ros_node.h
-//
-// [EOF]
-//
+// End of code generation (ros_node.h)

@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: quat2eul.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// quat2eul.cpp
+//
+// Code generation for function 'quat2eul'
 //
 
-// Include Files
+// Include files
 #include "quat2eul.h"
 #include "proc_planner_rtwutil.h"
 #include "rt_nonfinite.h"
@@ -22,13 +22,6 @@ static void binary_expand_op(double in1[3],
                              const coder::array<double, 1U> &in4);
 
 // Function Definitions
-//
-// Arguments    : double in1[3]
-//                const coder::array<signed char, 2U> &in2
-//                const coder::array<double, 1U> &in3
-//                const coder::array<double, 1U> &in4
-// Return Type  : void
-//
 static void binary_expand_op(double in1[3],
                              const coder::array<signed char, 2U> &in2,
                              const coder::array<double, 1U> &in3,
@@ -49,11 +42,6 @@ static void binary_expand_op(double in1[3],
   }
 }
 
-//
-// Arguments    : double q[4]
-//                double eul[3]
-// Return Type  : void
-//
 namespace coder {
 void quat2eul(double q[4], double eul[3])
 {
@@ -151,8 +139,4 @@ void quat2eul(double q[4], double eul[3])
 
 } // namespace coder
 
-//
-// File trailer for quat2eul.cpp
-//
-// [EOF]
-//
+// End of code generation (quat2eul.cpp)

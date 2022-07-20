@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xrotg.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// xrotg.h
+//
+// Code generation for function 'xrotg'
 //
 
 #ifndef XROTG_H
 #define XROTG_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
@@ -27,8 +27,4 @@ void xrotg(double *a, double *b, double *c, double *s);
 } // namespace coder
 
 #endif
-//
-// File trailer for xrotg.h
-//
-// [EOF]
-//
+// End of code generation (xrotg.h)

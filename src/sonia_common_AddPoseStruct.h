@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: sonia_common_AddPoseStruct.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// sonia_common_AddPoseStruct.h
+//
+// Code generation for function 'sonia_common_AddPoseStruct'
 //
 
 #ifndef SONIA_COMMON_ADDPOSESTRUCT_H
 #define SONIA_COMMON_ADDPOSESTRUCT_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
@@ -23,8 +23,4 @@ struct sonia_common_AddPoseStruct_T;
 void sonia_common_AddPoseStruct(sonia_common_AddPoseStruct_T *msg);
 
 #endif
-//
-// File trailer for sonia_common_AddPoseStruct.h
-//
-// [EOF]
-//
+// End of code generation (sonia_common_AddPoseStruct.h)

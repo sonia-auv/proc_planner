@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: proc_planner.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// proc_planner.cpp
+//
+// Code generation for function 'proc_planner'
 //
 
-// Include Files
+// Include files
 #include "proc_planner.h"
 #include "ParameterTree.h"
 #include "Publisher.h"
@@ -41,12 +41,6 @@
 #include <stdio.h>
 
 // Function Definitions
-//
-// Si on roule en simulation
-//
-// Arguments    : void
-// Return Type  : void
-//
 void proc_planner()
 {
   TrajectoryGenerator TG;
@@ -76,6 +70,7 @@ void proc_planner()
   if (!isInitialized_proc_planner) {
     proc_planner_initialize();
   }
+  //  Si on roule en simulation
   coder::b_getenv(formatSpec);
   parameterName.set_size(1, formatSpec.size(1) + 1);
   loop_ub = formatSpec.size(1);
@@ -88,9 +83,9 @@ void proc_planner()
   //  Variables locals
   r.init();
   //  Démarer le planner
-  //  Definir les Subscrier ros
   planner.TrajIsGenerating = false;
   //  Constructor
+  //  Definir les Subscrier ros
   sub = planner._pobj4.init();
   planner.madpSub = sub;
   b_sub = planner._pobj3.init();
@@ -352,11 +347,11 @@ void proc_planner()
                                          &icMsg_Orientation_Z,
                                          &icMsg_Orientation_W);
         planner.obstacleSub->get_LatestMessage(&TG.obstacleData);
-        //  Initialise l'objet trajectoire et vérifie si le message multi add
-        //  pose est valide.
         TG.icOffset = 2.0;
         // ==================================================================
         //  Constructeur
+        //  Initialise l'objet trajectoire et vérifie si le message multi add
+        //  pose est valide.
         TG.status = 0.0;
         //  Validité de waypoints reçus.
         //  prendre les infos des obstacles.
@@ -410,9 +405,9 @@ void proc_planner()
         }
         double dv[3];
         //  trouver le waypoint initial
-        //  Replire les listes.
         // ==================================================================
         //  Fonnction qui retoure le waypoint initial
+        //  Replire les listes.
         TG.pointList[0] = val;
         TG.pointList[TG.pointList.size(0)] = vlmax;
         TG.pointList[TG.pointList.size(0) * 2] = d;
@@ -446,10 +441,10 @@ void proc_planner()
         TG.courseList[1] = eul[0];
         TG.speedList[1] = 0.0;
         //  Verifier si le mode d'interpolation est valide
-        //  Le parametre verif permet au constructeur de verifier si le mode
-        //  existe sans interpoler. Determiner le type d'imterpolation
         // ==================================================================
         //  Fonction qui envoie les message sur ros
+        //  Le parametre verif permet au constructeur de verifier si le mode
+        //  existe sans interpoler. Determiner le type d'imterpolation
         switch (multiAddposeMsg_InterpolationMethod) {
         case 0U:
           //  piecewise cubic interpolation
@@ -685,8 +680,4 @@ void proc_planner()
   }
 }
 
-//
-// File trailer for proc_planner.cpp
-//
-// [EOF]
-//
+// End of code generation (proc_planner.cpp)

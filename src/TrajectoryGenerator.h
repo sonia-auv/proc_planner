@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: TrajectoryGenerator.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// TrajectoryGenerator.h
+//
+// Code generation for function 'TrajectoryGenerator'
 //
 
 #ifndef TRAJECTORYGENERATOR_H
 #define TRAJECTORYGENERATOR_H
 
-// Include Files
+// Include files
 #include "proc_planner_internal_types.h"
 #include "proc_planner_types.h"
 #include "rtwtypes.h"
@@ -54,8 +54,4 @@ public:
 };
 
 #endif
-//
-// File trailer for TrajectoryGenerator.h
-//
-// [EOF]
-//
+// End of code generation (TrajectoryGenerator.h)

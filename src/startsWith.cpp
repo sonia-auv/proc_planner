@@ -2,22 +2,18 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: startsWith.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// startsWith.cpp
+//
+// Code generation for function 'startsWith'
 //
 
-// Include Files
+// Include files
 #include "startsWith.h"
 #include "rt_nonfinite.h"
 #include "coder_array.h"
 
 // Function Definitions
-//
-// Arguments    : const ::coder::array<char, 2U> &str
-// Return Type  : bool
-//
 namespace coder {
 bool startsWith(const ::coder::array<char, 2U> &str)
 {
@@ -54,8 +50,4 @@ bool startsWith(const ::coder::array<char, 2U> &str)
 
 } // namespace coder
 
-//
-// File trailer for startsWith.cpp
-//
-// [EOF]
-//
+// End of code generation (startsWith.cpp)

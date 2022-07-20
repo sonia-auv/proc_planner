@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: rtGetInf.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// rtGetInf.h
+//
+// Code generation for function 'proc_planner'
 //
 
 #ifndef RTGETINF_H
 #define RTGETINF_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 
 #ifdef __cplusplus
@@ -27,8 +27,4 @@ extern real32_T rtGetMinusInfF(void);
 }
 #endif
 #endif
-//
-// File trailer for rtGetInf.h
-//
-// [EOF]
-//
+// End of code generation (rtGetInf.h)

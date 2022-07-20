@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: TrajectoryGenerator.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// TrajectoryGenerator.cpp
+//
+// Code generation for function 'TrajectoryGenerator'
 //
 
-// Include Files
+// Include files
 #include "TrajectoryGenerator.h"
 #include "Publisher.h"
 #include "colon.h"
@@ -29,12 +29,6 @@
 #include <stdio.h>
 
 // Function Definitions
-//
-// Vérifier la pré-validation
-//
-// Arguments    : const coder::ros::Publisher *trajpub
-// Return Type  : void
-//
 void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
 {
   static const signed char b[9]{1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -52,6 +46,7 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
   double a[3];
   // ==================================================================
   //  Fonction Main qui génère les waypoints
+  // Vérifier la pré-validation
   if (status == 0.0) {
     double absxk;
     double scale;
@@ -60,9 +55,9 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
     int ni;
     short i2;
     //  Interpoler les waypoints
-    //  vecteur temps
     // ==================================================================
     //  Fonction qui interpole les waypoints
+    //  vecteur temps
     absxk = param.ts;
     scale = timeList[timeList.size(0) - 1];
     if (std::isnan(absxk) || std::isnan(absxk) || std::isnan(scale)) {
@@ -88,10 +83,10 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
       coder::eml_float_colon(absxk, absxk, scale, t);
     }
     //  Interpoler la trajectoire lineaire
-    //  Le parametre verif permet au constructeur de verifier si le mode existe
-    //  sans interpoler. Determiner le type d'imterpolation
     // ==================================================================
     //  Fonction qui envoie les message sur ros
+    //  Le parametre verif permet au constructeur de verifier si le mode existe
+    //  sans interpoler. Determiner le type d'imterpolation
     switch (MAPM.InterpolationMethod) {
     case 0U:
       //  piecewise cubic interpolation
@@ -129,10 +124,10 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
     for (i = 0; i < ni; i++) {
       trajPosition[i] = trajList[i];
     }
-    //  Le parametre verif permet au constructeur de verifier si le mode existe
-    //  sans interpoler. Determiner le type d'imterpolation
     // ==================================================================
     //  Fonction qui envoie les message sur ros
+    //  Le parametre verif permet au constructeur de verifier si le mode existe
+    //  sans interpoler. Determiner le type d'imterpolation
     switch (MAPM.InterpolationMethod) {
     case 0U:
       //  piecewise cubic interpolation
@@ -363,11 +358,11 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
       double b_t;
       double y;
       //  Normaliser les quaternions car l'interpolation de type spline ne le
-      //  garentie pas. Fossen(2021) eq 2.86 p.37
+      //  garentie pas.
       // =================================================================
       //  Fonction qui normalise un quaternion.
       //  quatnormalize de matlab demande areospace block set pour etre
-      //  compilable.
+      //  compilable. Fossen(2021) eq 2.86 p.37
       scale = 3.3121686421112381E-170;
       absxk = std::abs(trajQuat[b_i]);
       if (absxk > 3.3121686421112381E-170) {
@@ -461,13 +456,13 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
       //  Convertir des quaternion instantané en vitesse angulaire
       // =================================================================
       //  Fonction qui convertie un quaternion instantané en vitesses
-      //  angulaires. Fossen(2021) eq 2.77 - 2.78 page 35
+      //  angulaires.
       // =================================================================
       //  Calcule la matrice de transformation vitesse angulaire à quaternion
-      //  instantané Fossen(2021) eq 2.47 p30
+      //  instantané Fossen(2021) eq 2.77 - 2.78 page 35
       // =================================================================
       //  Fonction qui Convertie un vecteur 3x1 en une matrice antisymétrique
-      //  3x3
+      //  3x3 Fossen(2021) eq 2.47 p30
       scale = trajQuat[b_i];
       dv[3] = -trajQuat[b_i + trajQuat.size(0) * 3];
       dv[6] = trajQuat[b_i + trajQuat.size(0) * 2];
@@ -586,9 +581,9 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
     }
     //  rs_dot
     //  Envoyer la trajectoire sur ROS.
-    //  Initialiser le message trajectoire.
     // ==================================================================
     //  Fonction qui envoie les message sur ros
+    //  Initialiser le message trajectoire.
     trajectory_msgs_MultiDOFJointTrajectoryPointStruct(&trajMsg);
     //  message point
     geometry_msgs_TransformStruct(&transformBuff);
@@ -682,10 +677,6 @@ void TrajectoryGenerator::Compute(const coder::ros::Publisher *trajpub)
   }
 }
 
-//
-// Arguments    : void
-// Return Type  : void
-//
 void TrajectoryGenerator::processWpt()
 {
   double d;
@@ -743,9 +734,9 @@ void TrajectoryGenerator::processWpt()
       switch (MAPM.Pose[i].Frame) {
       case 0U:
         //  position et angle absolue
-        //  Regarder la discontinuité entre le qk et qk-1
         // =================================================================
         //  Fonction qui assure la continuité entre 2 quaternions
+        //  Regarder la discontinuité entre le qk et qk-1
         R_1 = (static_cast<double>(i) + 1.0) + icOffset;
         if (((quatList[static_cast<int>(R_1 - 1.0) - 1] * q[0] +
               quatList[(static_cast<int>(R_1 - 1.0) + quatList.size(0)) - 1] *
@@ -774,6 +765,9 @@ void TrajectoryGenerator::processWpt()
         break;
       case 1U:
         //  position et angle relatif
+        // ==================================================================
+        //  Fonnction qui retoure le quaternion le plus court/long selon
+        //  l'utilisateur
         // ---------------------------------------------------------------
         //  Code not ready for deploy yet. It is comment to avoid instablitiy
         //  during pool testing.
@@ -786,9 +780,6 @@ void TrajectoryGenerator::processWpt()
         //                  this.lastConj =true;
         //
         //              end
-        // ==================================================================
-        //  Fonnction qui retoure le quaternion le plus court/long selon
-        //  l'utilisateur
         R_1 = quatList[static_cast<int>(
                            ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                        1];
@@ -834,14 +825,15 @@ void TrajectoryGenerator::processWpt()
             (R_1 * q[3] + q[0] * b) + (b_c * q[2] - q[1] * R_Bar);
         c_this =
             static_cast<int>(((static_cast<double>(i) + 1.0) + icOffset) - 1.0);
+        q[1] = quatList[(c_this + quatList.size(0)) - 1];
+        q[2] = quatList[(c_this + quatList.size(0) * 2) - 1];
+        q[3] = quatList[(c_this + quatList.size(0) * 3) - 1];
         // =================================================================
         //  Fonction qui tourne un vecteur selon un quaternion.
         //  quaternion partie scalaire
         //  quaternion partie vectoriel
         //  QuatRotate n'est pas compilable
-        a = 2.0 * ((quatList[(c_this + quatList.size(0)) - 1] * c[0] +
-                    quatList[(c_this + quatList.size(0) * 2) - 1] * c[1]) +
-                   quatList[(c_this + quatList.size(0) * 3) - 1] * c[2]);
+        a = 2.0 * ((c[0] * q[1] + c[1] * q[2]) + c[2] * q[3]);
         b_a = quatList[static_cast<int>(
                            ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                        1] *
@@ -849,19 +841,14 @@ void TrajectoryGenerator::processWpt()
                                ((static_cast<double>(i) + 1.0) + icOffset) -
                                1.0) -
                            1] -
-              ((quatList[(c_this + quatList.size(0)) - 1] *
-                    quatList[(c_this + quatList.size(0)) - 1] +
-                quatList[(c_this + quatList.size(0) * 2) - 1] *
-                    quatList[(c_this + quatList.size(0) * 2) - 1]) +
-               quatList[(c_this + quatList.size(0) * 3) - 1] *
-                   quatList[(c_this + quatList.size(0) * 3) - 1]);
+              ((q[1] * q[1] + q[2] * q[2]) + q[3] * q[3]);
         b = 2.0 *
             quatList[static_cast<int>(
                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                      1];
         d_this[1] =
             pointList[(c_this + pointList.size(0)) - 1] +
-            ((a * quatList[(c_this + quatList.size(0) * 2) - 1] + b_a * c[1]) +
+            ((a * q[2] + b_a * c[1]) +
              b * (c[0] * quatList[(static_cast<int>(
                                        ((static_cast<double>(i) + 1.0) +
                                         icOffset) -
@@ -876,7 +863,7 @@ void TrajectoryGenerator::processWpt()
                       c[2]));
         d_this[2] =
             pointList[(c_this + pointList.size(0) * 2) - 1] +
-            ((a * quatList[(c_this + quatList.size(0) * 3) - 1] + b_a * c[2]) +
+            ((a * q[3] + b_a * c[2]) +
              b * (quatList[(static_cast<int>(
                                 ((static_cast<double>(i) + 1.0) + icOffset) -
                                 1.0) +
@@ -891,7 +878,7 @@ void TrajectoryGenerator::processWpt()
                                   1]));
         pointList[b_this - 1] =
             pointList[c_this - 1] +
-            ((a * quatList[(c_this + quatList.size(0)) - 1] + b_a * c[0]) +
+            ((a * q[1] + b_a * c[0]) +
              b * (quatList[(static_cast<int>(
                                 ((static_cast<double>(i) + 1.0) + icOffset) -
                                 1.0) +
@@ -910,9 +897,9 @@ void TrajectoryGenerator::processWpt()
         break;
       case 2U:
         //  position relatif et angle absolue
-        //  Regarder la discontinuité entre le qk et qk-1
         // =================================================================
         //  Fonction qui assure la continuité entre 2 quaternions
+        //  Regarder la discontinuité entre le qk et qk-1
         i_tmp_tmp = (static_cast<double>(i) + 1.0) + icOffset;
         if (((quatList[static_cast<int>(i_tmp_tmp - 1.0) - 1] * q[0] +
               quatList[(static_cast<int>(i_tmp_tmp - 1.0) + quatList.size(0)) -
@@ -938,45 +925,24 @@ void TrajectoryGenerator::processWpt()
             q[2];
         quatList[(static_cast<int>(i_tmp_tmp) + quatList.size(0) * 3) - 1] =
             q[3];
+        q[1] = quatList[(static_cast<int>(i_tmp_tmp - 1.0) + quatList.size(0)) -
+                        1];
+        q[2] = quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
+                         quatList.size(0) * 2) -
+                        1];
+        q[3] = quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
+                         quatList.size(0) * 3) -
+                        1];
         // =================================================================
         //  Fonction qui tourne un vecteur selon un quaternion.
         //  quaternion partie scalaire
         //  quaternion partie vectoriel
         //  QuatRotate n'est pas compilable
-        a = 2.0 *
-            ((quatList[(static_cast<int>(i_tmp_tmp - 1.0) + quatList.size(0)) -
-                       1] *
-                  c[0] +
-              quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                        quatList.size(0) * 2) -
-                       1] *
-                  c[1]) +
-             quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                       quatList.size(0) * 3) -
-                      1] *
-                 c[2]);
+        a = 2.0 * ((c[0] * q[1] + c[1] * q[2]) + c[2] * q[3]);
         R_1 = quatList[static_cast<int>(
                            ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
                        1];
-        b_a =
-            R_1 * R_1 -
-            ((quatList[(static_cast<int>(i_tmp_tmp - 1.0) + quatList.size(0)) -
-                       1] *
-                  quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                            quatList.size(0)) -
-                           1] +
-              quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                        quatList.size(0) * 2) -
-                       1] *
-                  quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                            quatList.size(0) * 2) -
-                           1]) +
-             quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                       quatList.size(0) * 3) -
-                      1] *
-                 quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                           quatList.size(0) * 3) -
-                          1]);
+        b_a = R_1 * R_1 - ((q[1] * q[1] + q[2] * q[2]) + q[3] * q[3]);
         b = 2.0 * R_1;
         R_1 = quatList[(static_cast<int>(
                             ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
@@ -994,26 +960,14 @@ void TrajectoryGenerator::processWpt()
         d_this[1] =
             pointList[(static_cast<int>(i_tmp_tmp - 1.0) + pointList.size(0)) -
                       1] +
-            ((a * quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                            quatList.size(0) * 2) -
-                           1] +
-              b_a * c[1]) +
-             b * (c[0] * R_1 - b_c * c[2]));
+            ((a * q[2] + b_a * c[1]) + b * (c[0] * R_1 - b_c * c[2]));
         d_this[2] = pointList[(static_cast<int>(i_tmp_tmp - 1.0) +
                                pointList.size(0) * 2) -
                               1] +
-                    ((a * quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                                    quatList.size(0) * 3) -
-                                   1] +
-                      b_a * c[2]) +
-                     b * (b_c * c[1] - c[0] * R_Bar));
+                    ((a * q[3] + b_a * c[2]) + b * (b_c * c[1] - c[0] * R_Bar));
         pointList[static_cast<int>(i_tmp_tmp) - 1] =
             pointList[static_cast<int>(i_tmp_tmp - 1.0) - 1] +
-            ((a * quatList[(static_cast<int>(i_tmp_tmp - 1.0) +
-                            quatList.size(0)) -
-                           1] +
-              b_a * c[0]) +
-             b * (R_Bar * c[2] - c[1] * R_1));
+            ((a * q[1] + b_a * c[0]) + b * (R_Bar * c[2] - c[1] * R_1));
         pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0)) - 1] =
             d_this[1];
         pointList[(static_cast<int>(i_tmp_tmp) + pointList.size(0) * 2) - 1] =
@@ -1022,6 +976,9 @@ void TrajectoryGenerator::processWpt()
         break;
       case 3U:
         //  position absolue et angle relatif
+        // ==================================================================
+        //  Fonnction qui retoure le quaternion le plus court/long selon
+        //  l'utilisateur
         // ---------------------------------------------------------------
         //  Code not ready for deploy yet. It is comment to avoid instablitiy
         //  during pool testing.
@@ -1034,9 +991,6 @@ void TrajectoryGenerator::processWpt()
         //                  this.lastConj =true;
         //
         //              end
-        // ==================================================================
-        //  Fonnction qui retoure le quaternion le plus court/long selon
-        //  l'utilisateur
         qObst_idx_1 =
             (quatList[static_cast<int>(
                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
@@ -1126,14 +1080,190 @@ void TrajectoryGenerator::processWpt()
         pointList[(b_this + pointList.size(0) * 2) - 1] = c[2];
         guard1 = true;
         break;
+      case 4U:
+        //  z absolue et reste relatif
+        // ==================================================================
+        //  Fonnction qui retoure le quaternion le plus court/long selon
+        //  l'utilisateur
+        // ---------------------------------------------------------------
+        //  Code not ready for deploy yet. It is comment to avoid instablitiy
+        //  during pool testing.
+        // ---------------------------------------------------------------
+        //            norm = dot(lq,q);
+        //              % conjuger le quaternion au besoin
+        //              %if  norm > 1 && dir == 0 || norm < 1 && dir == 1
+        //             if  norm < 0  && dir == 0 || norm >= 0 && dir == 1
+        //                  q = quatconj(q);
+        //                  this.lastConj =true;
+        //
+        //              end
+        qObst_idx_1 =
+            (quatList[static_cast<int>(
+                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                      1] *
+                 q[1] +
+             q[0] * quatList[(static_cast<int>(
+                                  ((static_cast<double>(i) + 1.0) + icOffset) -
+                                  1.0) +
+                              quatList.size(0)) -
+                             1]) +
+            (quatList[(static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                       quatList.size(0) * 2) -
+                      1] *
+                 q[3] -
+             q[2] * quatList[(static_cast<int>(
+                                  ((static_cast<double>(i) + 1.0) + icOffset) -
+                                  1.0) +
+                              quatList.size(0) * 3) -
+                             1]);
+        qObst_idx_2 =
+            (quatList[static_cast<int>(
+                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                      1] *
+                 q[2] +
+             q[0] * quatList[(static_cast<int>(
+                                  ((static_cast<double>(i) + 1.0) + icOffset) -
+                                  1.0) +
+                              quatList.size(0) * 2) -
+                             1]) +
+            (q[1] * quatList[(static_cast<int>(
+                                  ((static_cast<double>(i) + 1.0) + icOffset) -
+                                  1.0) +
+                              quatList.size(0) * 3) -
+                             1] -
+             quatList[(static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                       quatList.size(0)) -
+                      1] *
+                 q[3]);
+        qObst_idx_3 =
+            (quatList[static_cast<int>(
+                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                      1] *
+                 q[3] +
+             q[0] * quatList[(static_cast<int>(
+                                  ((static_cast<double>(i) + 1.0) + icOffset) -
+                                  1.0) +
+                              quatList.size(0) * 3) -
+                             1]) +
+            (quatList[(static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                       quatList.size(0)) -
+                      1] *
+                 q[2] -
+             q[1] * quatList[(static_cast<int>(
+                                  ((static_cast<double>(i) + 1.0) + icOffset) -
+                                  1.0) +
+                              quatList.size(0) * 2) -
+                             1]);
+        b_this = static_cast<int>((static_cast<double>(i) + 1.0) + icOffset);
+        quatList[b_this - 1] =
+            ((quatList[static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                       1] *
+                  q[0] -
+              quatList[(static_cast<int>(
+                            ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                        quatList.size(0)) -
+                       1] *
+                  q[1]) -
+             quatList[(static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                       quatList.size(0) * 2) -
+                      1] *
+                 q[2]) -
+            quatList[(static_cast<int>(
+                          ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) +
+                      quatList.size(0) * 3) -
+                     1] *
+                q[3];
+        quatList[(b_this + quatList.size(0)) - 1] = qObst_idx_1;
+        quatList[(b_this + quatList.size(0) * 2) - 1] = qObst_idx_2;
+        quatList[(b_this + quatList.size(0) * 3) - 1] = qObst_idx_3;
+        c_this =
+            static_cast<int>(((static_cast<double>(i) + 1.0) + icOffset) - 1.0);
+        q[1] = quatList[(c_this + quatList.size(0)) - 1];
+        q[2] = quatList[(c_this + quatList.size(0) * 2) - 1];
+        q[3] = quatList[(c_this + quatList.size(0) * 3) - 1];
+        // =================================================================
+        //  Fonction qui tourne un vecteur selon un quaternion.
+        //  quaternion partie scalaire
+        //  quaternion partie vectoriel
+        //  QuatRotate n'est pas compilable
+        a = 2.0 * ((c[0] * q[1] + c[1] * q[2]) + c[2] * q[3]);
+        b_a = quatList[static_cast<int>(
+                           ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                       1] *
+                  quatList[static_cast<int>(
+                               ((static_cast<double>(i) + 1.0) + icOffset) -
+                               1.0) -
+                           1] -
+              ((q[1] * q[1] + q[2] * q[2]) + q[3] * q[3]);
+        b = 2.0 *
+            quatList[static_cast<int>(
+                         ((static_cast<double>(i) + 1.0) + icOffset) - 1.0) -
+                     1];
+        d_this[1] =
+            pointList[(c_this + pointList.size(0)) - 1] +
+            ((a * q[2] + b_a * c[1]) +
+             b * (c[0] * quatList[(static_cast<int>(
+                                       ((static_cast<double>(i) + 1.0) +
+                                        icOffset) -
+                                       1.0) +
+                                   quatList.size(0) * 3) -
+                                  1] -
+                  quatList[(static_cast<int>(
+                                ((static_cast<double>(i) + 1.0) + icOffset) -
+                                1.0) +
+                            quatList.size(0)) -
+                           1] *
+                      c[2]));
+        d_this[2] =
+            pointList[(c_this + pointList.size(0) * 2) - 1] +
+            ((a * q[3] + b_a * c[2]) +
+             b * (quatList[(static_cast<int>(
+                                ((static_cast<double>(i) + 1.0) + icOffset) -
+                                1.0) +
+                            quatList.size(0)) -
+                           1] *
+                      c[1] -
+                  c[0] * quatList[(static_cast<int>(
+                                       ((static_cast<double>(i) + 1.0) +
+                                        icOffset) -
+                                       1.0) +
+                                   quatList.size(0) * 2) -
+                                  1]));
+        pointList[b_this - 1] =
+            pointList[c_this - 1] +
+            ((a * q[1] + b_a * c[0]) +
+             b * (quatList[(static_cast<int>(
+                                ((static_cast<double>(i) + 1.0) + icOffset) -
+                                1.0) +
+                            quatList.size(0) * 2) -
+                           1] *
+                      c[2] -
+                  c[1] * quatList[(static_cast<int>(
+                                       ((static_cast<double>(i) + 1.0) +
+                                        icOffset) -
+                                       1.0) +
+                                   quatList.size(0) * 3) -
+                                  1]));
+        pointList[(b_this + pointList.size(0)) - 1] = d_this[1];
+        pointList[(b_this + pointList.size(0) * 2) - 1] = d_this[2];
+        pointList[(static_cast<int>((static_cast<double>(i) + 1.0) + icOffset) +
+                   pointList.size(0) * 2) -
+                  1] = c[2];
+        guard1 = true;
+        break;
       default: {
         unsigned int varargin_1_idx_0;
         unsigned char id;
         //  Référentiel obstacles
         id = MAPM.Pose[i].Frame;
-        //  determiner le nombre d'obstacle
         // ==================================================================
         //  Fonction qui vérifie frame obstacles
+        //  determiner le nombre d'obstacle
         varargin_1_idx_0 =
             static_cast<unsigned int>(obstacleData.Obstacles.size(0));
         s[0] = 0.0;
@@ -1181,9 +1311,9 @@ void TrajectoryGenerator::processWpt()
                  (R_Bar * qObst_idx_3 - qObst_idx_1 * q[3]);
           q[3] = (b_c * q[3] + R_1 * qObst_idx_3) +
                  (qObst_idx_1 * b - R_Bar * qObst_idx_2);
-          //  Regarder la discontinuité entre le qk et qk-1
           // =================================================================
           //  Fonction qui assure la continuité entre 2 quaternions
+          //  Regarder la discontinuité entre le qk et qk-1
           b_this = static_cast<int>(
               ((static_cast<double>(i) + 1.0) + icOffset) - 1.0);
           if (((quatList[b_this - 1] * q[0] +
@@ -1467,8 +1597,4 @@ void TrajectoryGenerator::processWpt()
   } while (exitg1 == 0);
 }
 
-//
-// File trailer for TrajectoryGenerator.cpp
-//
-// [EOF]
-//
+// End of code generation (TrajectoryGenerator.cpp)

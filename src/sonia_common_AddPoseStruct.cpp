@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: sonia_common_AddPoseStruct.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// sonia_common_AddPoseStruct.cpp
+//
+// Code generation for function 'sonia_common_AddPoseStruct'
 //
 
-// Include Files
+// Include files
 #include "sonia_common_AddPoseStruct.h"
 #include "geometry_msgs_PointStruct.h"
 #include "geometry_msgs_Vector3Struct.h"
@@ -16,16 +16,11 @@
 #include "rt_nonfinite.h"
 
 // Function Definitions
-//
-// Message struct definition for sonia_common/AddPose
-//
-// Arguments    : sonia_common_AddPoseStruct_T *msg
-// Return Type  : void
-//
 void sonia_common_AddPoseStruct(sonia_common_AddPoseStruct_T *msg)
 {
   static const char b_cv[20]{'s', 'o', 'n', 'i', 'a', '_', 'c', 'o', 'm', 'm',
                              'o', 'n', '/', 'A', 'd', 'd', 'P', 'o', 's', 'e'};
+  //  Message struct definition for sonia_common/AddPose
   for (int i{0}; i < 20; i++) {
     msg->MessageType[i] = b_cv[i];
   }
@@ -38,8 +33,4 @@ void sonia_common_AddPoseStruct(sonia_common_AddPoseStruct_T *msg)
   //(msg);
 }
 
-//
-// File trailer for sonia_common_AddPoseStruct.cpp
-//
-// [EOF]
-//
+// End of code generation (sonia_common_AddPoseStruct.cpp)

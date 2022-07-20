@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: xaxpy.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// xaxpy.h
+//
+// Code generation for function 'xaxpy'
 //
 
 #ifndef XAXPY_H
 #define XAXPY_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
@@ -33,8 +33,4 @@ void xaxpy(double a, double y[9], int iy0);
 } // namespace coder
 
 #endif
-//
-// File trailer for xaxpy.h
-//
-// [EOF]
-//
+// End of code generation (xaxpy.h)

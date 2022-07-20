@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: diff.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// diff.h
+//
+// Code generation for function 'diff'
 //
 
 #ifndef DIFF_H
 #define DIFF_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
 #include <cstddef>
@@ -24,8 +24,4 @@ void diff(const ::coder::array<double, 1U> &x, ::coder::array<double, 1U> &y);
 }
 
 #endif
-//
-// File trailer for diff.h
-//
-// [EOF]
-//
+// End of code generation (diff.h)
