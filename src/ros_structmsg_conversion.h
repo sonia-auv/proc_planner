@@ -9,8 +9,12 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Vector3.h>
 #include <ros/duration.h>
+#include <ros/time.h>
 #include <sonia_common/AddPose.h>
 #include <sonia_common/MultiAddPose.h>
+#include <sonia_common/ObstacleArray.h>
+#include <sonia_common/ObstacleInfo.h>
+#include <std_msgs/Header.h>
 #include <std_msgs/Int8.h>
 #include <trajectory_msgs/MultiDOFJointTrajectoryPoint.h>
 #include "proc_planner_types.h"
@@ -38,11 +42,23 @@ void msg2struct(geometry_msgs_Vector3Struct_T* structPtr, geometry_msgs::Vector3
 void struct2msg(ros::Duration* msgPtr, ros_DurationStruct_T const* structPtr);
 void msg2struct(ros_DurationStruct_T* structPtr, ros::Duration const* msgPtr);
 
+void struct2msg(ros::Time* msgPtr, ros_TimeStruct_T const* structPtr);
+void msg2struct(ros_TimeStruct_T* structPtr, ros::Time const* msgPtr);
+
 void struct2msg(sonia_common::AddPose* msgPtr, sonia_common_AddPoseStruct_T const* structPtr);
 void msg2struct(sonia_common_AddPoseStruct_T* structPtr, sonia_common::AddPose const* msgPtr);
 
 void struct2msg(sonia_common::MultiAddPose* msgPtr, sonia_common_MultiAddPoseStruct_T const* structPtr);
 void msg2struct(sonia_common_MultiAddPoseStruct_T* structPtr, sonia_common::MultiAddPose const* msgPtr);
+
+void struct2msg(sonia_common::ObstacleArray* msgPtr, sonia_common_ObstacleArrayStruct_T const* structPtr);
+void msg2struct(sonia_common_ObstacleArrayStruct_T* structPtr, sonia_common::ObstacleArray const* msgPtr);
+
+void struct2msg(sonia_common::ObstacleInfo* msgPtr, sonia_common_ObstacleInfoStruct_T const* structPtr);
+void msg2struct(sonia_common_ObstacleInfoStruct_T* structPtr, sonia_common::ObstacleInfo const* msgPtr);
+
+void struct2msg(std_msgs::Header* msgPtr, std_msgs_HeaderStruct_T const* structPtr);
+void msg2struct(std_msgs_HeaderStruct_T* structPtr, std_msgs::Header const* msgPtr);
 
 void struct2msg(std_msgs::Int8* msgPtr, std_msgs_Int8Struct_T const* structPtr);
 void msg2struct(std_msgs_Int8Struct_T* structPtr, std_msgs::Int8 const* msgPtr);

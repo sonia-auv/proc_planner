@@ -2,31 +2,30 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: dot.h
+// File: getenv.h
 //
 // MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 25-Jun-2022 15:23:16
+// C/C++ source code generated on  : 10-Jul-2022 02:34:17
 //
 
-#ifndef DOT_H
-#define DOT_H
+#ifndef GETENV_H
+#define GETENV_H
 
 // Include Files
 #include "rtwtypes.h"
+#include "coder_array.h"
 #include <cstddef>
 #include <cstdlib>
 
 // Function Declarations
 namespace coder {
-double b_dot(const double a[3], const double b[3]);
+void b_getenv(::coder::array<char, 2U> &value);
 
-double dot(const double a[4], const double b[4]);
-
-} // namespace coder
+}
 
 #endif
 //
-// File trailer for dot.h
+// File trailer for getenv.h
 //
 // [EOF]
 //
