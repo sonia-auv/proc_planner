@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: Publisher.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// Publisher.h
+//
+// Code generation for function 'Publisher'
 //
 
 #ifndef PUBLISHER_H
 #define PUBLISHER_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include "mlroscpp_pub.h"
 #include <cstddef>
@@ -46,8 +46,4 @@ public:
 } // namespace coder
 
 #endif
-//
-// File trailer for Publisher.h
-//
-// [EOF]
-//
+// End of code generation (Publisher.h)

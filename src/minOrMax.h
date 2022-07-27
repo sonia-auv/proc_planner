@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: minOrMax.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// minOrMax.h
+//
+// Code generation for function 'minOrMax'
 //
 
 #ifndef MINORMAX_H
 #define MINORMAX_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
 #include <cstddef>
@@ -30,8 +30,4 @@ double maximum(const ::coder::array<double, 1U> &x);
 } // namespace coder
 
 #endif
-//
-// File trailer for minOrMax.h
-//
-// [EOF]
-//
+// End of code generation (minOrMax.h)

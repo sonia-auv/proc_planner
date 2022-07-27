@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: sonia_common_ObstacleArrayStruct.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// sonia_common_ObstacleArrayStruct.cpp
+//
+// Code generation for function 'sonia_common_ObstacleArrayStruct'
 //
 
-// Include Files
+// Include files
 #include "sonia_common_ObstacleArrayStruct.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
@@ -17,18 +17,13 @@
 #include "coder_array.h"
 
 // Function Definitions
-//
-// Message struct definition for sonia_common/ObstacleArray
-//
-// Arguments    : sonia_common_ObstacleArrayStruct_T *msg
-// Return Type  : void
-//
 void sonia_common_ObstacleArrayStruct(sonia_common_ObstacleArrayStruct_T *msg)
 {
   static const char b_cv[26]{'s', 'o', 'n', 'i', 'a', '_', 'c', 'o', 'm',
                              'm', 'o', 'n', '/', 'O', 'b', 's', 't', 'a',
                              'c', 'l', 'e', 'A', 'r', 'r', 'a', 'y'};
   sonia_common_ObstacleInfoStruct_T t4_Obstacles;
+  //  Message struct definition for sonia_common/ObstacleArray
   std_msgs_HeaderStruct(&msg->Header);
   sonia_common_ObstacleInfoStruct(&t4_Obstacles);
   for (int i{0}; i < 26; i++) {
@@ -40,8 +35,4 @@ void sonia_common_ObstacleArrayStruct(sonia_common_ObstacleArrayStruct_T *msg)
   //(msg);
 }
 
-//
-// File trailer for sonia_common_ObstacleArrayStruct.cpp
-//
-// [EOF]
-//
+// End of code generation (sonia_common_ObstacleArrayStruct.cpp)

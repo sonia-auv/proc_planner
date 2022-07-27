@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: Publisher.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// Publisher.cpp
+//
+// Code generation for function 'Publisher'
 //
 
-// Include Files
+// Include files
 #include "Publisher.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
@@ -17,10 +17,6 @@
 #include "mlroscpp_pub.h"
 
 // Function Definitions
-//
-// Arguments    : void
-// Return Type  : Publisher *
-//
 namespace coder {
 namespace ros {
 Publisher *Publisher::init()
@@ -49,10 +45,6 @@ Publisher *Publisher::init()
   return obj;
 }
 
-//
-// Arguments    : void
-// Return Type  : b_Publisher *
-//
 b_Publisher *b_Publisher::init()
 {
   static const char topic[32]{'/', 'p', 'r', 'o', 'c', '_', 'p', 'l',
@@ -78,8 +70,4 @@ b_Publisher *b_Publisher::init()
 } // namespace ros
 } // namespace coder
 
-//
-// File trailer for Publisher.cpp
-//
-// [EOF]
-//
+// End of code generation (Publisher.cpp)

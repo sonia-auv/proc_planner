@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: ros_TimeStruct.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// ros_TimeStruct.h
+//
+// Code generation for function 'ros_TimeStruct'
 //
 
 #ifndef ROS_TIMESTRUCT_H
 #define ROS_TIMESTRUCT_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
@@ -23,8 +23,4 @@ struct ros_TimeStruct_T;
 ros_TimeStruct_T ros_TimeStruct();
 
 #endif
-//
-// File trailer for ros_TimeStruct.h
-//
-// [EOF]
-//
+// End of code generation (ros_TimeStruct.h)

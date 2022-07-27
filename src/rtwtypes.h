@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: rtwtypes.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// rtwtypes.h
+//
+// Code generation for function 'proc_planner'
 //
 
 #ifndef RTWTYPES_H
 #define RTWTYPES_H
 
-// Include Files
+// Include files
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -143,8 +143,4 @@ static const uint32_T MIN_uint32_T = 0;
 }
 #endif
 #endif
-//
-// File trailer for rtwtypes.h
-//
-// [EOF]
-//
+// End of code generation (rtwtypes.h)

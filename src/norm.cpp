@@ -2,22 +2,18 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: norm.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// norm.cpp
+//
+// Code generation for function 'norm'
 //
 
-// Include Files
+// Include files
 #include "norm.h"
 #include "rt_nonfinite.h"
 #include <cmath>
 
 // Function Definitions
-//
-// Arguments    : const double x[3]
-// Return Type  : double
-//
 namespace coder {
 double b_norm(const double x[3])
 {
@@ -57,8 +53,4 @@ double b_norm(const double x[3])
 
 } // namespace coder
 
-//
-// File trailer for norm.cpp
-//
-// [EOF]
-//
+// End of code generation (norm.cpp)

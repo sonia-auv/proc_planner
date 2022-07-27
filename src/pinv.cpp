@@ -2,13 +2,13 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: pinv.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// pinv.cpp
+//
+// Code generation for function 'pinv'
 //
 
-// Include Files
+// Include files
 #include "pinv.h"
 #include "rt_nonfinite.h"
 #include "svd.h"
@@ -17,11 +17,6 @@
 #include <math.h>
 
 // Function Definitions
-//
-// Arguments    : const double A[12]
-//                double X[12]
-// Return Type  : void
-//
 namespace coder {
 void pinv(const double A[12], double X[12])
 {
@@ -105,8 +100,4 @@ void pinv(const double A[12], double X[12])
 
 } // namespace coder
 
-//
-// File trailer for pinv.cpp
-//
-// [EOF]
-//
+// End of code generation (pinv.cpp)

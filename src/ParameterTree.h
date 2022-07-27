@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: ParameterTree.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// ParameterTree.h
+//
+// Code generation for function 'ParameterTree'
 //
 
 #ifndef PARAMETERTREE_H
 #define PARAMETERTREE_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include "coder_array.h"
 #include "mlroscpp_param.h"
@@ -63,8 +63,4 @@ public:
 } // namespace coder
 
 #endif
-//
-// File trailer for ParameterTree.h
-//
-// [EOF]
-//
+// End of code generation (ParameterTree.h)

@@ -2,29 +2,24 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: geometry_msgs_TwistStruct.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// geometry_msgs_TwistStruct.cpp
+//
+// Code generation for function 'geometry_msgs_TwistStruct'
 //
 
-// Include Files
+// Include files
 #include "geometry_msgs_TwistStruct.h"
 #include "geometry_msgs_Vector3Struct.h"
 #include "proc_planner_types.h"
 #include "rt_nonfinite.h"
 
 // Function Definitions
-//
-// Message struct definition for geometry_msgs/Twist
-//
-// Arguments    : geometry_msgs_TwistStruct_T *msg
-// Return Type  : void
-//
 void geometry_msgs_TwistStruct(geometry_msgs_TwistStruct_T *msg)
 {
   static const char b_cv[19]{'g', 'e', 'o', 'm', 'e', 't', 'r', 'y', '_', 'm',
                              's', 'g', 's', '/', 'T', 'w', 'i', 's', 't'};
+  //  Message struct definition for geometry_msgs/Twist
   for (int i{0}; i < 19; i++) {
     msg->MessageType[i] = b_cv[i];
   }
@@ -33,8 +28,4 @@ void geometry_msgs_TwistStruct(geometry_msgs_TwistStruct_T *msg)
   //(msg);
 }
 
-//
-// File trailer for geometry_msgs_TwistStruct.cpp
-//
-// [EOF]
-//
+// End of code generation (geometry_msgs_TwistStruct.cpp)

@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: proc_planner_terminate.h
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// proc_planner_terminate.h
+//
+// Code generation for function 'proc_planner_terminate'
 //
 
 #ifndef PROC_PLANNER_TERMINATE_H
 #define PROC_PLANNER_TERMINATE_H
 
-// Include Files
+// Include files
 #include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
@@ -20,8 +20,4 @@
 extern void proc_planner_terminate();
 
 #endif
-//
-// File trailer for proc_planner_terminate.h
-//
-// [EOF]
-//
+// End of code generation (proc_planner_terminate.h)

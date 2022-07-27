@@ -2,16 +2,16 @@
 // Academic License - for use in teaching, academic research, and meeting
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
-// File: rt_nonfinite.cpp
 //
-// MATLAB Coder version            : 5.4
-// C/C++ source code generated on  : 10-Jul-2022 02:34:17
+// rt_nonfinite.cpp
+//
+// Code generation for function 'proc_planner'
 //
 
 // Abstract:
 //      MATLAB for code generation function to initialize non-finites,
 //      (Inf, NaN and -Inf).
-// Include Files
+// Include files
 #include "rt_nonfinite.h"
 #include <cmath>
 #include <limits>
@@ -23,8 +23,4 @@ real32_T rtNaNF{std::numeric_limits<real32_T>::quiet_NaN()};
 real32_T rtInfF{std::numeric_limits<real32_T>::infinity()};
 real32_T rtMinusInfF{-std::numeric_limits<real32_T>::infinity()};
 
-//
-// File trailer for rt_nonfinite.cpp
-//
-// [EOF]
-//
+// End of code generation (rt_nonfinite.cpp)
